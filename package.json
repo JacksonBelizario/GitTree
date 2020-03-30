@@ -41,11 +41,18 @@
     ]
   },
   "dependencies": {
+    "@blueprintjs/core": "^3.24.0",
+    "@blueprintjs/timezone": "^3.6.1",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
+    "@types/moment-timezone": "^0.5.13",
+    "@types/react": "^16.9.27",
+    "@types/react-dom": "^16.9.5",
     "electron": "^8.2.0",
     "electron-is-dev": "^1.1.0",
+    "moment": "^2.24.0",
+    "node-sass": "^4.13.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-scripts": "3.4.1"
