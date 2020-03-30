@@ -2,16 +2,25 @@
   "name": "git-tree",
   "version": "0.1.0",
   "private": true,
-  "dependencies": {
-    "@testing-library/jest-dom": "^4.2.4",
-    "@testing-library/react": "^9.3.2",
-    "@testing-library/user-event": "^7.1.2",
-    "react": "^16.13.1",
-    "react-dom": "^16.13.1",
-    "react-scripts": "3.4.1"
+  "main": "src/start.js",
+  "build": {
+    "appId": "some.id.ofyours",
+    "directories": {
+      "buildResources": "assets"
+    },
+    "win": {
+      "category": "productivity",
+      "iconUrl": "./src/assets/images/git-branch.svg"
+    },
+    "mac": {
+      "category": "productivity",
+      "iconUrl": "./src/assets/images/git-branch.svg"
+    }
   },
   "scripts": {
-    "start": "react-scripts start",
+    "electron2": "cross-env NODE_ENV=dev nodemon --exec \"\"electron .\"\"",
+    "electron": "concurrently \"yarn start\" \"wait-on http://localhost:3000 && electron .\"",
+    "start": "cross-env BROWSER=none react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
@@ -30,5 +39,24 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "dependencies": {
+    "@testing-library/jest-dom": "^4.2.4",
+    "@testing-library/react": "^9.3.2",
+    "@testing-library/user-event": "^7.1.2",
+    "electron": "^8.2.0",
+    "electron-is-dev": "^1.1.0",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "react-scripts": "3.4.1"
+  },
+  "devDependencies": {
+    "concurrently": "^5.1.0",
+    "cross-env": "^7.0.2",
+    "electron-builder": "^22.4.1",
+    "electron-reload": "^1.5.0",
+    "nodemon": "^2.0.2",
+    "typescript": "^3.8.3",
+    "wait-on": "^4.0.1"
   }
 }
