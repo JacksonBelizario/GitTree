@@ -18,7 +18,7 @@ function createWindow() {
       nodeIntegration: true,
     },
   })
-
+  
   mainWindow.loadURL(
     isDev
       ? 'http://localhost:3000'
@@ -34,6 +34,7 @@ function createWindow() {
   mainWindow.on('closed', () => {
     mainWindow = null
   })
+
 }
 
 app.on('ready', createWindow)
