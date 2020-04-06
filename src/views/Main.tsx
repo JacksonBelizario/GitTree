@@ -1,15 +1,23 @@
 import React, { useEffect, useState } from 'react';
 import SubwayStations from './SubwayStations';
 import SubwayMapVisual from './SubwayMapVisual';
+import { connect } from "redux-zero/react";
+import { IStore } from "../store/store";
 
 import Git from '../utils/git';
 import {IRepo, ICommit} from '../utils/interfaces';
 
-const Main = () => {
+interface StoreProps {
+    folder: string;
+}
+
+const mapToProps = (state : IStore) : StoreProps => ({ folder: state.folder });
+
+const Main = (props : StoreProps) => {
+    const { folder } = props;
     useEffect(() => {
-        const folder = '';
-        loadRepo(folder)
-    }, []);
+        loadRepo(folder);
+    }, [folder]);
 
     const loadRepo = async (folder: string) => {
         let repo = await Git.openRepo(folder);
@@ -42,4 +50,4 @@ const Main = () => {
     );
 }
 
-export default Main;
+export default connect<IStore>(mapToProps)(Main);
