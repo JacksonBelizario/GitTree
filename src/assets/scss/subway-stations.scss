@@ -52,8 +52,9 @@
         flex-shrink: 0;
         height: 30px;
         line-height: 30px;
+        width: 30px;
         .modification {
-            color: var(--yellow);
+            color: var(--warning);
         }
         .addition {
             color: var(--success);

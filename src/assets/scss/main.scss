@@ -35,6 +35,15 @@ pre {
 .text-center {
     text-align: center !important;
 }
+:root {
+    --primary: #7367f0;
+    --success: #90C90C;
+    --danger: #FF5454;
+    --warning: #FFB200;
+    --dark: #000000;
+    --info: #1687FF
+}
+
 
 @import 'subway.scss';
 @import 'node-visual.scss';
