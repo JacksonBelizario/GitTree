@@ -1,8 +1,8 @@
-:host{
+.map-station {
     cursor: pointer;
 }
 
-:host:hover{
+.map-station:hover{
     .highlight{
         opacity: 0.3;
     }

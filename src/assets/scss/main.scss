@@ -32,6 +32,10 @@ pre {
     }
 }
 
+.text-center {
+    text-align: center !important;
+}
+
 @import 'subway.scss';
 @import 'node-visual.scss';
 @import 'link-visual.scss';

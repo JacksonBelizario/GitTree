@@ -2,37 +2,39 @@ import React, { useState } from 'react';
 import { ICommit } from '../utils/interfaces';
 import { Node } from '../models/node';
 import { Link } from '../models/link';
-import { Color } from '../models/color';
+import { Color, colors } from '../models/color';
 import { SubwayMap, IGraph } from '../models/subway-map';
 import NodeVisual from './NodeVisual';
 import LinkVisual from './LinkVisual';
 
-interface SubwayMapVisualProps {
+import { connect } from "redux-zero/react";
+import { BoundActions } from "redux-zero/types/Actions";
+import actions from "../store/actions";
+import { IStore } from "../store/store";
+
+interface ISubwayMapVisual {
     commits: ICommit[];
 }
+
+interface StoreProps {
+    graph: IGraph | null;
+}
+
+const mapToProps = (state : IStore) : StoreProps => ({ graph: state.graph }); 
+
+type SubwayMapVisualProps = ISubwayMapVisual & StoreProps & BoundActions<IStore, typeof actions>
 
 interface BranchLine {
   nodes: Node[];
   open: boolean;
 }
 
-const colors = [
-  '#058ED9',
-  '#880044',
-  '#875053',
-  '#129490',
-  '#E5A823',
-  '#0055A2',
-  '#96C5F7'
-];
-
 const SubwayMapVisual = (props : SubwayMapVisualProps) => {
-    const {commits} = props;
+    const {commits, graph, setGraph} = props;
     React.useEffect(() => {
         getSubwayMap(commits)
     }, [commits]);
 
-    const [graph, setGraph] = useState<IGraph | null>(null);
     const [height, setHeight] = useState('100%');
     const [width, setWidth] = useState('600px');
 
@@ -85,8 +87,8 @@ const SubwayMapVisual = (props : SubwayMapVisualProps) => {
           });
         }
         });
-        const currentMap = new SubwayMap(nodes, links, nodeDict);
-        updateMapLayout(currentMap);
+        let currentMap = new SubwayMap(nodes, links, nodeDict);
+        currentMap = updateMapLayout(currentMap);
         setGraph(currentMap);
         _updateHeight();
     }
@@ -160,7 +162,7 @@ const SubwayMapVisual = (props : SubwayMapVisualProps) => {
         return addedToBl;
       }
       function processParents(n: Node, bl: BranchLine) {
-        // pecial case for it's parents, always put the first with itself
+        // special case for it's parents, always put the first with itself
         //@ts-ignore
         let parent0 = nodeDict[n.commit.parents[0]];
         let processGrandparent0 = false;
@@ -228,6 +230,7 @@ const SubwayMapVisual = (props : SubwayMapVisualProps) => {
         });
       });
       map.width = branchLines.length;
+      return map;
     }
 
     console.log({graph});
@@ -250,4 +253,4 @@ const SubwayMapVisual = (props : SubwayMapVisualProps) => {
     );
 };
 
-export default SubwayMapVisual;
+export default connect<IStore>(mapToProps, actions)(SubwayMapVisual);

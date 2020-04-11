@@ -1,3 +1,13 @@
+export const colors = [
+    '#058ED9',
+    '#880044',
+    '#875053',
+    '#129490',
+    '#E5A823',
+    '#0055A2',
+    '#96C5F7'
+];
+
 export class Color {
     r: number;
     g: number;

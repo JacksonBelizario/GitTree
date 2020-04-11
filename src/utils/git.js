@@ -1,13 +1,5 @@
 import NodeGit, {Repository} from 'nodegit';
 
-const isSSH = url => {
-    if (url.startsWith('http://') || url.startsWith('https://')) {
-        return false;
-    } else {
-        return true;
-    }
-}
-
 // declare type IRepo = Repository | null;
 
 /**

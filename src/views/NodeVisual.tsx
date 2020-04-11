@@ -1,21 +1,38 @@
 import React from 'react';
 import { Node } from '../models/node';
 
+import { connect } from "redux-zero/react";
+import { BoundActions } from "redux-zero/types/Actions";
+import actions from "../store/actions";
+import { IStore } from "../store/store";
+
 interface INodeVisual {
     node: Node
 }
 
-const NodeVisual = (props : INodeVisual) => {
+interface StoreProps {
+    selectedCommit: string;
+}
 
-    const { node } = props;
+const mapToProps = (state : IStore) : StoreProps => ({ selectedCommit: state.selectedCommit }); 
+
+type NodeVisualProps = INodeVisual & StoreProps & BoundActions<IStore, typeof actions>
+
+const NodeVisual = (props : NodeVisualProps) => {
+
+    const { node, selectedCommit, setSelectedCommit } = props;
 
     const [graphWidth] = React.useState(500);
 
+    const select = (sha: string) => {
+        setSelectedCommit(sha);
+    }
+
     return (
-        <g transform={`translate(${node.x}, ${node.y})`} className="map-station">
+        <g transform={`translate(${node.x}, ${node.y})`} className="map-station" onClick={() => node.commit && select(node.commit.sha)}>
         {
             node.x && node.color && graphWidth > node.x + 3 &&
-            <rect x="0" y="-13" width={graphWidth - 3 - node.x} height="27" className="highlight smooth-1" style={{fill: node.color.stringValue}} />
+            <rect x="0" y="-13" width={graphWidth - 3 - node.x} height="27" className={"highlight smooth-1 " + (node.commit && node.commit.sha === selectedCommit ? 'selected' : '')} style={{fill: node.color.stringValue}} />
         }
         {
             node.commit && node.color && !node.commit.isStash &&
@@ -97,4 +114,4 @@ const NodeVisual = (props : INodeVisual) => {
     )
 }
 
-export default NodeVisual;
+export default connect<IStore>(mapToProps, actions)(NodeVisual);
