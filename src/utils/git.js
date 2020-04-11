@@ -68,7 +68,98 @@ const getCommits = async (Repo) => {
     });
     return commits;
 }
+
+const watchStatus = async (Repo) => {
+    const statuses = await Repo.getStatus();
+    let stagedSummary = {
+        ignored: 0,
+        newCount: 0,
+        deleted: 0,
+        modified: 0,
+        renamed: 0
+    }
+    let unstagedSummary = {
+        ignored: 0,
+        newCount: 0,
+        deleted: 0,
+        modified: 0,
+        renamed: 0
+    }
+    let staged = [];
+    let unstaged = [];
+    statuses.forEach(status => {
+        let item = {
+            path: status.path(),
+            isNew: status.isNew(),
+            isModified: status.isModified(),
+            isRenamed: status.isRenamed(),
+            isIgnored: status.isIgnored(),
+            isDeleted: status.isDeleted(),
+        }
+        if (status.inIndex()) {
+            staged.push(item);
+            if (status.isNew()) {
+                stagedSummary.newCount += 1;
+            } else if (status.isModified()) {
+                stagedSummary.modified += 1;
+            } else if (status.isIgnored()) {
+                stagedSummary.ignored += 1;
+            } else if (status.isRenamed()) {
+                stagedSummary.rename += 1;
+            } else if (status.isDeleted()) {
+                stagedSummary.deleted += 1;
+            }
+        }
+        if (status.inWorkingTree()) {
+            unstaged.push(item);
+            if (status.isNew()) {
+                unstagedSummary.newCount += 1;
+            } else if (status.isModified()) {
+                unstagedSummary.modified += 1;
+            } else if (status.isIgnored()) {
+                unstagedSummary.ignored += 1;
+            } else if (status.isRenamed()) {
+                unstagedSummary.rename += 1;
+            } else if (status.isDeleted()) {
+                unstagedSummary.deleted += 1;
+            }
+        }
+    });
+    return {
+        staged: staged,
+        unstaged: unstaged,
+        stagedSummary: stagedSummary,
+        unstagedSummary: unstagedSummary,
+        summary: {
+            ignored: stagedSummary.ignored + unstagedSummary.ignored,
+            newCount: stagedSummary.newCount + unstagedSummary.newCount,
+            deleted: stagedSummary.deleted + unstagedSummary.deleted,
+            modified: stagedSummary.modified + unstagedSummary.modified,
+            renamed: stagedSummary.renamed + unstagedSummary.renamed
+        }
+    };
+}
+
+const getCurrentBranch = async Repo => {
+    try {
+        const ref = await Repo.getCurrentBranch();
+        let branchNames = ref.name().split('/');
+        let branchName = branchNames[branchNames.length - 1];
+        return {
+            name: branchName,
+            fullName: ref.name(),
+            shorthand: ref.shorthand(),
+            target: ref.target().toString()
+        };
+    } catch(err) {
+        return { name: "", fullName: "", shorthand: "", target: "" }
+    }
+}
+
+
 export default {
     openRepo,
-    getCommits
+    getCommits,
+    watchStatus,
+    getCurrentBranch
 }
