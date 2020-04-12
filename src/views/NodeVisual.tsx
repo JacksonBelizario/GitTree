@@ -35,12 +35,9 @@ const NodeVisual = (props : NodeVisualProps) => {
             <rect x="0" y="-13" width={graphWidth - 3 - node.x} height="27" className={"highlight smooth-1 " + (node.commit && node.commit.sha === selectedCommit ? 'selected' : '')} style={{fill: node.color.stringValue}} />
         }
         {
-            node.commit && node.color && !node.commit.isStash &&
-            <circle cx="0" cy="0" r="13" className="dot" style={{stroke: node.color.stringValue, fill: node.commit.virtual ? node.color.stringValue :'#fff' }} ></circle>
-        }
-        {
-            node.commit && node.secondColor && node.commit.parents.length > 1 && !node.commit.isStash &&
-            <circle cx="0" cy="0" r="7" className="dot" style={{fill: node.secondColor.stringValue }}></circle>
+            (node.commit && node.secondColor && node.commit.parents.length > 1 && !node.commit.isStash)
+            ? <circle cx="0" cy="0" r="7" className="dot" style={{fill: node.color && node.color.stringValue }}></circle>
+            : <circle cx="0" cy="0" r="13" className="dot" style={{stroke: node.color && node.color.stringValue, fill: node.commit && node.color && node.commit.virtual ? node.color.stringValue : '#fff' }} ></circle>
         }
         {
             node.commit && node.color && node.commit.isStash &&

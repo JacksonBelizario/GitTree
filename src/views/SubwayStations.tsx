@@ -54,40 +54,42 @@ const SubwayStations = (props: SubwayStationsProps) => {
         setSelectedCommit(sha);
     }
     return (
-        <div className="commit-info-container" style={{height: '100%', paddingTop: '3px', minWidth: 0}}>
-            {commits.map((commit : ICommit, idx: number) => (
-                <div className="commit-info" key={idx} onClick={() => select(commit.sha)}
-                    id={'commit-info-' + commit.sha} style={{height}}>
-                    <div className={"background " + (commit.sha === selectedCommit ? 'selected' : '')}
-                        style={{background: getBranchColor(commit)}}
-                        ></div>
-                    <div className="commit-info-detail-container d-flex">
-                        { !commit.virtual &&
-                            <div className="ml-1 committer text-center"style={{background: getColorByAuthor(commit)}}>{getAuthor(commit.author)}</div>
-                        }
-                        <div>
-                        {
-                            commit.virtual && <div className="files-summary ml-1">
-                                {!!commit.fileSummary.modified && <span className="mr-1 commit-summary modification">
-                                    <Icon icon="document" />{commit.fileSummary.modified}</span> }
-                                {!!commit.fileSummary.newCount && <span className="mr-1 commit-summary addition">
-                                    <i className="icon-file-plus"></i>{commit.fileSummary.newCount}</span>}
-                                {!!commit.fileSummary.deleted && <span className="mr-1 commit-summary deletion">
-                                    <i className="icon-file-minus"></i>{commit.fileSummary.deleted}</span>}
-                                {!!commit.fileSummary.renamed && <span className="mr-1 commit-summary rename">
-                                    <i className="icon-file-minus"></i>{commit.fileSummary.renamed}</span>}
-                                {!!commit.fileSummary.ignored && <span className="mr-1 commit-summary ignored">
-                                    <i className="icon-file-minus"></i>{commit.fileSummary.ignored}</span>}
+        <div className="commit-info-root">
+            <div className="commit-info-container">
+                {commits.map((commit : ICommit, idx: number) => (
+                    <div className="commit-info" key={idx} onClick={() => select(commit.sha)}
+                        id={'commit-info-' + commit.sha} style={{height}}>
+                        <div className={"background " + (commit.sha === selectedCommit ? 'selected' : '')}
+                            style={{background: getBranchColor(commit)}}
+                            ></div>
+                        <div className="commit-info-detail-container d-flex">
+                            { !commit.virtual &&
+                                <div className="ml-1 committer text-center"style={{background: getColorByAuthor(commit)}}>{getAuthor(commit.author)}</div>
+                            }
+                            <div>
+                            {
+                                commit.virtual && <div className="files-summary ml-1">
+                                    {!!commit.fileSummary.modified && <span className="mr-1 commit-summary modification">
+                                        <Icon icon="document" />{commit.fileSummary.modified}</span> }
+                                    {!!commit.fileSummary.newCount && <span className="mr-1 commit-summary addition">
+                                        <i className="icon-file-plus"></i>{commit.fileSummary.newCount}</span>}
+                                    {!!commit.fileSummary.deleted && <span className="mr-1 commit-summary deletion">
+                                        <i className="icon-file-minus"></i>{commit.fileSummary.deleted}</span>}
+                                    {!!commit.fileSummary.renamed && <span className="mr-1 commit-summary rename">
+                                        <i className="icon-file-minus"></i>{commit.fileSummary.renamed}</span>}
+                                    {!!commit.fileSummary.ignored && <span className="mr-1 commit-summary ignored">
+                                        <i className="icon-file-minus"></i>{commit.fileSummary.ignored}</span>}
+                                </div>
+                            }
                             </div>
-                        }
-                        </div>
-                        <div className="ml-2 commit-message full-width">
-                            {!commit.message && <span className="text-muted">Message...</span>}
-                            {commit.message}
+                            <div className="ml-2 commit-message full-width">
+                                {!commit.message && <span className="text-muted">Message...</span>}
+                                {commit.message}
+                            </div>
                         </div>
                     </div>
-                </div>
-            ))}
+                ))}
+            </div>
         </div>
     );
 }

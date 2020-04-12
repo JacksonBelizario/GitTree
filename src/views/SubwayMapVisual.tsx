@@ -36,7 +36,7 @@ const SubwayMapVisual = (props : SubwayMapVisualProps) => {
     }, [commits]);
 
     const [height, setHeight] = useState('100%');
-    const [width, setWidth] = useState('600px');
+    const [width, setWidth] = useState('500px');
 
     const getSubwayMap = (commits: ICommit[]) => {
       let _start = 25;
@@ -233,7 +233,6 @@ const SubwayMapVisual = (props : SubwayMapVisualProps) => {
       return map;
     }
 
-    console.log({graph});
     const _updateHeight = () => {
         setHeight(Math.max(commits.length * Node.height + 10, 55) + 'px');
     }

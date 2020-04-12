@@ -156,10 +156,58 @@ const getCurrentBranch = async Repo => {
     }
 }
 
+const getReferences = async Repo => {
+    try {
+        let refs = await Repo.getReferences();
+        refs = refs.filter(_ => _.shorthand() !== 'stash');
+        let remoteRefs = refs.filter(_ => _.isRemote());
+        let localRefs = refs.filter(_ => _.isBranch());
+        localRefs.forEach(localR => {
+            let matching = remoteRefs.filter(ref => ref.shorthand().indexOf(localR.shorthand()) !== -1);
+            if (matching.length) {
+                localR.diff = localR.cmp(matching[0]);
+            }
+        })
+    
+        let references = refs.map(ref => {
+            let display = "";
+            if (ref.isBranch()) {
+                display = ref.shorthand();
+            } else if (ref.isRemote()) {
+                let names = ref.shorthand().split('/');
+                display = names.splice(1, names.length).join('/');
+            } else if (ref.isTag()) {
+                display = ref.shorthand();
+            }
+            return {
+                target: ref.target().toString(),
+                isBranch: ref.isBranch(),
+                isRemote: ref.isRemote(),
+                isTag: ref.isTag(),
+                name: ref.name(),
+                shorthand: ref.shorthand(),
+                display: display
+            }
+        });
+        let refDict = {};
+        references.forEach(ref => {
+            if (refDict[ref.target]) {
+                refDict[ref.target].push(ref);
+            } else {
+                refDict[ref.target] = [ref];
+            }
+        })
+        return { references: references, refDict: refDict };
+    } catch (err) {
+        console.warn('getReferences', {err});
+        return {}
+    }
+}
 
 export default {
     openRepo,
     getCommits,
     watchStatus,
-    getCurrentBranch
+    getCurrentBranch,
+    getReferences
 }

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import SubwayStations from './SubwayStations';
 import SubwayMapVisual from './SubwayMapVisual';
+import SubwayStationAnnot from './SubwayStationAnnot';
 import { connect } from 'redux-zero/react';
 import { IStore } from '../store/store';
 import { useInterval } from '../utils/hooks';
@@ -49,14 +50,10 @@ const Main = (props : StoreProps) => {
 
     const loadRepo = async (folder: string) => {
         try {
-            let repo = await Git.openRepo(folder);
-
+            const repo = await Git.openRepo(folder);
             setRepo(repo);
-            const commits = await Git.getCommits(repo);
-            console.log({commits});
-            setCommits(commits);
-            const currentBranch = await Git.getCurrentBranch(repo);
-            setCurrentBranch(currentBranch);
+            setCommits(await Git.getCommits(repo));
+            setCurrentBranch(await Git.getCurrentBranch(repo));
             setWipCommit(INITIAL_WIP);
         } catch (error) {
             console.warn({error});
@@ -68,9 +65,7 @@ const Main = (props : StoreProps) => {
             return;
         }
         let changes = await Git.watchStatus(repo);
-        console.log({changes});
         let oldStatus = wipCommit.enabled;
-        console.log({oldStatus});
         let wip = wipCommit;
         wip.fileSummary = changes.summary;
         if (changes.staged.length || changes.unstaged.length) {
@@ -80,27 +75,27 @@ const Main = (props : StoreProps) => {
         }
         if (oldStatus !== wip.enabled) {
             wip.parents = currentBranch ? [currentBranch.target] : [];
-            console.log('oldStatus !== wip.enabled');
             if (wip.enabled) {
                 let newCommits = [wip, ...commits];
                 setCommits(newCommits);
-                console.log({newCommits});
             } else {
-                //return this.commits;
+                // TODO
             }
         }
         setWipCommit(wip);
     };
 
-    console.log({repo});
+    if (!repo) {
+        return <div>Loading</div>;
+    }
 
     return (
         <div className="host">
             <div className="subway-outer">
                 <div className="d-flex subway-container">
-                    <div style={{ height: '100%', paddingTop: '4px', width: '180px'}}></div>
+                    <SubwayStationAnnot repo={repo} commits={commits} currentBranch={currentBranch} />
                     <SubwayMapVisual commits={commits} />
-                    <div style={{width: '600px'}}><SubwayStations commits={commits} /></div>
+                    <SubwayStations commits={commits} />
                 </div>
                 <div className="app-map-separator"></div>
                 <div className="eoh-container text-center mt-1">
