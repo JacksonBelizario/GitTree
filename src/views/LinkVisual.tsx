@@ -26,27 +26,29 @@ const LinkVisual = (props : ILinkVisual) => {
         <g>
         {
             link.source && linkDirection < 0 && !link.merge &&
-            <g>
+            <g>{'<!--link.source && linkDirection < 0 && !link.merge ╝ -->'}
                 <line strokeDasharray={link.source.commit.virtual || link.source.commit.isStash? '5, 3' : 'none'} className="line" x1={link.source.x} y1={link.source.y} x2={link.source.x} y2={(link.target.y || 0) - 10}
                     style={{ stroke: link.color.stringValue }}></line>
                 <line strokeDasharray={link.source.commit.virtual || link.source.commit.isStash? '5, 3' : 'none'} className="line" x1={link.source.x -10} y1={link.target.y} x2={link.target.x} y2={link.target.y}
                     style={{ stroke: link.color.stringValue }}></line>
-                <path strokeDasharray={link.source.commit.virtual || link.source.commit.isStash? '5, 3' : 'none'} className="line" style={{ stroke: link.color.stringValue }} d={'M' + link.source.x + ',' + ((link.target.y || 0)- 15) + ' C' + link.source.x + ',' + link.target.y + ' ' + (link.source.x) + ',' + (link.target.y) + ' ' + ((link.source.x || 0) - 15)  + ',' + link.target.y} />
+                <path
+                    strokeDasharray={link.source.commit.virtual || link.source.commit.isStash? '5, 3' : 'none'} className="line"
+                    style={{ stroke: link.color.stringValue }} d={'M' + link.source.x + ',' + ((link.target.y || 0)- 10) + ' C' + link.source.x + ',' + link.target.y + ' ' + (link.source.x) + ',' + (link.target.y) + ' ' + ((link.source.x || 0) - 10)  + ',' + link.target.y} />
             </g>
         }
         {
             linkDirection > 0 && !link.merge &&
-            <g>
+            <g>{'<!--linkDirection > 0 && !link.merge-->'}
                 <line strokeDasharray={link.source.commit.virtual || link.source.commit.isStash? '5, 3' : 'none'} className="line" x1={link.source.x} y1={link.source.y} x2={link.source.x} y2={(link.target.y || 0) - 10}
                     style={{ stroke: link.color.stringValue }}></line>
                 <line strokeDasharray={link.source.commit.virtual || link.source.commit.isStash? '5, 3' : 'none'} className="line" x1={link.source.x + 10} y1={link.target.y} x2={link.target.x} y2={link.target.y}
                     style={{ stroke: link.color.stringValue }}></line>
-                <path strokeDasharray={link.source.commit.virtual || link.source.commit.isStash? '5, 3' : 'none'} className="line" style={{ stroke: link.color.stringValue }} d={'M' + link.source.x + ',' + ((link.target.y || 0) - 15) + ' C' + link.source.x + ',' + link.target.y + ' ' + (link.source.x) + ',' + (link.target.y) + ' ' + ((link.source.x || 0) + 15)  + ',' + link.target.y} />
+                <path strokeDasharray={link.source.commit.virtual || link.source.commit.isStash? '5, 3' : 'none'} className="line" style={{ stroke: link.color.stringValue }} d={'M' + link.source.x + ',' + ((link.target.y || 0) - 10) + ' C' + link.source.x + ',' + link.target.y + ' ' + (link.source.x) + ',' + (link.target.y) + ' ' + ((link.source.x || 0) + 10)  + ',' + link.target.y} />
             </g>
         }
         {
             link.target && link.merge &&
-            <g>
+            <g>{'<!--link.target && link.merge ╔ -->'}
                 <line strokeDasharray={link.source.commit.virtual || link.source.commit.isStash? '5, 3' : 'none'} className="line" x1={link.source.x} y1={link.source.y} x2={(link.target.x || 0) - (10 * linkDirection)} y2={link.source.y}
                     style={{ stroke: link.color.stringValue }}></line>
                 <line strokeDasharray={link.source.commit.virtual || link.source.commit.isStash? '5, 3' : 'none'} className="line" x1={link.target.x} y1={(link.source.y || 0 ) + 10} x2={link.target.x} y2={link.target.y}
