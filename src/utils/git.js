@@ -69,7 +69,7 @@ const getCommits = async (Repo) => {
     return commits;
 }
 
-const watchStatus = async (Repo) => {
+const getStatus = async (Repo) => {
     const statuses = await Repo.getStatus();
     let stagedSummary = {
         ignored: 0,
@@ -207,7 +207,7 @@ const getReferences = async Repo => {
 export default {
     openRepo,
     getCommits,
-    watchStatus,
+    getStatus,
     getCurrentBranch,
     getReferences
 }

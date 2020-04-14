@@ -35,17 +35,23 @@ const NodeVisual = (props : NodeVisualProps) => {
             <rect x="0" y="-13" width={graphWidth - 3 - node.x} height="27" className={"highlight smooth-1 " + (node.commit && node.commit.sha === selectedCommit ? 'selected' : '')} style={{fill: node.color.stringValue}} />
         }
         {
-            (node.commit && node.secondColor && node.commit.parents.length > 1 && !node.commit.isStash)
-            ? <circle cx="0" cy="0" r="7" className="dot" style={{fill: node.color && node.color.stringValue }}></circle>
-            : <circle cx="0" cy="0" r="13" className="dot" style={{stroke: node.color && node.color.stringValue, fill: node.commit && node.color && node.commit.virtual ? node.color.stringValue : '#fff' }} ></circle>
+            (node.commit && !node.commit.isStash && !node.commit.virtual) && (
+                (node.secondColor && node.commit.parents.length > 1)
+                ? <circle cx="0" cy="0" r="7" className="dot" style={{fill: node.color && node.color.stringValue }}></circle>
+                : <circle cx="0" cy="0" r="13" className="dot" style={{stroke: node.color && node.color.stringValue, fill: '#282c34' }} ></circle>
+            )
+        }
+        {
+           node.commit && node.color && node.commit.virtual &&
+           <circle cx="0" cy="0" r="13" className="dot" strokeWidth="1" strokeDasharray={'5, 3'} style={{stroke: node.color && node.color.stringValue, fill: '#282c34' }} ></circle>
+        }
+        {
+           node.commit && node.color && node.commit.isStash &&
+            <rect stroke={node.color.stringValue} strokeWidth="3" strokeDasharray={'5, 3'} x="-13" y="-13" width="26" height="26" style={{fill: '#282c34' }}></rect>
         }
         {
             node.commit && node.color && node.commit.isStash &&
-            <rect x="-13" y="-13" width="26" height="26" style={{fill: node.color.stringValue }}></rect>
-        }
-        {
-            node.commit && node.commit.isStash &&
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" x="-9" y="-9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feather feather-archive">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill={node.color.stringValue} x="-9" y="-9" stroke="#282c34" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feather feather-archive">
                 <polyline points="21 8 21 21 3 21 3 8"></polyline>
                 <rect x="1" y="3" width="22" height="5"></rect>
                 <line x1="10" y1="12" x2="14" y2="12"></line>

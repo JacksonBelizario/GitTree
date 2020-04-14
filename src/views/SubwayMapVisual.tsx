@@ -32,6 +32,7 @@ interface BranchLine {
 const SubwayMapVisual = (props : SubwayMapVisualProps) => {
     const {commits, graph, setGraph} = props;
     React.useEffect(() => {
+        setGraph(null);
         getSubwayMap(commits)
     }, [commits]);
 
@@ -40,12 +41,10 @@ const SubwayMapVisual = (props : SubwayMapVisualProps) => {
 
     const getSubwayMap = (commits: ICommit[]) => {
       let _start = 25;
-      let _offset = Node.height;
       let _infinityY = Node.height * (commits.length + 1);
       let nodeDict : object | any= {};
       let nodes : [] = [];
       let links : [] = [];
-      let treeOffset = 0;
       commits.forEach((c, i) => {
         let node = new Node(c.sha);
         // Y offset, just increment;
@@ -86,11 +85,11 @@ const SubwayMapVisual = (props : SubwayMapVisualProps) => {
             }
           });
         }
-        });
-        let currentMap = new SubwayMap(nodes, links, nodeDict);
-        currentMap = updateMapLayout(currentMap);
-        setGraph(currentMap);
-        _updateHeight();
+      });
+      let currentMap = new SubwayMap(nodes, links, nodeDict);
+      currentMap = updateMapLayout(currentMap);
+      setGraph(currentMap);
+      _updateHeight();
     }
 
     const updateMapLayout = (map: SubwayMap) => {

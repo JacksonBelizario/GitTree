@@ -38,23 +38,31 @@ const Main = (props : StoreProps) => {
     const [currentBranch, setCurrentBranch] = useState<object | any>({});
     const [commits, setCommits] = useState<ICommit[]>([]);
     const [wipCommit, setWipCommit] = useState<ICommit>(INITIAL_WIP);
+    const [watch, setWatch] = useState<Boolean>(false);
 
     useEffect(() => {
         loadRepo(folder);
     }, [folder]);
 
+
     useInterval(() => {
-        watchChanges();
+        if (watch) {
+            watchChanges();
+        }
     }, INTERVAL);
 
 
     const loadRepo = async (folder: string) => {
+        if (!folder) {
+            return;
+        }
         try {
             const repo = await Git.openRepo(folder);
             setRepo(repo);
-            setCommits(await Git.getCommits(repo));
             setCurrentBranch(await Git.getCurrentBranch(repo));
             setWipCommit(INITIAL_WIP);
+            setCommits(await Git.getCommits(repo));
+            setWatch(true);
         } catch (error) {
             console.warn({error});
         }
@@ -64,7 +72,7 @@ const Main = (props : StoreProps) => {
         if (!repo || commits.length === 0) {
             return;
         }
-        let changes = await Git.watchStatus(repo);
+        let changes = await Git.getStatus(repo);
         let oldStatus = wipCommit.enabled;
         let wip = wipCommit;
         wip.fileSummary = changes.summary;
@@ -73,16 +81,15 @@ const Main = (props : StoreProps) => {
         } else {
             wip.enabled = false;
         }
+        setWipCommit(wip);
         if (oldStatus !== wip.enabled) {
             wip.parents = currentBranch ? [currentBranch.target] : [];
             if (wip.enabled) {
-                let newCommits = [wip, ...commits];
-                setCommits(newCommits);
+                setCommits([wip, ...commits]);
             } else {
                 // TODO
             }
         }
-        setWipCommit(wip);
     };
 
     if (!repo) {
