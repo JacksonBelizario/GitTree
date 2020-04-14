@@ -40,6 +40,8 @@
         line-height: 22px;
         flex-shrink: 0;
         box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+        margin: 0 3px;
+        font-size: 10px;
     }
     .commit-message {
         height: 22px;
@@ -49,6 +51,10 @@
         text-overflow: ellipsis;
         white-space: nowrap;
         padding-right: 15px;
+    }
+    .commit-info-detail-container {
+        position: relative;
+        top: 1px;
     }
     .files-summary {
         flex-shrink: 0;
