@@ -3,7 +3,7 @@ import { ICommit } from '../utils/interfaces';
 import { Node } from '../models/node';
 import { colors } from '../models/color';
 import { IGraph } from '../models/subway-map';
-import { generateColor } from '../utils';
+import { getMaterialColors } from '../utils/colors';
 import { Icon } from "@blueprintjs/core";
 
 import { connect } from "redux-zero/react";
@@ -38,8 +38,12 @@ const SubwayStations = (props: SubwayStationsProps) => {
       return name;
     }
     
-    const  getColorByAuthor = (commit: ICommit) => {
-      return generateColor(commit.email);
+    const getColorByAuthor = (commit: ICommit) => {
+      const authorColor = getMaterialColors(commit.email);
+      return {
+          backgroundColor: authorColor.backgroundColor,
+          color: authorColor.color,
+      }
     }
     const getBranchColor = (commit: ICommit) => {
         if (graph && graph.nodeDict[commit.sha]) {
@@ -62,7 +66,7 @@ const SubwayStations = (props: SubwayStationsProps) => {
                             ></div>
                         <div className="commit-info-detail-container d-flex">
                             { !commit.virtual &&
-                                <div className="ml-1 committer text-center"style={{background: getColorByAuthor(commit)}}>{getAuthor(commit.author)}</div>
+                                <div className="ml-1 committer text-center"style={getColorByAuthor(commit)}>{getAuthor(commit.author)}</div>
                             }
                             <div>
                             {

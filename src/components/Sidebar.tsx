@@ -72,7 +72,6 @@ const Sidebar = () => {
             disabled: true,
         },
     ])
-    
 
     const handleNodeClick = (nodeData: ITreeNode, _nodePath: number[], e: React.MouseEvent<HTMLElement>) => {
         const originallySelected = nodeData.isSelected;
@@ -84,25 +83,6 @@ const Sidebar = () => {
         console.log({nodeData, _nodePath});
     };
 
-    const handleNodeCollapse = (nodeData: ITreeNode, _nodePath: number[]) => {
-        nodeData.isExpanded = true;
-        changeNodeState(nodeData, _nodePath);
-        console.log('handleNodeCollapse');
-    };
-
-    const handleNodeExpand = (nodeData: ITreeNode, _nodePath: number[]) => {
-        nodeData.isExpanded = false;
-        changeNodeState(nodeData, _nodePath);
-        console.log('handleNodeExpand');
-    };
-    
-    const changeNodeState = (nodeData: ITreeNode, _nodePath: number[]) => {
-        console.log({nodeData, _nodePath});
-        const _nodes = nodeFromPath( _nodePath, nodes,nodeData);
-        console.log({_nodes});
-        setNodes(_nodes);
-    }
-
     const nodeFromPath = (path: number[], treeNodes: ITreeNode[], node: ITreeNode) => {
         if (path.length === 1) {
             treeNodes[path[0]] = node;
@@ -113,6 +93,25 @@ const Sidebar = () => {
             treeNodes.childNodes = nodeFromPath(path.slice(1), treeNodes[path[0]].childNodes, node);
             return treeNodes;
         }
+    };
+    
+    const changeNodeState = (nodeData: ITreeNode, _nodePath: number[]) => {
+        console.log({nodeData, _nodePath});
+        const _nodes = nodeFromPath( _nodePath, nodes,nodeData);
+        console.log('changeNodeState', { nodes: _nodes});
+        setNodes(_nodes);
+    }
+
+    const handleNodeCollapse = (nodeData: ITreeNode, _nodePath: number[]) => {
+        nodeData.isExpanded = true;
+        changeNodeState(nodeData, _nodePath);
+        console.log('handleNodeCollapse');
+    };
+
+    const handleNodeExpand = (nodeData: ITreeNode, _nodePath: number[]) => {
+        nodeData.isExpanded = false;
+        changeNodeState(nodeData, _nodePath);
+        console.log('handleNodeExpand');
     };
 
     const forEachNode = (nodes: ITreeNode[], callback: (node: ITreeNode) => void) => {
