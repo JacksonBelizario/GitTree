@@ -1,12 +1,15 @@
 import * as React from "react";
 
-import { Classes, Icon, Intent, ITreeNode, Position, Tooltip, Tree } from "@blueprintjs/core";
+import {
+    Classes, Icon, Intent, ITreeNode, Position, Tooltip,
+    Tree, ContextMenu, MenuItem, Menu, MenuDivider
+} from '@blueprintjs/core';
 
 
 // use Component so it re-renders everytime: `nodes` are not a primitive type
 // and therefore aren't included in shallow prop comparison
 const Sidebar = () => {
-    const [nodes, setNodes] = React.useState<ITreeNode[]>([
+    const [menuItem, setMenuItem] = React.useState<ITreeNode[]>([
         {
             id: 0,
             hasCaret: true,
@@ -42,6 +45,7 @@ const Sidebar = () => {
                     id: 4,
                     hasCaret: true,
                     icon: "folder-close",
+                    isExpanded: true,
                     label: (
                         <Tooltip content="foo" position={Position.RIGHT}>
                             Folder 2
@@ -55,6 +59,7 @@ const Sidebar = () => {
                             hasCaret: true,
                             icon: "folder-close",
                             label: "Folder 3",
+                            isExpanded: false,
                             childNodes: [
                                 { id: 8, icon: "document", label: "Item 0" },
                                 { id: 9, icon: "tag", label: "Item 1" },
@@ -73,65 +78,44 @@ const Sidebar = () => {
         },
     ])
 
-    const handleNodeClick = (nodeData: ITreeNode, _nodePath: number[], e: React.MouseEvent<HTMLElement>) => {
-        const originallySelected = nodeData.isSelected;
-        if (!e.shiftKey) {
-            forEachNode(nodes, n => (n.isSelected = false));
-        }
-        nodeData.isSelected = originallySelected == null ? true : !originallySelected;
-        //this.setState(this.state);
-        console.log({nodeData, _nodePath});
+    const handleNodeClick = (nodeData : ITreeNode, _nodePath : number[], e: React.MouseEvent<HTMLElement>) =>  {
+        // nodeData.isExpanded ? onCollapse(nodeData) : onExpand(nodeData)
+     };
+     const handleNodeCollapse = (nodeData : ITreeNode) => {
+         nodeData.isExpanded = false;
+         setMenuItem([...menuItem]);
+ 
+     };
+     const handleNodeExpand = (nodeData : ITreeNode) => {
+         nodeData.isExpanded = true;
+         setMenuItem([...menuItem]);
+     };
+     const onExpand = React.useCallback(handleNodeExpand, []);
+     const onCollapse = React.useCallback(handleNodeCollapse, []);
+     const onNodeClick = React.useCallback(handleNodeClick, []);
+
+     const showContextMenu = (nodeData : ITreeNode, path : number[], e: React.MouseEvent<HTMLElement>) => {
+        e.preventDefault();
+        ContextMenu.show(
+            <Menu>
+                <MenuItem icon="search-around" text="Search around..."/>
+                <MenuItem icon="search" text="Object viewer"/>
+                <MenuItem icon="graph-remove" text="Remove"/>
+                <MenuItem icon="group-objects" text="Group"/>
+                <MenuDivider/>
+                <MenuItem disabled={true} text="Clicked on node"/>
+            </Menu>,
+            {left: e.clientX, top: e.clientY}
+        );
     };
-
-    const nodeFromPath = (path: number[], treeNodes: ITreeNode[], node: ITreeNode) => {
-        if (path.length === 1) {
-            treeNodes[path[0]] = node;
-            return treeNodes;
-        }
-        else {
-            //@ts-ignore
-            treeNodes.childNodes = nodeFromPath(path.slice(1), treeNodes[path[0]].childNodes, node);
-            return treeNodes;
-        }
-    };
-    
-    const changeNodeState = (nodeData: ITreeNode, _nodePath: number[]) => {
-        console.log({nodeData, _nodePath});
-        const _nodes = nodeFromPath( _nodePath, nodes,nodeData);
-        console.log('changeNodeState', { nodes: _nodes});
-        setNodes(_nodes);
-    }
-
-    const handleNodeCollapse = (nodeData: ITreeNode, _nodePath: number[]) => {
-        nodeData.isExpanded = true;
-        changeNodeState(nodeData, _nodePath);
-        console.log('handleNodeCollapse');
-    };
-
-    const handleNodeExpand = (nodeData: ITreeNode, _nodePath: number[]) => {
-        nodeData.isExpanded = false;
-        changeNodeState(nodeData, _nodePath);
-        console.log('handleNodeExpand');
-    };
-
-    const forEachNode = (nodes: ITreeNode[], callback: (node: ITreeNode) => void) => {
-        if (nodes == null) {
-            return;
-        }
-
-        for (const node of nodes) {
-            callback(node);
-            //@ts-ignore
-            forEachNode(node.childNodes, callback);
-        }
-    }
 
     return (
         <Tree
-            contents={nodes}
-            onNodeClick={handleNodeClick}
-            onNodeCollapse={handleNodeCollapse}
-            onNodeExpand={handleNodeExpand}
+            contents={menuItem}
+            onNodeContextMenu={showContextMenu}
+            onNodeCollapse={onCollapse}
+            onNodeClick={onNodeClick}
+            onNodeExpand={onExpand}
             className={Classes.ELEVATION_0}
         />
     );
