@@ -27,8 +27,6 @@ type SubwayStationsProps = ISubwayStations & StoreProps & BoundActions<IStore, t
 const SubwayStations = (props: SubwayStationsProps) => {
     const {commits, selectedCommit, setSelectedCommit, graph} = props;
 
-    const height = Node.height - 8;
-
     const getAuthor = (author: string) => {
       let firstChars = author.split(' ').map(n => n.length > 0 ? n[0].toUpperCase() : "");
       let name = "";
@@ -58,7 +56,7 @@ const SubwayStations = (props: SubwayStationsProps) => {
             <div className="commit-info-container">
                 {commits.map((commit : ICommit, idx: number) => (
                     <div className="commit-info" key={idx} onClick={() => select(commit.sha)}
-                        id={'commit-info-' + commit.sha} style={{height}}>
+                        id={'commit-info-' + commit.sha}>
                         <div className={"background " + (commit.sha === selectedCommit ? 'selected' : '')}
                             style={{background: getBranchColor(commit)}}
                             ></div>

@@ -1,6 +1,6 @@
 .commit-info-root {
     height: 100%;
-    padding-top: 3px;
+    padding-top: 14px;
     min-width: 0;
     width: 600px;
 }
@@ -12,13 +12,13 @@
 
 .commit-info {
     font-size: 13px;
-    margin-top: 8px;
+    margin-bottom: 4px;
     width: 100%;
     position: relative;
     cursor: pointer;
     p {
         font-size: 16px;
-        line-height: 30px;
+        line-height: 22px;
         margin: 0;
         position: absolute;
     }
@@ -35,15 +35,15 @@
     }
     .committer {
         border-radius: 50%;
-        width: 30px;
-        height: 30px;
-        line-height: 30px;
+        width: 22px;
+        height: 22px;
+        line-height: 22px;
         flex-shrink: 0;
         box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
     }
     .commit-message {
-        height: 30px;
-        line-height: 30px;
+        height: 22px;
+        line-height: 22px;
 
         overflow: hidden;
         text-overflow: ellipsis;
@@ -52,9 +52,9 @@
     }
     .files-summary {
         flex-shrink: 0;
-        height: 30px;
-        line-height: 30px;
-        width: 30px;
+        height: 22px;
+        line-height: 22px;
+        width: 25px;
         .modification {
             color: var(--warning);
         }

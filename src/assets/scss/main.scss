@@ -3,10 +3,19 @@
 @import '~@blueprintjs/icons/lib/css/blueprint-icons.css';
 @import "~@blueprintjs/core/lib/scss/variables";
 
-$background-color: #30404d;
+:root {
+    --bg: #30404d;
+    --bg-graph: #282c34;
+    --primary: #7367f0;
+    --success: #90C90C;
+    --danger: #FF5454;
+    --warning: #FFB200;
+    --dark: #000000;
+    --info: #1687FF
+}
 
 body {
-    background-color: $background-color;
+    background-color: var(--bg);
     overflow-y: hidden;
     overflow-x: auto;
 }
@@ -29,21 +38,18 @@ pre {
         display: flex;
         flex-direction: column;
         flex: auto;
+        background-color: var(--bg-graph);
+        min-height: 100vh;
+        align-items: center;
+        justify-content: center;
+        font-size: calc(10px + 2vmin);
+        color: white;
     }
 }
 
 .text-center {
     text-align: center !important;
 }
-:root {
-    --primary: #7367f0;
-    --success: #90C90C;
-    --danger: #FF5454;
-    --warning: #FFB200;
-    --dark: #000000;
-    --info: #1687FF
-}
-
 
 @import 'subway.scss';
 @import 'node-visual.scss';

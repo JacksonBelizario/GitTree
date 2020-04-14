@@ -1,9 +1,8 @@
 import React from 'react';
-import './App.css';
 import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
 import Main from './views/Main';
-import { Provider, connect } from "redux-zero/react";
+import { Provider } from "redux-zero/react";
 import store from "./store/store";
 
 import './assets/scss/main.scss';

@@ -3,7 +3,7 @@ import { Color } from "./color";
 
 export class Node {
 
-    static height = 35;
+    static height = 26;
 
     commit?: ICommit;
     x: number = 0;
