@@ -9,6 +9,10 @@ import {
     NavbarHeading,
     Tag,
 } from "@blueprintjs/core";
+import {
+    FolderPlus as FolderIcon,
+    Book as BookIcon
+} from 'react-feather';
 
 import { connect } from "redux-zero/react";
 import { BoundActions } from "redux-zero/types/Actions";
@@ -42,8 +46,8 @@ const Nav = (props : NavProps) => {
             <NavbarGroup align={Alignment.LEFT}>
                 <NavbarHeading>GitTree</NavbarHeading>
                 <NavbarDivider />
-                <Button className={Classes.MINIMAL} icon="folder-new" onClick={() => selectFolder()} />
-                { folder && <Tag icon="git-repo" large minimal style={{marginLeft: 10}}>{folder}</Tag> }
+                <Button className={Classes.MINIMAL} icon={<FolderIcon size={20} />} onClick={() => selectFolder()} />
+                { folder && <Tag icon={<BookIcon size={18} />} large minimal style={{marginLeft: 10}}>{folder}</Tag> }
             </NavbarGroup>
         </Navbar>
     );
