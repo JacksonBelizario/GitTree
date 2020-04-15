@@ -1,7 +1,7 @@
 import * as React from "react";
 
 import {
-    Classes, Icon, Intent, ITreeNode, Position, Tooltip,
+    Classes, Icon, Button, ITreeNode, Position, Tooltip,
     Tree, ContextMenu, MenuItem, Menu, MenuDivider
 } from '@blueprintjs/core';
 import {
@@ -14,6 +14,20 @@ import {
     GitBranch as GitBranchIcon
 } from 'react-feather';
 
+interface ISidebarBtn {
+    icon: any,
+}
+const SidebarBtn : React.StatelessComponent<ISidebarBtn> = props => {
+    let { icon, children, ...rest} = props;
+    let CustomIcon = (props : any) => ({...icon, size: props.size});
+    
+    return (
+        <Button icon={<CustomIcon />} {...rest} className={Classes.MINIMAL + ' ' + Classes.ALIGN_LEFT}
+            style={{width: '100%', borderRadius: 0, borderBottom: '1px solid #282c34'}} >
+            {children}
+        </Button>
+    )
+}
 
 // use Component so it re-renders everytime: `nodes` are not a primitive type
 // and therefore aren't included in shallow prop comparison
@@ -130,6 +144,19 @@ const Sidebar = () => {
     };
 
     return (
+        <>
+        <SidebarBtn
+            icon={<HardDriveIcon size={18} />}  >
+            Local
+        </SidebarBtn>
+        <Button className={Classes.MINIMAL + ' ' + Classes.ALIGN_LEFT}
+            icon={<CloudIcon size={18} />} style={{width: '100%', borderRadius: 0, borderBottom: '1px solid #282c34'}} onClick={() => {}} >
+            Remote
+        </Button>
+        <Button className={Classes.MINIMAL + ' ' + Classes.ALIGN_LEFT}
+            icon={<CloudIcon size={18} />} style={{width: '100%', borderRadius: 0, borderBottom: '1px solid #282c34'}} onClick={() => {}} >
+            Remote
+        </Button>
         <Tree
             contents={menuItem}
             onNodeContextMenu={showContextMenu}
@@ -138,6 +165,7 @@ const Sidebar = () => {
             onNodeExpand={onExpand}
             className={Classes.ELEVATION_0}
         />
+        </>
     );
 }
 
