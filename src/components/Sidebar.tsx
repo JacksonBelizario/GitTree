@@ -4,6 +4,15 @@ import {
     Classes, Icon, Intent, ITreeNode, Position, Tooltip,
     Tree, ContextMenu, MenuItem, Menu, MenuDivider
 } from '@blueprintjs/core';
+import {
+    HardDrive as HardDriveIcon,
+    Cloud as CloudIcon,
+    Inbox as InboxIcon,
+    Layers as LayersIcon,
+    Tag as TagIcon,
+    Folder as FolderIcon,
+    GitBranch as GitBranchIcon
+} from 'react-feather';
 
 
 // use Component so it re-renders everytime: `nodes` are not a primitive type
@@ -12,24 +21,14 @@ const Sidebar = () => {
     const [menuItem, setMenuItem] = React.useState<ITreeNode[]>([
         {
             id: 0,
-            hasCaret: true,
-            icon: "folder-close",
-            label: "Folder 0",
-        },
-        {
-            id: 1,
-            icon: "folder-close",
-            isExpanded: true,
-            label: (
-                <Tooltip content="I'm a folder <3" position={Position.RIGHT}>
-                    Folder 1
-                </Tooltip>
-            ),
+            hasCaret: false,
+            icon: <HardDriveIcon size={18} style={{marginRight: '10px'}} />,
+            label: "Local",
             childNodes: [
                 {
                     id: 2,
-                    icon: "document",
-                    label: "Item 0",
+                    icon: <GitBranchIcon size={16} style={{marginRight: '10px'}} />,
+                    label: "master",
                     secondaryLabel: (
                         <Tooltip content="An eye!">
                             <Icon icon="eye-open" />
@@ -38,31 +37,31 @@ const Sidebar = () => {
                 },
                 {
                     id: 3,
-                    icon: <Icon icon="tag" intent={Intent.PRIMARY} className={Classes.TREE_NODE_ICON} />,
-                    label: "Organic meditation gluten-free, sriracha VHS drinking vinegar beard man.",
+                    icon: <GitBranchIcon size={16} style={{marginRight: '10px'}} />,
+                    label: "staging",
                 },
                 {
                     id: 4,
                     hasCaret: true,
-                    icon: "folder-close",
+                    icon: <FolderIcon size={16} style={{marginRight: '10px'}} />,
                     isExpanded: true,
                     label: (
                         <Tooltip content="foo" position={Position.RIGHT}>
-                            Folder 2
+                            feature
                         </Tooltip>
                     ),
                     childNodes: [
-                        { id: 5, label: "No-Icon Item" },
-                        { id: 6, icon: "tag", label: "Item 1" },
+                        { id: 5, label: "label-1", icon: <GitBranchIcon size={16} style={{marginRight: '10px'}} /> },
+                        { id: 6, label: "label-2", icon: <GitBranchIcon size={16} style={{marginRight: '10px'}} /> },
                         {
                             id: 7,
                             hasCaret: true,
-                            icon: "folder-close",
-                            label: "Folder 3",
+                            icon: <FolderIcon size={16} style={{marginRight: '10px'}} />,
+                            label: "folder",
                             isExpanded: false,
                             childNodes: [
-                                { id: 8, icon: "document", label: "Item 0" },
-                                { id: 9, icon: "tag", label: "Item 1" },
+                                { id: 8, label: "label-3", icon: <GitBranchIcon size={16} style={{marginRight: '10px'}} /> },
+                                { id: 9, label: "label-4", icon: <GitBranchIcon size={16} style={{marginRight: '10px'}} /> },
                             ],
                         },
                     ],
@@ -70,16 +69,37 @@ const Sidebar = () => {
             ],
         },
         {
+            id: 1,
+            hasCaret: false,
+            icon: <CloudIcon size={18} style={{marginRight: '10px'}} />,
+            label: (
+                <Tooltip content="I'm a folder <3" position={Position.RIGHT}>
+                    Remote
+                </Tooltip>
+            ),
+        },
+        {
             id: 2,
-            hasCaret: true,
-            icon: "folder-close",
-            label: "Super secret files",
-            disabled: true,
+            hasCaret: false,
+            icon: <InboxIcon size={18} style={{marginRight: '10px'}} />,
+            label: "Stashes",
+        },
+        {
+            id: 3,
+            hasCaret: false,
+            icon: <TagIcon size={18} style={{marginRight: '10px'}} />,
+            label: "Tags",
+        },
+        {
+            id: 4,
+            hasCaret: false,
+            icon: <LayersIcon size={18} style={{marginRight: '10px'}} />,
+            label: "Submodules",
         },
     ])
 
     const handleNodeClick = (nodeData : ITreeNode, _nodePath : number[], e: React.MouseEvent<HTMLElement>) =>  {
-        // nodeData.isExpanded ? onCollapse(nodeData) : onExpand(nodeData)
+        nodeData.isExpanded ? onCollapse(nodeData) : onExpand(nodeData);
      };
      const handleNodeCollapse = (nodeData : ITreeNode) => {
          nodeData.isExpanded = false;
