@@ -42,7 +42,7 @@ const Sidebar = () => {
                 },
                 {
                     id: 4,
-                    hasCaret: true,
+                    hasCaret: false,
                     icon: <FolderIcon size={16} style={{marginRight: '10px'}} />,
                     isExpanded: true,
                     label: (
@@ -55,7 +55,7 @@ const Sidebar = () => {
                         { id: 6, label: "label-2", icon: <GitBranchIcon size={16} style={{marginRight: '10px'}} /> },
                         {
                             id: 7,
-                            hasCaret: true,
+                            hasCaret: false,
                             icon: <FolderIcon size={16} style={{marginRight: '10px'}} />,
                             label: "folder",
                             isExpanded: false,
