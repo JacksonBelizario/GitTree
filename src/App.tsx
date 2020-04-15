@@ -15,9 +15,7 @@ const App = () => {
         <Navbar />
         <SplitPane className="main-layout" split="vertical" minSize={210} defaultSize={250} maxSize={390}>
           <Sidebar />
-          <div className="App-header section">
-            <Main />
-          </div>
+          <Main />
         </SplitPane>
       </div>
     </Provider>

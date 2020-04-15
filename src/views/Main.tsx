@@ -97,7 +97,7 @@ const Main = (props : StoreProps) => {
     }
 
     return (
-        <div className="host">
+        <div className="section host">
             <div className="subway-outer">
                 <div className="d-flex subway-container">
                     <SubwayStationAnnot repo={repo} commits={commits} currentBranch={currentBranch} />
