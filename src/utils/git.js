@@ -200,7 +200,7 @@ const getReferences = async Repo => {
         return { references: references, refDict: refDict };
     } catch (err) {
         console.warn('getReferences', {err});
-        return {}
+        return { references: [], refDict: null };
     }
 }
 

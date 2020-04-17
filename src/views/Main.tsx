@@ -5,9 +5,11 @@ import SubwayStationAnnot from './SubwayStationAnnot';
 import { connect } from 'redux-zero/react';
 import { IStore } from '../store/store';
 import { useInterval } from '../utils/hooks';
+import { BoundActions } from "redux-zero/types/Actions";
+import actions from "../store/actions";
 
 import Git from '../utils/git';
-import {IRepo, ICommit} from '../utils/interfaces';
+import {IRepo, ICommit, ICurrentCommit} from '../utils/interfaces';
 
 const INITIAL_WIP = {
     sha: "00000",
@@ -25,17 +27,21 @@ const INITIAL_WIP = {
 
 interface StoreProps {
     folder: string;
+    repo: IRepo;
+    currentBranch: ICurrentCommit | null;
 }
 
-const mapToProps = (state : IStore) : StoreProps => ({ folder: state.folder });
+const mapToProps = (state : IStore) : StoreProps => ({
+    folder: state.folder, repo: state.repo, currentBranch: state.currentBranch
+});
 
 const INTERVAL = 5 * 1000;
 
-const Main = (props : StoreProps) => {
-    const { folder } = props;
+type MainProps = StoreProps & BoundActions<IStore, typeof actions>
 
-    const [repo, setRepo] = useState<IRepo>(null);
-    const [currentBranch, setCurrentBranch] = useState<object | any>({});
+const Main = (props : MainProps) => {
+    const { folder, repo, setRepo, currentBranch, setCurrentBranch, setRefs } = props;
+
     const [commits, setCommits] = useState<ICommit[]>([]);
     const [wipCommit, setWipCommit] = useState<ICommit>(INITIAL_WIP);
     const [watch, setWatch] = useState<Boolean>(false);
@@ -48,8 +54,14 @@ const Main = (props : StoreProps) => {
     useInterval(() => {
         if (watch) {
             watchChanges();
+            getRefs();
         }
     }, INTERVAL);
+
+    const getRefs = async () => {
+        //@ts-ignore
+        setRefs((await Git.getReferences(repo)));
+    }
 
 
     const loadRepo = async (folder: string) => {
@@ -113,4 +125,4 @@ const Main = (props : StoreProps) => {
     );
 }
 
-export default connect<IStore>(mapToProps)(Main);
+export default connect<IStore>(mapToProps, actions)(Main);

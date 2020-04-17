@@ -14,6 +14,12 @@ import {
     GitBranch as GitBranchIcon
 } from 'react-feather';
 
+import { IReference } from "../utils/interfaces";
+import { connect } from "redux-zero/react";
+import { IStore } from "../store/store";
+
+import SidebarBranchs from './SidebarBranchs';
+
 interface ISidebarBtn {
     icon: any,
 }
@@ -29,9 +35,29 @@ const SidebarBtn : React.StatelessComponent<ISidebarBtn> = props => {
     )
 }
 
+interface StoreProps {
+    local: IReference[];
+    remote: IReference[];
+    tags: IReference[];
+}
+
+const mapToProps = (state : IStore) : StoreProps => ({
+    local: state.refs.references.filter(_ => _.isBranch),
+    remote: state.refs.references.filter(_ => _.isRemote),
+    tags: state.refs.references.filter(_ => _.isTag),
+}); 
+
+declare interface IFolder {
+    label: string;
+    children: any[];
+    icon?: any;
+}
+
 // use Component so it re-renders everytime: `nodes` are not a primitive type
 // and therefore aren't included in shallow prop comparison
-const Sidebar = () => {
+const Sidebar = (props : StoreProps) => {
+    const { local, remote, tags } = props;
+
     const [menuItem, setMenuItem] = React.useState<ITreeNode[]>([
         {
             id: 0,
@@ -149,6 +175,7 @@ const Sidebar = () => {
             icon={<HardDriveIcon size={18} />}  >
             Local
         </SidebarBtn>
+        <SidebarBranchs branchs={local} />
         <Button className={Classes.MINIMAL + ' ' + Classes.ALIGN_LEFT}
             icon={<CloudIcon size={18} />} style={{width: '100%', borderRadius: 0, borderBottom: '1px solid #282c34'}} onClick={() => {}} >
             Remote
@@ -169,4 +196,4 @@ const Sidebar = () => {
     );
 }
 
-export default Sidebar;
+export default connect<IStore>(mapToProps)(Sidebar);

@@ -1,9 +1,8 @@
 import React from 'react';
 import { Node } from '../models/node';
-import { ICommit, IRepo } from '../utils/interfaces';
+import { ICommit, IRepo, IRefDict } from '../utils/interfaces';
 import { IGraph } from '../models/subway-map';
 import { colors } from '../models/color';
-import Git from '../utils/git';
 import { useInterval } from '../utils/hooks';
 
 import { connect } from "redux-zero/react";
@@ -32,43 +31,40 @@ interface ISubwayStationAnnot {
 
 interface StoreProps {
     graph: IGraph | null;
+    refDict: IRefDict;
 }
 
-const mapToProps = (state : IStore) : StoreProps => ({ graph: state.graph }); 
+const mapToProps = (state : IStore) : StoreProps => ({ graph: state.graph, refDict: state.refs.refDict }); 
 
 type SubwayStationAnnotProps = ISubwayStationAnnot & StoreProps;
 
 const INTERVAL = 5 * 1000;
 
 const SubwayStationAnnot = (props : SubwayStationAnnotProps) => {
-    const { repo, commits, graph, currentBranch } = props;
+    const { commits, graph, currentBranch, refDict } = props;
     const height = Node.height;
 
     const [branchInfos, setBranchInfos] = React.useState<IBranchInfo[]>([]);
-    const [refs, setRefs] = React.useState<any>({});
 
     useInterval(() => {
-        getRefs();
-    }, INTERVAL);
-
-    const getRefs = async () => {
-        setRefs((await Git.getReferences(repo)).refDict);
         updateBranchInfo();
-    }
+    }, INTERVAL);
     
   const updateBranchInfo = () => {
-        const branchInfos : IBranchInfo[] = [];
-        if (!commits) {
+        if (!commits || !refDict) {
             return;
         }
+        const branchInfos : IBranchInfo[] = [];
         commits.forEach((cmt : ICommit, i: number) => {
-            if (refs[cmt.sha]) {
+            //@ts-ignore
+            if (refDict[cmt.sha]) {
                 let bi = {
                     top: height * i,
                     names: [],
                     target: cmt.sha,
                 };
-                refs[cmt.sha].forEach((ref : any) => {
+                //@ts-ignore
+                refDict[cmt.sha].forEach((ref : any) => {
                     //@ts-ignore
                     bi.names.push(ref);
                 });

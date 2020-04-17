@@ -2,7 +2,7 @@ import createStore from "redux-zero";
 import { applyMiddleware } from "redux-zero/middleware";
 import storage from "localforage";
 import { IGraph } from '../models/subway-map';
-import {ICommit} from '../utils/interfaces';
+import {IRepo, ICommit, ICurrentCommit, IRefs} from '../utils/interfaces';
 
 const persist = require("redux-zero-persist");
 
@@ -18,17 +18,23 @@ const middlewares = applyMiddleware(persistMiddleware);
 
 export interface IStore {
     folder: string;
+    repo: IRepo;
     selectedCommit: string;
     graph: IGraph | null;
-    commits: ICommit[]
+    currentBranch: ICurrentCommit | null;
+    commits: ICommit[];
     wipCommit: ICommit;
+    refs: IRefs
 }
 
 const initialState : IStore = {
     folder: '',
+    repo: null,
     selectedCommit: '',
     graph: null,
+    currentBranch: null,
     commits: [],
+    refs: { references: [], refDict: null },
     wipCommit: {
       sha: "00000",
       author: "",
