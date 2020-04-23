@@ -7,9 +7,10 @@ import { IStore } from '../store/store';
 import { useInterval } from '../utils/hooks';
 import { BoundActions } from "redux-zero/types/Actions";
 import actions from "../store/actions";
+import {isEqual} from 'lodash';
 
 import Git from '../utils/git';
-import {IRepo, ICommit, ICurrentCommit} from '../utils/interfaces';
+import {IRepo, ICommit, ICurrentCommit, IRefs} from '../utils/interfaces';
 
 const INITIAL_WIP = {
     sha: "00000",
@@ -28,11 +29,12 @@ const INITIAL_WIP = {
 interface StoreProps {
     folder: string;
     repo: IRepo;
+    refs: IRefs;
     currentBranch: ICurrentCommit | null;
 }
 
 const mapToProps = (state : IStore) : StoreProps => ({
-    folder: state.folder, repo: state.repo, currentBranch: state.currentBranch
+    folder: state.folder, repo: state.repo, currentBranch: state.currentBranch, refs: state.refs
 });
 
 const INTERVAL = 5 * 1000;
@@ -40,16 +42,22 @@ const INTERVAL = 5 * 1000;
 type MainProps = StoreProps & BoundActions<IStore, typeof actions>
 
 const Main = (props : MainProps) => {
-    const { folder, repo, setRepo, currentBranch, setCurrentBranch, setRefs } = props;
+    const { folder, repo, setRepo, currentBranch, setCurrentBranch, refs, setRefs } = props;
 
     const [commits, setCommits] = useState<ICommit[]>([]);
     const [wipCommit, setWipCommit] = useState<ICommit>(INITIAL_WIP);
     const [watch, setWatch] = useState<Boolean>(false);
+    const [localRefs, setLocalRefs] = useState<IRefs>(refs);
 
     useEffect(() => {
         loadRepo(folder);
     }, [folder]);
 
+    useEffect(() => {
+        if (!isEqual(localRefs.references, refs.references)) {
+            setRefs(localRefs);
+        }
+    }, [localRefs]);
 
     useInterval(() => {
         if (watch) {
@@ -57,12 +65,11 @@ const Main = (props : MainProps) => {
             getRefs();
         }
     }, INTERVAL);
-
+    
     const getRefs = async () => {
         //@ts-ignore
-        setRefs((await Git.getReferences(repo)));
+        setLocalRefs(await Git.getReferences(repo));
     }
-
 
     const loadRepo = async (folder: string) => {
         if (!folder) {

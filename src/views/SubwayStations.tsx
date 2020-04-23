@@ -1,6 +1,5 @@
 import React from 'react';
 import { ICommit } from '../utils/interfaces';
-import { Node } from '../models/node';
 import { colors } from '../models/color';
 import { IGraph } from '../models/subway-map';
 import { getMaterialColors } from '../utils/colors';

@@ -1,9 +1,8 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Node } from '../models/node';
 import { ICommit, IRepo, IRefDict } from '../utils/interfaces';
 import { IGraph } from '../models/subway-map';
 import { colors } from '../models/color';
-import { useInterval } from '../utils/hooks';
 
 import { connect } from "redux-zero/react";
 import { IStore } from "../store/store";
@@ -38,17 +37,15 @@ const mapToProps = (state : IStore) : StoreProps => ({ graph: state.graph, refDi
 
 type SubwayStationAnnotProps = ISubwayStationAnnot & StoreProps;
 
-const INTERVAL = 5 * 1000;
-
 const SubwayStationAnnot = (props : SubwayStationAnnotProps) => {
     const { commits, graph, currentBranch, refDict } = props;
     const height = Node.height;
 
     const [branchInfos, setBranchInfos] = React.useState<IBranchInfo[]>([]);
 
-    useInterval(() => {
+    useEffect(() => {
         updateBranchInfo();
-    }, INTERVAL);
+    }, []);
     
   const updateBranchInfo = () => {
         if (!commits || !refDict) {
