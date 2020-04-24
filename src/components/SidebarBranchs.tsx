@@ -39,7 +39,7 @@ function placeBranchInFolder (paths : string[], folder : IFolder, branch : IRefe
             folder.childNodes.push({
                 id: `${folder.id}_${folder.childNodes.length}`,
                 label: paths[0],
-                icon: <GitBranchIcon size={16} style={{marginRight: '10px'}} />,
+                icon: <GitBranchIcon size={15} style={{marginRight: '10px'}} />,
                 ...branch
             })
             folder.childNodes.sort(order);
@@ -53,7 +53,7 @@ function placeBranchInFolder (paths : string[], folder : IFolder, branch : IRefe
                 label: currentFolderPath,
                 childNodes: [],
                 isExpanded: false,
-                icon: <FolderIcon size={16} style={{marginRight: '10px'}} />
+                icon: <FolderIcon size={15} style={{marginRight: '10px'}} />
             };
             folder.childNodes.push(newFolder);
             folder.childNodes.sort(order);

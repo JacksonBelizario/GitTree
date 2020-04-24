@@ -31,10 +31,15 @@ interface StoreProps {
     repo: IRepo;
     refs: IRefs;
     currentBranch: ICurrentCommit | null;
+    commits: ICommit[];
 }
 
 const mapToProps = (state : IStore) : StoreProps => ({
-    folder: state.folder, repo: state.repo, currentBranch: state.currentBranch, refs: state.refs
+    folder: state.folder,
+    repo: state.repo,
+    commits: state.commits,
+    currentBranch: state.currentBranch,
+    refs: state.refs
 });
 
 const INTERVAL = 5 * 1000;
@@ -42,9 +47,8 @@ const INTERVAL = 5 * 1000;
 type MainProps = StoreProps & BoundActions<IStore, typeof actions>
 
 const Main = (props : MainProps) => {
-    const { folder, repo, setRepo, currentBranch, setCurrentBranch, refs, setRefs } = props;
+    const { folder, repo, setRepo, currentBranch, setCurrentBranch, refs, setRefs, commits, setCommits } = props;
 
-    const [commits, setCommits] = useState<ICommit[]>([]);
     const [wipCommit, setWipCommit] = useState<ICommit>(INITIAL_WIP);
     const [watch, setWatch] = useState<Boolean>(false);
     const [localRefs, setLocalRefs] = useState<IRefs>(refs);
@@ -55,6 +59,7 @@ const Main = (props : MainProps) => {
 
     useEffect(() => {
         if (!isEqual(localRefs.references, refs.references)) {
+            console.log('!isEqual');
             setRefs(localRefs);
         }
     }, [localRefs]);

@@ -204,10 +204,38 @@ const getReferences = async Repo => {
     }
 }
 
+const getSubmodules = async (Repo) => {
+    let submodules = await Repo.getSubmodules();
+    return submodules.map(submodule => ({
+        hid: submodule.headId().toString(),
+        path: submodule.path()
+    }))
+}
+
+const getSubmoduleDetails = async (Repo, name) => {
+    let submodule  = await NodeGit.Submodule.lookup(Repo, name);
+    let result = {};
+    result.hid = submodule.headId().toString();
+    result.path = submodule.path();
+    let subm = await submodule.open();
+    let cmt = await subm.getCommit(result.hid);
+    result.message = cmt.message().split('\n')[0];
+    result.detail = cmt.message().split('\n').splice(1, cmt.message().split('\n').length).join('\n');
+    result.date = cmt.date();
+    result.time = cmt.time();
+    result.committer = cmt.committer();
+    result.email = cmt.author().email();
+    result.author = cmt.author().name();
+    return result;
+}
+
+
 export default {
     openRepo,
     getCommits,
     getStatus,
     getCurrentBranch,
-    getReferences
+    getReferences,
+    getSubmodules,
+    getSubmoduleDetails
 }

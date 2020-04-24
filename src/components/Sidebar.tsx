@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import {
-    Classes, Button, IButtonProps
+    Classes, Button, IButtonProps, Divider
 } from '@blueprintjs/core';
 
 import {
@@ -12,11 +12,12 @@ import {
     Tag as TagIcon
 } from 'react-feather';
 
-import { IReference } from "../utils/interfaces";
+import { IReference, ICommit, IRepo } from "../utils/interfaces";
 import { connect } from "redux-zero/react";
 import { IStore } from "../store/store";
 
 import SidebarBranchs from './SidebarBranchs';
+import { Submodule } from "nodegit";
 
 interface ISidebarBtn extends IButtonProps {
     icon: any
@@ -37,20 +38,37 @@ interface StoreProps {
     local: IReference[];
     remote: IReference[];
     tags: IReference[];
+    stashs: ICommit[];
+    repo: IRepo;
 }
 
 const mapToProps = (state : IStore) : StoreProps => ({
     local: state.refs.references.filter(_ => _.isBranch),
     remote: state.refs.references.filter(_ => _.isRemote),
     tags: state.refs.references.filter(_ => _.isTag),
+    stashs: state.commits.filter(_ => _.isStash),
+    repo: state.repo
 });
 
 const Sidebar = (props : StoreProps) => {
-    const { local, remote, tags } = props;
+    const { local, remote, tags, stashs, repo } = props;
 
     const [showLocal, setShowLocal] = useState<boolean>(true);
     const [showRemote, setShowRemote] = useState<boolean>(false);
     const [showTags, setShowTags] = useState<boolean>(false);
+    const [showStashs, setShowStashs] = useState<boolean>(true);
+    const [showSubmodules, setShowSubmodules] = useState<boolean>(true);
+    const [submodules, setSubmodules] = useState<any[]>([]);
+
+    const getSubmodules = async (Repo : any) => {
+        if (Repo && Repo.getSubmodules) {
+            setSubmodules(await Repo.getSubmodules())
+        }
+    }
+
+    useEffect(() => {
+        getSubmodules(repo);
+    }, [repo])
 
     return (
         <>
@@ -68,9 +86,19 @@ const Sidebar = (props : StoreProps) => {
         { showRemote && <SidebarBranchs branchs={remote} />}
         <SidebarBtn
             icon={<InboxIcon size={18} />}
-            onClick={() => {}} >
+            onClick={() => setShowStashs(!showStashs)} >
             Stashes
         </SidebarBtn>
+        { showStashs && stashs.map((stash : ICommit, idx: number) => 
+            <Button
+                key={idx}
+                icon={<InboxIcon size={15} />}
+                className={Classes.MINIMAL + ' ' + Classes.ALIGN_LEFT}
+                style={{paddingLeft: 30, paddingRight: 10, width: '100%'}}>
+                {stash.message}
+            </Button>
+        )}
+        { showStashs && !!stashs.length && <Divider style={{margin: 0}} /> }
         <SidebarBtn
             icon={<TagIcon size={18} />}
             onClick={() => setShowTags(!showTags)} >
@@ -79,9 +107,19 @@ const Sidebar = (props : StoreProps) => {
         { showTags && <SidebarBranchs branchs={tags} />}
         <SidebarBtn
             icon={<LayersIcon size={18} />}
-            onClick={() => {}} >
+            onClick={() => setShowSubmodules(!showSubmodules)} >
             Submodules
         </SidebarBtn>
+        { showSubmodules && submodules.map((submodule : Submodule, idx: number) => 
+            <Button
+                key={idx}
+                icon={<LayersIcon size={15} />}
+                className={Classes.MINIMAL + ' ' + Classes.ALIGN_LEFT}
+                style={{paddingLeft: 30, paddingRight: 10, width: '100%'}}>
+                {submodule.path()}
+            </Button>
+        )}
+        { showStashs && !!stashs.length && <Divider style={{margin: 0}} /> }
         </>
     );
 }
