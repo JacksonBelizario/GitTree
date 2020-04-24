@@ -35,7 +35,7 @@ function placeBranchInFolder (paths : string[], folder : IFolder, branch : IRefe
         return;
     }
     if (paths.length === 1) {
-        if (folder.childNodes.map(_ => _.label).indexOf(paths[0]) === -1) {
+        if (folder.childNodes.findIndex(_ => _.label === paths[0]) === -1) {
             folder.childNodes.push({
                 id: `${folder.id}_${folder.childNodes.length}`,
                 label: paths[0],
@@ -59,7 +59,7 @@ function placeBranchInFolder (paths : string[], folder : IFolder, branch : IRefe
             folder.childNodes.sort(order);
             currentFolder = newFolder;
         } else {
-            currentFolder = folder.childNodes.filter(_ => _.label === currentFolderPath && _.items)[0];
+            currentFolder = folder.childNodes.find(_ => _.label === currentFolderPath);
         }
         placeBranchInFolder(paths.splice(1, paths.length), currentFolder, branch, depth + 1);
     }
