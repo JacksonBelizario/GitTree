@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import PerfectScrollbar from 'react-perfect-scrollbar'
 import SubwayStations from './SubwayStations';
 import SubwayMapVisual from './SubwayMapVisual';
 import SubwayStationAnnot from './SubwayStationAnnot';
@@ -11,6 +12,8 @@ import {isEqual} from 'lodash';
 
 import Git from '../utils/git';
 import {IRepo, ICommit, ICurrentCommit, IRefs} from '../utils/interfaces';
+
+import 'react-perfect-scrollbar/dist/css/styles.css';
 
 const INITIAL_WIP = {
     sha: "00000",
@@ -121,7 +124,7 @@ const Main = (props : MainProps) => {
     }
 
     return (
-        <div className="section host">
+        <PerfectScrollbar className="section host">
             <div className="subway-outer">
                 <div className="d-flex subway-container">
                     <SubwayStationAnnot repo={repo} commits={commits} currentBranch={currentBranch} />
@@ -133,7 +136,7 @@ const Main = (props : MainProps) => {
                     <p><span className="mr-1 icon-info"></span>End of History</p>
                 </div>
             </div>
-        </div>
+        </PerfectScrollbar>
     );
 }
 

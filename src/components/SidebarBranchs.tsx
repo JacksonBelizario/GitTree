@@ -67,10 +67,11 @@ function placeBranchInFolder (paths : string[], folder : IFolder, branch : IRefe
 
 interface SidebarBranchsProps {
     branchs: IReference[];
+    scrollToCommit: Function
 }
 
 const SidebarBranchs = (props: SidebarBranchsProps) => {
-    const { branchs } = props;
+    const { branchs, scrollToCommit } = props;
 
     const [contents, setContents] = useState<ITreeNode[]>([]);
 
@@ -80,7 +81,12 @@ const SidebarBranchs = (props: SidebarBranchsProps) => {
     }, [branchs]);
 
     const handleNodeClick = (nodeData : ITreeNode, _nodePath : number[], e: React.MouseEvent<HTMLElement>) =>  {
-        nodeData.isExpanded ? onCollapse(nodeData) : onExpand(nodeData);
+        if (!!nodeData.childNodes?.length) {
+            nodeData.isExpanded ? onCollapse(nodeData) : onExpand(nodeData);
+        } else {
+            //@ts-ignore
+            scrollToCommit(nodeData.target);
+        }
      };
      const handleNodeCollapse = (nodeData : ITreeNode) => {
          nodeData.isExpanded = false;

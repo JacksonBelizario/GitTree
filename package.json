@@ -60,6 +60,7 @@
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-feather": "^2.0.4",
+    "react-perfect-scrollbar": "^1.5.8",
     "react-scripts": "3.4.1",
     "react-split-pane": "^0.1.91",
     "redux-zero": "^5.1.3",

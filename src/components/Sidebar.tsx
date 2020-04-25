@@ -18,6 +18,8 @@ import { IStore } from "../store/store";
 
 import SidebarBranchs from './SidebarBranchs';
 import { Submodule } from "nodegit";
+import actions from "../store/actions";
+import { BoundActions } from "redux-zero/types";
 
 interface ISidebarBtn extends IButtonProps {
     icon: any
@@ -50,8 +52,10 @@ const mapToProps = (state : IStore) : StoreProps => ({
     repo: state.repo
 });
 
-const Sidebar = (props : StoreProps) => {
-    const { local, remote, tags, stashs, repo } = props;
+type SidebarProps = StoreProps & BoundActions<IStore, typeof actions>
+
+const Sidebar = (props : SidebarProps) => {
+    const { local, remote, tags, stashs, repo, scrollToCommit } = props;
 
     const [showLocal, setShowLocal] = useState<boolean>(true);
     const [showRemote, setShowRemote] = useState<boolean>(false);
@@ -77,13 +81,13 @@ const Sidebar = (props : StoreProps) => {
             onClick={() => setShowLocal(!showLocal)} >
             Local
         </SidebarBtn>
-        { showLocal && <SidebarBranchs branchs={local} />}
+        { showLocal && <SidebarBranchs branchs={local} scrollToCommit={scrollToCommit} />}
         <SidebarBtn
             icon={<CloudIcon size={18} />}
             onClick={() => setShowRemote(!showRemote)} >
             Remote
         </SidebarBtn>
-        { showRemote && <SidebarBranchs branchs={remote} />}
+        { showRemote && <SidebarBranchs branchs={remote} scrollToCommit={scrollToCommit} />}
         <SidebarBtn
             icon={<InboxIcon size={18} />}
             onClick={() => setShowStashs(!showStashs)} >
@@ -94,7 +98,8 @@ const Sidebar = (props : StoreProps) => {
                 key={idx}
                 icon={<InboxIcon size={15} />}
                 className={Classes.MINIMAL + ' ' + Classes.ALIGN_LEFT}
-                style={{paddingLeft: 30, paddingRight: 10, width: '100%'}}>
+                style={{paddingLeft: 30, paddingRight: 10, width: '100%'}}
+                onClick={() => scrollToCommit(stash.sha) }>
                 {stash.message}
             </Button>
         )}
@@ -104,7 +109,7 @@ const Sidebar = (props : StoreProps) => {
             onClick={() => setShowTags(!showTags)} >
             Tags
         </SidebarBtn>
-        { showTags && <SidebarBranchs branchs={tags} />}
+        { showTags && <SidebarBranchs branchs={tags} scrollToCommit={scrollToCommit} />}
         <SidebarBtn
             icon={<LayersIcon size={18} />}
             onClick={() => setShowSubmodules(!showSubmodules)} >
@@ -124,4 +129,4 @@ const Sidebar = (props : StoreProps) => {
     );
 }
 
-export default connect<IStore>(mapToProps)(Sidebar);
+export default connect<IStore>(mapToProps, actions)(Sidebar);

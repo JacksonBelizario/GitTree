@@ -10,7 +10,20 @@ const actions = (store : any)  => ({
     setSelectedCommit: (state : IStore, selectedCommit: string) => ({ selectedCommit }),
     setGraph: (state : IStore, graph: IGraph | null) => ({ graph }),
     setRefs: (state : IStore, refs: IRefs) => ({ refs }),
-    setWipCommit: (state: IStore, wipCommit: ICommit) => ({ wipCommit })
+    setWipCommit: (state: IStore, wipCommit: ICommit) => ({ wipCommit }),
+    scrollToCommit: (state: IStore, sha: string) => {
+        const hash = "commit-info-" + sha;
+        const element = document.getElementById(hash);
+        const container = document.querySelector('.scrollbar-container');
+        const sidebar = document.querySelector('.Pane.vertical');
+        if (container && element && sidebar) {
+            const top = element.offsetTop - (sidebar.clientHeight / 2);
+            container.scrollTo({top: top > 0 ? top: 0, behavior: 'smooth'});
+        }
+        return {
+            selectedCommit: sha
+        }
+    }
 });
 
 export default actions;
