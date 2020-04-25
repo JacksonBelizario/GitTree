@@ -4,7 +4,9 @@ import Sidebar from './components/Sidebar';
 import Main from './views/Main';
 import { Provider } from "redux-zero/react";
 import store from "./store/store";
-import SplitPane from 'react-split-pane';
+// import SplitPane, { Pane } from 'react-split-pane';
+import SplitPane from 'react-split-pane/lib/SplitPane';
+import Pane from "react-split-pane/lib/Pane";
 
 import './assets/scss/main.scss';
 
@@ -13,9 +15,11 @@ const App = () => {
     <Provider store={store}>
       <div className="bp3-dark">
         <Navbar />
-        <SplitPane className="main-layout" split="vertical" minSize={210} defaultSize={250} maxSize={390}>
-          <Sidebar />
+        <SplitPane className="main-layout" split="vertical">
+          <Pane className="sidebar" minSize="210px" defaultSize="250px" maxSize="390px"><Sidebar /></Pane>
           <Main />
+          <Pane minSize="300px" defaultSize="350px" maxSize="500px">
+          </Pane>
         </SplitPane>
       </div>
     </Provider>

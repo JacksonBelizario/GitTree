@@ -15,7 +15,7 @@ const actions = (store : any)  => ({
         const hash = "commit-info-" + sha;
         const element = document.getElementById(hash);
         const container = document.querySelector('.scrollbar-container');
-        const sidebar = document.querySelector('.Pane.vertical');
+        const sidebar = document.querySelector('.sidebar');
         if (container && element && sidebar) {
             const top = element.offsetTop - (sidebar.clientHeight / 2);
             container.scrollTo({top: top > 0 ? top: 0, behavior: 'smooth'});
