@@ -7,6 +7,15 @@ import { colors } from "../models/Color";
 import { connect } from "redux-zero/react";
 import { IStore } from "../store/store";
 
+import {
+  Cloud as CloudIcon,
+  Check as CheckIcon,
+  Monitor as MonitorIcon,
+  Tag as TagIcon,
+} from "react-feather";
+
+import '../assets/scss/subway-station-annot.scss'
+
 interface IBranchInfo {
   top: number;
   color: string;
@@ -117,15 +126,15 @@ const SubwayStationAnnot = (props: SubwayStationAnnotProps) => {
             <ul className="ml-1 text-right">
               <li style={{ backgroundColor: branch.color }} className="summary">
                 {!!branch.names[0].current && (
-                  <i className="icon-check mr-1"></i>
+                  <CheckIcon size={12} />
                 )}
                 {!!branch.names[0].isRemote && (
-                  <i className="icon-cloud mr-1"></i>
+                  <CloudIcon size={12} />
                 )}
                 {!!branch.names[0].isBranch && (
-                  <i className="icon-monitor mr-1"></i>
+                  <MonitorIcon size={12} />
                 )}
-                {!!branch.names[0].isTag && <i className="icon-tag mr-1"></i>}
+                {!!branch.names[0].isTag && <TagIcon size={12} />}
                 <span className="">{branch.names[0].display}</span>
                 {branch.names.length > 1 && <span className="ml-2">1+</span>}
               </li>
@@ -135,10 +144,10 @@ const SubwayStationAnnot = (props: SubwayStationAnnotProps) => {
                   style={{ backgroundColor: branch.color }}
                   key={key}
                 >
-                  {!!name.current && <i className="icon-check mr-1"></i>}
-                  {!!name.isRemote && <i className="icon-cloud mr-1"></i>}
-                  {!!name.isBranch && <i className="icon-monitor mr-1"></i>}
-                  {!!name.isTag && <i className="icon-tag mr-1"></i>}
+                  {!!name.current && <CheckIcon size={12} />}
+                  {!!name.isRemote && <CloudIcon size={12} />}
+                  {!!name.isBranch && <MonitorIcon size={12} />}
+                  {!!name.isTag && <TagIcon size={12} />}
                   <span>{name.display}</span>
                 </li>
               ))}

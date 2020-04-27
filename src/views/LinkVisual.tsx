@@ -1,6 +1,8 @@
 import React from "react";
 import { Link } from "../models/Link";
 
+import '../assets/scss/link-visual.scss';
+
 interface ILinkVisual {
   link: Link;
 }

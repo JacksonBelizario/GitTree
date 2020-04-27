@@ -6,6 +6,8 @@ import { BoundActions } from "redux-zero/types/Actions";
 import actions from "../store/actions";
 import { IStore } from "../store/store";
 
+import '../assets/scss/node-visual.scss';
+
 interface INodeVisual {
   node: Node;
 }

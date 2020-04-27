@@ -12,6 +12,8 @@ import { BoundActions } from "redux-zero/types/Actions";
 import actions from "../store/actions";
 import { IStore } from "../store/store";
 
+import '../assets/scss/subway-map-visual.scss';
+
 interface ISubwayMapVisual {
   commits: ICommit[];
 }

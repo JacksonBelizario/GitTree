@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { Classes, Button, IButtonProps, Divider } from "@blueprintjs/core";
 
 import {
-  HardDrive as HardDriveIcon,
+  Monitor as MonitorIcon,
   Cloud as CloudIcon,
   Inbox as InboxIcon,
   Layers as LayersIcon,
@@ -83,7 +83,7 @@ const Sidebar = (props: SidebarProps) => {
   return (
     <>
       <SidebarBtn
-        icon={<HardDriveIcon size={18} />}
+        icon={<MonitorIcon size={18} />}
         onClick={() => setShowLocal(!showLocal)}
       >
         Local

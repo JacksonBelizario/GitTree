@@ -10,6 +10,8 @@ import { BoundActions } from "redux-zero/types/Actions";
 import actions from "../store/actions";
 import { IStore } from "../store/store";
 
+import '../assets/scss/subway-stations.scss'
+
 export interface ISubwayStations {
   commits: ICommit[];
 }

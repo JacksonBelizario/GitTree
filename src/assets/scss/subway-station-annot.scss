@@ -1,4 +1,4 @@
-$main-width: 180px;
+$main-width: 200px;
 
 .annot-root {
   height: 100%;
@@ -32,14 +32,16 @@ $main-width: 180px;
   ul {
     margin-top: 3px;
     list-style: none;
-    float: right;
-    max-width: 100%;
+    float: left;
+    max-width: 140px;
     -webkit-padding-start: 0;
     .summary {
       display: block;
     }
     .detail {
       display: none;
+      position: absolute;
+      left: 0px;
     }
     &:hover {
       .summary {
@@ -51,16 +53,21 @@ $main-width: 180px;
     }
 
     li {
-      line-height: 17px;
       border-radius: 3px;
       white-space: nowrap;
       text-overflow: ellipsis;
       overflow: hidden;
       font-size: 14px;
-      i {
+      padding: 0 5px;
+      line-height: 22px;
+      svg {
         font-size: 12px;
+        margin-right: 4px;
+        margin-top: 2px;
       }
-      padding: 2px 5px;
+      span {
+        margin: 2px 0
+      }
     }
   }
 }
