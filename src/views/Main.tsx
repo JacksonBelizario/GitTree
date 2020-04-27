@@ -11,7 +11,7 @@ import actions from "../store/actions";
 import { isEqual } from "lodash";
 
 import Git from "../utils/git";
-import { IRepo, ICommit, ICurrentCommit, IRefs } from "../utils/interfaces";
+import { IRepo, ICommit, ICurrentCommit, IRefs, IReference } from "../utils/interfaces";
 
 import "react-perfect-scrollbar/dist/css/styles.css";
 import MapSeparator from "./MapSeparator";
@@ -86,8 +86,13 @@ const Main = (props: MainProps) => {
   }, INTERVAL);
 
   const getRefs = async () => {
+    let refs = await Git.getReferences(repo);
+    refs.references = refs.references.map((ref: IReference)=> ({
+      current: ref.display.includes(currentBranch.name),
+      ...ref
+    }))
     //@ts-ignore
-    setLocalRefs(await Git.getReferences(repo));
+    setLocalRefs(refs);
   };
 
   const loadRepo = async (folder: string) => {

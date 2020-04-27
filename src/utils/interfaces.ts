@@ -35,6 +35,7 @@ export interface IReference {
   name: string;
   shorthand: string;
   display: string;
+  current?: boolean;
 }
 
 export type IRefDict = Map<string, IReference> | null;
