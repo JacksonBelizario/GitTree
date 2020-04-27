@@ -10,9 +10,9 @@ import {
   MenuDivider,
 } from "@blueprintjs/core";
 import {
-  Folder as FolderIcon,
-  GitBranch as GitBranchIcon,
-} from "react-feather";
+  FiFolder as FolderIcon,
+  FiGitBranch as GitBranchIcon,
+} from "react-icons/fi";
 import { IReference } from "../utils/interfaces";
 
 declare interface IFolder {

@@ -8,11 +8,11 @@ import { connect } from "redux-zero/react";
 import { IStore } from "../store/store";
 
 import {
-  Cloud as CloudIcon,
-  Check as CheckIcon,
-  Monitor as MonitorIcon,
-  Tag as TagIcon,
-} from "react-feather";
+  FiCloud as CloudIcon,
+  FiCheck as CheckIcon,
+  FiMonitor as MonitorIcon,
+  FiTag as TagIcon,
+} from "react-icons/fi";
 
 import '../assets/scss/subway-station-annot.scss'
 

@@ -3,12 +3,12 @@ import React, { useState, useEffect } from "react";
 import { Classes, Button, IButtonProps, Divider } from "@blueprintjs/core";
 
 import {
-  Monitor as MonitorIcon,
-  Cloud as CloudIcon,
-  Inbox as InboxIcon,
-  Layers as LayersIcon,
-  Tag as TagIcon,
-} from "react-feather";
+  FiMonitor as MonitorIcon,
+  FiCloud as CloudIcon,
+  FiInbox as InboxIcon,
+  FiLayers as LayersIcon,
+  FiTag as TagIcon,
+} from "react-icons/fi";
 
 import { IReference, ICommit, IRepo } from "../utils/interfaces";
 import { connect } from "redux-zero/react";

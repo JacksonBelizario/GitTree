@@ -10,10 +10,10 @@ import {
   Tag,
 } from "@blueprintjs/core";
 import {
-  FolderPlus as FolderIcon,
-  Book as BookIcon,
-  GitBranch as GitBranchIcon,
-} from "react-feather";
+  FiFolderPlus as FolderIcon,
+  FiBook as BookIcon,
+  FiGitBranch as GitBranchIcon,
+} from "react-icons/fi";
 
 import { ICurrentCommit, IReference } from "../utils/interfaces";
 import { connect } from "redux-zero/react";
