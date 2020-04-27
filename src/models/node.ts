@@ -1,9 +1,9 @@
 import { ICommit } from "../utils/interfaces";
-import { Color } from "./color";
+import { Color } from "./Color";
 
 export class Node {
 
-    static height = 26;
+    static height = 27;
 
     commit?: ICommit;
     x: number = 0;

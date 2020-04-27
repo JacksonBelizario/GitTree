@@ -13,7 +13,8 @@
     "no-bitwise": false,
     "align": true,
     "arrow-return-shorthand": true,
-    "no-magic-numbers": true
+    "no-magic-numbers": true,
+    "ter-indent": [true, 2]
   },
   "rulesDirectory": []
 }

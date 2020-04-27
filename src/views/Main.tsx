@@ -14,6 +14,7 @@ import Git from '../utils/git';
 import {IRepo, ICommit, ICurrentCommit, IRefs} from '../utils/interfaces';
 
 import 'react-perfect-scrollbar/dist/css/styles.css';
+import MapSeparator from './MapSeparator';
 
 const INITIAL_WIP = {
     sha: "00000",
@@ -126,12 +127,12 @@ const Main = (props : MainProps) => {
     return (
         <PerfectScrollbar className="section host">
             <div className="subway-outer">
+                <MapSeparator commits={commits} />
                 <div className="d-flex subway-container">
                     <SubwayStationAnnot repo={repo} commits={commits} currentBranch={currentBranch} />
                     <SubwayMapVisual commits={commits} />
                     <SubwayStations commits={commits} />
                 </div>
-                <div className="app-map-separator"></div>
                 <div className="eoh-container text-center mt-1">
                     <p><span className="mr-1 icon-info"></span>End of History</p>
                 </div>

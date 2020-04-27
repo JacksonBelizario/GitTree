@@ -1,5 +1,5 @@
 import React from 'react';
-import { Node } from '../models/node';
+import { Node } from '../models/Node';
 
 import { connect } from "redux-zero/react";
 import { BoundActions } from "redux-zero/types/Actions";

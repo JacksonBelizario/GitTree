@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from '../models/link';
+import { Link } from '../models/Link';
 
 interface ILinkVisual {
     link: Link

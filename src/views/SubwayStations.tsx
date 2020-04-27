@@ -1,7 +1,7 @@
 import React from 'react';
 import { ICommit } from '../utils/interfaces';
-import { colors } from '../models/color';
-import { IGraph } from '../models/subway-map';
+import { colors } from '../models/Color';
+import { IGraph } from '../models/SubwayMap';
 import { getMaterialColors } from '../utils/colors';
 import { Icon } from "@blueprintjs/core";
 

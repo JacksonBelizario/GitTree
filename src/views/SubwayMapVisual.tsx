@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { ICommit } from '../utils/interfaces';
-import { Node } from '../models/node';
-import { Link } from '../models/link';
-import { Color, colors } from '../models/color';
-import { SubwayMap, IGraph } from '../models/subway-map';
+import { Node } from '../models/Node';
+import { Link } from '../models/Link';
+import { Color, colors } from '../models/Color';
+import { SubwayMap, IGraph } from '../models/SubwayMap';
 import NodeVisual from './NodeVisual';
 import LinkVisual from './LinkVisual';
 

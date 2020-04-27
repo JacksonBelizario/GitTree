@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
-import { Node } from '../models/node';
+import { Node } from '../models/Node';
 import { ICommit, IRepo, IRefDict } from '../utils/interfaces';
-import { IGraph } from '../models/subway-map';
-import { colors } from '../models/color';
+import { IGraph } from '../models/SubwayMap';
+import { colors } from '../models/Color';
 
 import { connect } from "redux-zero/react";
 import { IStore } from "../store/store";

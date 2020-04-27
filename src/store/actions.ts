@@ -1,5 +1,5 @@
 import { IStore } from "./store";
-import { IGraph } from '../models/subway-map';
+import { IGraph } from '../models/SubwayMap';
 import { ICommit, IRepo, ICurrentCommit, IRefs } from "../utils/interfaces";
   
 const actions = (store : any)  => ({

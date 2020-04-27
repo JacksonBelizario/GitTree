@@ -1,7 +1,7 @@
 import createStore from "redux-zero";
 import { applyMiddleware } from "redux-zero/middleware";
 import storage from "localforage";
-import { IGraph } from '../models/subway-map';
+import { IGraph } from '../models/SubwayMap';
 import {IRepo, ICommit, ICurrentCommit, IRefs} from '../utils/interfaces';
 
 const persist = require("redux-zero-persist");

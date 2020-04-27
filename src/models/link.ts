@@ -1,5 +1,5 @@
-import { Node } from './node';
-import { Color } from './color';
+import { Node } from './Node';
+import { Color } from './Color';
 
 export class Link {
 

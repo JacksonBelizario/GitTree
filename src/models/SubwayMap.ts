@@ -1,5 +1,5 @@
-import { Node } from './node';
-import { Link } from './link';
+import { Node } from './Node';
+import { Link } from './Link';
 
 export interface IGraph {
     nodes: Node[];
