@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { Node } from "../models/Node";
-import { ICommit, IRepo, IRefDict } from "../utils/interfaces";
+import { ICommit, IRepo, IRefDict, ICurrentCommit } from "../utils/interfaces";
 import { IGraph } from "../models/SubwayMap";
 import { colors } from "../models/Color";
 
@@ -36,7 +36,7 @@ interface IBranchInfo {
 interface ISubwayStationAnnot {
   repo: IRepo;
   commits: ICommit[];
-  currentBranch: object;
+  currentBranch: ICurrentCommit;
 }
 
 interface StoreProps {
@@ -105,7 +105,7 @@ const SubwayStationAnnot = (props: SubwayStationAnnotProps) => {
         }
       });
       Object.values(consolidated).forEach((con) => {
-        if (con.isBranch && con.display.includes(currentBranch)) {
+        if (con.isBranch && con.display.includes(currentBranch.name)) {
           con.current = true;
         }
       });
