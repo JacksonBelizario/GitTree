@@ -1,2 +1,2 @@
-const NodeGit = require('nodegit')
-global.NodeGit = NodeGit
+const NodeGit = require("nodegit");
+global.NodeGit = NodeGit;

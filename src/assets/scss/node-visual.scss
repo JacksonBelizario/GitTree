@@ -1,24 +1,24 @@
 .map-station {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .map-station:hover {
-    .highlight {
-        opacity: 0.3;
-    }
+  .highlight {
+    opacity: 0.3;
+  }
 }
 
 .highlight.selected {
-    opacity: 0.3;
+  opacity: 0.3;
 }
 
 .dot {
-    fill: var(--bg-graph);
-    stroke-width: 2;
-    stroke-miterlimit: 10;
+  fill: var(--bg-graph);
+  stroke-width: 2;
+  stroke-miterlimit: 10;
 }
 
-.highlight{
-    opacity: 0.1;
-    border-right: solid 1px transparent;
+.highlight {
+  opacity: 0.1;
+  border-right: solid 1px transparent;
 }

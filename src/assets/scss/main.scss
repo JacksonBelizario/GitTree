@@ -1,77 +1,77 @@
-@import '~normalize.css/normalize.css';
-@import '~@blueprintjs/core/lib/css/blueprint.css';
-@import '~@blueprintjs/icons/lib/css/blueprint-icons.css';
+@import "~normalize.css/normalize.css";
+@import "~@blueprintjs/core/lib/css/blueprint.css";
+@import "~@blueprintjs/icons/lib/css/blueprint-icons.css";
 @import "~@blueprintjs/core/lib/scss/variables";
 
 :root {
-    --bg: #30404d;
-    --bg-graph: #282c34;
-    --primary: #7367f0;
-    --success: #90C90C;
-    --danger: #FF5454;
-    --warning: #FFB200;
-    --dark: #000000;
-    --info: #1687FF;
-    --gray: #4a6d88;
+  --bg: #30404d;
+  --bg-graph: #282c34;
+  --primary: #7367f0;
+  --success: #90c90c;
+  --danger: #ff5454;
+  --warning: #ffb200;
+  --dark: #000000;
+  --info: #1687ff;
+  --gray: #4a6d88;
 }
 
 body {
-    background-color: var(--bg);
-    overflow-y: hidden;
-    overflow-x: auto;
+  background-color: var(--bg);
+  overflow-y: hidden;
+  overflow-x: auto;
 }
-  
+
 pre {
-    white-space: pre-wrap;
+  white-space: pre-wrap;
 }
 
 .main-layout {
-    display: flex;
+  display: flex;
 
-    .sidebar {
-        flex: 0 0 200px;
-        max-width: 200px;
-        min-width: 200px;
-        width: 200px;
-    }
-    .section {
-        display: flex;
-        flex-direction: column;
-        flex: auto;
-        background-color: var(--bg-graph);
-        min-height: 100vh;
-        align-items: center;
-        justify-content: center;
-        font-size: calc(10px + 2vmin);
-        color: white;
-        width: 100%;
-        height: 100%;
-        position: relative;
-        overflow-y: auto;
-        overflow-x: hidden;
-    }
+  .sidebar {
+    flex: 0 0 200px;
+    max-width: 200px;
+    min-width: 200px;
+    width: 200px;
+  }
+  .section {
+    display: flex;
+    flex-direction: column;
+    flex: auto;
+    background-color: var(--bg-graph);
+    min-height: 100vh;
+    align-items: center;
+    justify-content: center;
+    font-size: calc(10px + 2vmin);
+    color: white;
+    width: 100%;
+    height: 100%;
+    position: relative;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
 }
 
 .text-center {
-    text-align: center !important;
+  text-align: center !important;
 }
 
 .bp3-button.bp3-align-left .bp3-button-text {
-    flex: 1 1 auto;
-    width: 100%;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    word-wrap: normal;
-    position: relative;
-    -webkit-user-select: none;
-    user-select: none;
+  flex: 1 1 auto;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  word-wrap: normal;
+  position: relative;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
-@import 'resizer.scss';
-@import 'subway.scss';
-@import 'node-visual.scss';
-@import 'link-visual.scss';
-@import 'subway-map-visual.scss';
-@import 'subway-stations.scss';
-@import 'subway-station-annot.scss';
+@import "resizer.scss";
+@import "subway.scss";
+@import "node-visual.scss";
+@import "link-visual.scss";
+@import "subway-map-visual.scss";
+@import "subway-stations.scss";
+@import "subway-station-annot.scss";

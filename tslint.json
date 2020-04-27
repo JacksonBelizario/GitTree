@@ -1,8 +1,13 @@
 {
   "defaultSeverity": "none",
-  "extends": ["tslint:recommended"],
+  "extends": [
+    "tslint:recommended",
+    "tslint-plugin-prettier",
+    "tslint-config-prettier"
+  ],
   "jsRules": {},
   "rules": {
+    "prettier": true,
     "no-internal-module": false,
     "typedef-whitespace": false,
     "variable-name": [true, "check-format", "allow-leading-underscore"],
