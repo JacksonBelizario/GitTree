@@ -39,7 +39,7 @@ const initialState: IStore = {
   commits: [],
   refs: { references: [], refDict: null },
   wipCommit: {
-    sha: "00000",
+    sha: "000000",
     author: "",
     email: "",
     parents: [],

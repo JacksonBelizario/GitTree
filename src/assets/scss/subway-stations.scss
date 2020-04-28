@@ -60,7 +60,12 @@
     flex-shrink: 0;
     height: 22px;
     line-height: 22px;
-    width: 25px;
+    svg {
+      margin: 2px 2px 2px 0;
+    }
+    .commit-summary {
+      display: flex;
+    }
     .modification {
       color: var(--warning);
     }

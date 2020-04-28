@@ -1,9 +1,17 @@
-.commit-detail {
+.commit-details-parent {
   margin: 20px;
 }
+
 .committer-info-container {
   width: 100%;
 }
+
+.commit-details {
+  svg {
+    margin: 0 2px;
+  }
+}
+
 .committer-badge {
     flex-shrink: 0;
     width: 70px;

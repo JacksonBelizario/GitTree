@@ -311,7 +311,7 @@ export const generateColor = (text) => {
   const intToRGB = (i) => {
     let c = (i & 0x00ffffff).toString(16).toUpperCase();
 
-    return "00000".substring(0, 6 - c.length) + c;
+    return "000000".substring(0, 6 - c.length) + c;
   };
 
   return `#${intToRGB(hashCode(text))}`;
@@ -357,12 +357,4 @@ export const generateMaterialColor = (text, shade = 500) => {
   const material = getMaterialColors(text, shade);
 
   return material.backgroundColor;
-};
-
-export const getColorByAuthor = (email) => {
-  const authorColor = getMaterialColors(email);
-  return {
-    backgroundColor: authorColor.backgroundColor,
-    color: authorColor.color,
-  };
 };

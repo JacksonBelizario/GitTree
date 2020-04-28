@@ -17,7 +17,7 @@ import "react-perfect-scrollbar/dist/css/styles.css";
 import MapSeparator from "./MapSeparator";
 
 const INITIAL_WIP = {
-  sha: "00000",
+  sha: "000000",
   author: "",
   email: "",
   parents: [],

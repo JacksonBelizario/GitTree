@@ -2,16 +2,16 @@ import React from "react";
 import { ICommit } from "../utils/interfaces";
 import { colors } from "../models/Color";
 import { IGraph } from "../models/SubwayMap";
-import { getMaterialColors, getColorByAuthor } from "../utils/colors";
 import { Icon } from "@blueprintjs/core";
 
 import { connect } from "redux-zero/react";
 import { BoundActions } from "redux-zero/types/Actions";
 import actions from "../store/actions";
 import { IStore } from "../store/store";
+import { FiFile as FileIcon } from 'react-icons/fi';
 
 import '../assets/scss/subway-stations.scss'
-import { getAuthor } from "../utils";
+import { Author } from "../models/Author";
 
 export interface ISubwayStations {
   commits: ICommit[];
@@ -65,47 +65,45 @@ const SubwayStations = (props: SubwayStationsProps) => {
               {!commit.virtual && (
                 <div
                   className="ml-1 committer text-center"
-                  style={getColorByAuthor(commit.email)}
+                  style={Author.getColors(commit.email)}
                 >
-                  {getAuthor(commit.author)}
+                  {Author.getAcronym(commit.author)}
                 </div>
               )}
-              <div>
-                {commit.virtual && (
-                  <div className="files-summary ml-1">
-                    {!!commit.fileSummary.modified && (
-                      <span className="mr-1 commit-summary modification">
-                        <Icon icon="document" />
-                        {commit.fileSummary.modified}
-                      </span>
-                    )}
-                    {!!commit.fileSummary.newCount && (
-                      <span className="mr-1 commit-summary addition">
-                        <i className="icon-file-plus"></i>
-                        {commit.fileSummary.newCount}
-                      </span>
-                    )}
-                    {!!commit.fileSummary.deleted && (
-                      <span className="mr-1 commit-summary deletion">
-                        <i className="icon-file-minus"></i>
-                        {commit.fileSummary.deleted}
-                      </span>
-                    )}
-                    {!!commit.fileSummary.renamed && (
-                      <span className="mr-1 commit-summary rename">
-                        <i className="icon-file-minus"></i>
-                        {commit.fileSummary.renamed}
-                      </span>
-                    )}
-                    {!!commit.fileSummary.ignored && (
-                      <span className="mr-1 commit-summary ignored">
-                        <i className="icon-file-minus"></i>
-                        {commit.fileSummary.ignored}
-                      </span>
-                    )}
-                  </div>
-                )}
-              </div>
+              {commit.virtual && (
+                <div className="files-summary ml-1 flex">
+                  {!!commit.fileSummary.modified && (
+                    <span className="mr-1 commit-summary modification">
+                      <FileIcon size={18} />
+                      {commit.fileSummary.modified}
+                    </span>
+                  )}
+                  {!!commit.fileSummary.newCount && (
+                    <span className="mr-1 commit-summary addition">
+                      <i className="icon-file-plus"></i>
+                      {commit.fileSummary.newCount}
+                    </span>
+                  )}
+                  {!!commit.fileSummary.deleted && (
+                    <span className="mr-1 commit-summary deletion">
+                      <i className="icon-file-minus"></i>
+                      {commit.fileSummary.deleted}
+                    </span>
+                  )}
+                  {!!commit.fileSummary.renamed && (
+                    <span className="mr-1 commit-summary rename">
+                      <i className="icon-file-minus"></i>
+                      {commit.fileSummary.renamed}
+                    </span>
+                  )}
+                  {!!commit.fileSummary.ignored && (
+                    <span className="mr-1 commit-summary ignored">
+                      <i className="icon-file-minus"></i>
+                      {commit.fileSummary.ignored}
+                    </span>
+                  )}
+                </div>
+              )}
               <div className="ml-2 commit-message full-width">
                 {!commit.message && (
                   <span className="text-muted">Message...</span>
