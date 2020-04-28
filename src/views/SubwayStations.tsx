@@ -2,7 +2,7 @@ import React from "react";
 import { ICommit } from "../utils/interfaces";
 import { colors } from "../models/Color";
 import { IGraph } from "../models/SubwayMap";
-import { getMaterialColors } from "../utils/colors";
+import { getMaterialColors, getColorByAuthor } from "../utils/colors";
 import { Icon } from "@blueprintjs/core";
 
 import { connect } from "redux-zero/react";
@@ -11,6 +11,7 @@ import actions from "../store/actions";
 import { IStore } from "../store/store";
 
 import '../assets/scss/subway-stations.scss'
+import { getAuthor } from "../utils";
 
 export interface ISubwayStations {
   commits: ICommit[];
@@ -33,26 +34,6 @@ type SubwayStationsProps = ISubwayStations &
 const SubwayStations = (props: SubwayStationsProps) => {
   const { commits, selectedCommit, setSelectedCommit, graph } = props;
 
-  const getAuthor = (author: string) => {
-    let firstChars = author
-      .split(" ")
-      .map((n) => (n.length > 0 ? n[0].toUpperCase() : ""));
-    let name = "";
-    firstChars.forEach((f) => {
-      if (f > "A" && f < "Z" && name.length < 2) {
-        name += f;
-      }
-    });
-    return name;
-  };
-
-  const getColorByAuthor = (commit: ICommit) => {
-    const authorColor = getMaterialColors(commit.email);
-    return {
-      backgroundColor: authorColor.backgroundColor,
-      color: authorColor.color,
-    };
-  };
   const getBranchColor = (commit: ICommit) => {
     if (graph && graph.nodeDict[commit.sha]) {
       return colors[graph.nodeDict[commit.sha].x_order % colors.length];
@@ -84,7 +65,7 @@ const SubwayStations = (props: SubwayStationsProps) => {
               {!commit.virtual && (
                 <div
                   className="ml-1 committer text-center"
-                  style={getColorByAuthor(commit)}
+                  style={getColorByAuthor(commit.email)}
                 >
                   {getAuthor(commit.author)}
                 </div>

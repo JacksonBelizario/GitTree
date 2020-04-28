@@ -358,3 +358,11 @@ export const generateMaterialColor = (text, shade = 500) => {
 
   return material.backgroundColor;
 };
+
+export const getColorByAuthor = (email) => {
+  const authorColor = getMaterialColors(email);
+  return {
+    backgroundColor: authorColor.backgroundColor,
+    color: authorColor.color,
+  };
+};

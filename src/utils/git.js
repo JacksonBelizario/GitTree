@@ -239,6 +239,58 @@ const getSubmoduleDetails = async (Repo, name) => {
   return result;
 };
 
+const getCommitDetails = async (Repo, sha) => {
+  let x = await Repo.getCommit(sha);
+  let [diff] = await x.getDiff();
+  let patches = await diff.findSimilar({ renameThreshold: 50 }).then(() => {
+      return diff.patches();
+  })
+  let modified = 0;
+  let added = 0;
+  let deleted = 0;
+  let renamed = 0;
+  let files = [];
+  patches.forEach(p => {
+    let existingPaths = files.map(f => f.path);
+    if (existingPaths.indexOf(p.newFile().path()) === -1) {
+      if (p.isRenamed()) {
+        renamed += 1;
+      } else if (p.isModified()) {
+        modified += 1;
+      } else if (p.isDeleted()) {
+        deleted += 1;
+      } else if (p.isAdded()) {
+        added += 1;
+      }
+      files.push({
+        isModified: p.isModified(),
+        isAdded: p.isAdded(),
+        isDeleted: p.isDeleted(),
+        isRenamed: p.isRenamed(),
+        path: p.newFile().path()
+      })
+    }
+  });
+  return {
+    sha: x.sha(),
+    message: x.message().split('\n')[0],
+    detail: x.message().split('\n').splice(1, x.message().split('\n').length).join('\n'),
+    date: x.date(),
+    time: x.time(),
+    committer: x.committer(),
+    email: x.author().email(),
+    author: x.author().name(),
+    parents: x.parents().map(p => p.toString()),
+    fileSummary: {
+      added: added,
+      deleted: deleted,
+      modified: modified,
+      renamed: renamed,
+    },
+    files: files
+  }
+}
+
 export default {
   openRepo,
   getCommits,
@@ -247,4 +299,5 @@ export default {
   getReferences,
   getSubmodules,
   getSubmoduleDetails,
+  getCommitDetails
 };
