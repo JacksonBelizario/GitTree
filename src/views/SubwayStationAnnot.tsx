@@ -123,31 +123,31 @@ const SubwayStationAnnot = (props: SubwayStationAnnotProps) => {
       <div className="annot-container">
         {branchInfos.map((branch: IBranchInfo, key: number) => (
           <div className="annot" style={{ height, top: branch.top }} key={key}>
-            <ul className="ml-1 text-right">
+            <ul>
               <li style={{ backgroundColor: branch.color }} className="summary">
                 {!!branch.names[0].current && (
-                  <CheckIcon size={12} />
+                  <CheckIcon size={14} />
                 )}
                 {!!branch.names[0].isRemote && (
-                  <CloudIcon size={12} />
+                  <CloudIcon size={14} />
                 )}
                 {!!branch.names[0].isBranch && (
-                  <MonitorIcon size={12} />
+                  <MonitorIcon size={14} />
                 )}
-                {!!branch.names[0].isTag && <TagIcon size={12} />}
+                {!!branch.names[0].isTag && <TagIcon size={14} />}
                 <span className="">{branch.names[0].display}</span>
                 {branch.names.length > 1 && <span className="ml-2">1+</span>}
               </li>
               {branch.names.map((name: any, key: number) => (
                 <li
-                  className="detail mb-1"
+                  className="detail"
                   style={{ backgroundColor: branch.color }}
                   key={key}
                 >
-                  {!!name.current && <CheckIcon size={12} />}
-                  {!!name.isRemote && <CloudIcon size={12} />}
-                  {!!name.isBranch && <MonitorIcon size={12} />}
-                  {!!name.isTag && <TagIcon size={12} />}
+                  {!!name.current && <CheckIcon size={14} />}
+                  {!!name.isRemote && <CloudIcon size={14} />}
+                  {!!name.isBranch && <MonitorIcon size={14} />}
+                  {!!name.isTag && <TagIcon size={14} />}
                   <span>{name.display}</span>
                 </li>
               ))}

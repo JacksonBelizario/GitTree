@@ -7,7 +7,9 @@ import store from "./store/store";
 // import SplitPane, { Pane } from 'react-split-pane';
 import SplitPane from "react-split-pane/lib/SplitPane";
 import Pane from "react-split-pane/lib/Pane";
+import CommitDetail from "./views/CommitDetail";
 
+import "./assets/main.css";
 import "./assets/scss/main.scss";
 
 const App = () => {
@@ -25,7 +27,9 @@ const App = () => {
             <Sidebar />
           </Pane>
           <Main />
-          <Pane minSize="300px" defaultSize="350px" maxSize="500px"></Pane>
+          <Pane minSize="300px" defaultSize="350px" maxSize="500px">
+            <CommitDetail />
+          </Pane>
         </SplitPane>
       </div>
     </Provider>
