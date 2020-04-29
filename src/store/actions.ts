@@ -1,6 +1,6 @@
 import { IStore } from "./store";
 import { IGraph } from "../models/SubwayMap";
-import { ICommit, IRepo, ICurrentCommit, IRefs } from "../utils/interfaces";
+import { ICommit, IRepo, ICurrentCommit, IRefs, ISelectedFile } from "../utils/interfaces";
 
 const actions = (store: any) => ({
   setFolder: (state: IStore, folder: string) => ({ folder }),
@@ -28,6 +28,7 @@ const actions = (store: any) => ({
       selectedCommit: sha,
     };
   },
+  setSelectedFile: (state: IStore, selectedFile: ISelectedFile) => ({selectedFile})
 });
 
 export default actions;

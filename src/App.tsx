@@ -11,6 +11,7 @@ import CommitDetail from "./views/CommitDetail";
 
 import "./assets/main.css";
 import "./assets/scss/main.scss";
+import FileViewer from "./views/FileViewer";
 
 const App = () => {
   return (
@@ -26,7 +27,10 @@ const App = () => {
           >
             <Sidebar />
           </Pane>
-          <Main />
+          <div className="relative">
+            <Main />
+            <FileViewer />
+          </div>
           <Pane minSize="300px" defaultSize="350px" maxSize="500px">
             <CommitDetail />
           </Pane>

@@ -1,0 +1,47 @@
+@import "../../../node_modules/react-diff-view/style/index.css";
+@import "../../../node_modules/prismjs/themes/prism.css";
+@import "../../../node_modules/prism-color-variables/variables.css";
+@import "../../../node_modules/prism-color-variables/themes/duracula.css";
+:root {
+  --diff-text-color: #fafafa;
+  --diff-selection-background-color: #5a5f80;
+  --diff-gutter-insert-background-color: #034148;
+  --diff-gutter-delete-background-color: #632b30;
+  --diff-gutter-selected-background-color: #5a5f80;
+  --diff-code-insert-background-color: #044b53;
+  --diff-code-delete-background-color: #632f34;
+  --diff-code-insert-edit-background-color: #055d67;
+  --diff-code-delete-edit-background-color: #7d383f;
+  --diff-code-selected-background-color: #5a5f80;
+  --diff-omit-background-color: #101120;
+  --diff-decoration-gutter-background-color: #202a33;
+  --diff-decoration-gutter-color: #363d4c;
+  --diff-decoration-content-background-color: #2e303c;
+  --diff-decoration-content-color: #ababab;
+  --diff-omit-gutter-line-color: #7d383f;
+}
+
+.diff-hunk {
+  //font-family: SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+}
+
+.file-viewer {
+  // background-color: #2e303c;
+  background-color: var(--bg-secondary);
+}
+
+.diff-gutter {
+  color: #ffffff52;
+}
+
+.diff-gutter-normal {
+  background-color: var(--diff-decoration-gutter-background-color);
+}
+
+.diff-gutter-omit {
+  background-color: var(--diff-decoration-gutter-background-color);
+}
+
+.token.operator, .token.entity, .token.url, .language-css .token.string, .style .token.string {
+  background: unset;
+}

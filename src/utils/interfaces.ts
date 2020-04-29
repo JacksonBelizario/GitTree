@@ -44,3 +44,10 @@ export interface IRefs {
   references: IReference[];
   refDict: IRefDict;
 }
+
+
+export interface ISelectedFile {
+  commit: string;
+  path: string;
+  diffType: 'add' | 'delete' | 'modify' | 'rename' | 'copy';
+}

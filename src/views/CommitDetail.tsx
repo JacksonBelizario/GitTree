@@ -4,7 +4,7 @@ import { Author } from "../models/Author";
 
 import { connect } from 'redux-zero/react';
 import { IStore } from '../store/store';
-import { IRepo } from '../utils/interfaces';
+import { IRepo, ISelectedFile } from '../utils/interfaces';
 
 import Git from "../utils/git";
 
@@ -21,11 +21,8 @@ import {
 import {
   FaRegCopy as FileCopyIcon
 } from 'react-icons/fa';
-
-interface StoreProps {
-  repo: IRepo;
-  sha: string;
-}
+import actions from '../store/actions';
+import { BoundActions } from 'redux-zero/types';
 
 interface IFile {
   isModified: boolean;
@@ -54,13 +51,22 @@ interface IDetails {
   files: IFile[]
 }
 
+interface StoreProps {
+  repo: IRepo;
+  sha: string;
+  selectedFile: ISelectedFile;
+}
+
 const mapToProps = (state: IStore): StoreProps => ({
   repo: state.repo,
   sha: state.selectedCommit,
+  selectedFile: state.selectedFile,
 });
 
-const CommitDetail = (props : StoreProps) => {
-  const { repo, sha } = props;
+type CommitDetailProps = StoreProps & BoundActions<IStore, typeof actions>;
+
+const CommitDetail = (props : CommitDetailProps) => {
+  const { repo, sha, selectedFile, setSelectedFile } = props;
 
   useEffect(() => {
     getCommitDetails(repo, sha);
@@ -119,7 +125,11 @@ const CommitDetail = (props : StoreProps) => {
         <span className="text-md font-bold">File Details</span>
         <div className="modified-file-list p-2">
           { details.files.map((file : IFile, key : number) => (
-            <div key={key} className="modified-file-entry p-1 flex cursor-pointer hover:bg-gray-800">
+            <div key={key} className="modified-file-entry p-1 flex cursor-pointer hover:bg-gray-800" onClick={() => setSelectedFile({
+              commit: sha,
+              path: file.path,
+              diffType: file.isRenamed ? 'rename' : file.isModified ? 'modify' : file.isAdded ? 'add' : file.isDeleted ? 'delete' : 'copy'
+            })}>
             { file.isModified &&
               <span className="mr-2 text-yellow-500">
                 <FileIcon />
@@ -150,4 +160,4 @@ const CommitDetail = (props : StoreProps) => {
   )
 }
 
-export default connect<IStore>(mapToProps)(CommitDetail);
+export default connect<IStore>(mapToProps, actions)(CommitDetail);
