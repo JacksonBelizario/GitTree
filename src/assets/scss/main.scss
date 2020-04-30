@@ -28,6 +28,8 @@ pre {
 
 .main-layout {
   display: flex;
+  min-height: 100%;
+  margin-bottom: -75px;
 
   .sidebar {
     flex: 0 0 200px;
@@ -42,7 +44,7 @@ pre {
     display: flex;
     flex-direction: column;
     flex: auto;
-    background-color: var(--bg-graph);
+    background-color: var(--bg-secondary);
     min-height: 100vh;
     align-items: center;
     justify-content: center;
@@ -56,8 +58,10 @@ pre {
   }
 }
 
-.text-center {
-  text-align: center !important;
+.footer {
+  background-color: var(--bg);
+  height: 50px;
+  border-top: 1px solid var(--bg-graph);
 }
 
 .bp3-button.bp3-align-left .bp3-button-text {

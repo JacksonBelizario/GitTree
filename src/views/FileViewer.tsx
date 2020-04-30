@@ -47,7 +47,7 @@ const FileViewer = (props: FileViewerProps) => {
     tokenize(hunks, {
       highlight: true,
       refractor: refractor,
-      language: selectedFile.path ? selectedFile.path.split('.').pop() : 'js',
+      language: selectedFile.path && refractor.listLanguages().includes(selectedFile.path.split('.').pop()) ? selectedFile.path.split('.').pop() : 'xml',
       enhancers: [
           markWord('\r', 'carriage-return'),
           markWord('\t', 'tab'),
@@ -89,7 +89,7 @@ const FileViewer = (props: FileViewerProps) => {
         </div>
         <Button className="self-end" onClick={() => setSelectedFile({commit: null, path: null, diffType: null})} >X</Button>
       </div>
-      <div className="overflow-auto h-screen">
+      <div className="diff-viewer overflow-auto">
         <Diff
           viewType={viewType}
           diffType={selectedFile.diffType}
