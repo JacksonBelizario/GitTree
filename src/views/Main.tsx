@@ -15,6 +15,7 @@ import { IRepo, ICommit, ICurrentCommit, IRefs, IReference } from "../utils/inte
 
 import "react-perfect-scrollbar/dist/css/styles.css";
 import MapSeparator from "./MapSeparator";
+import { Spinner, Intent } from "@blueprintjs/core";
 
 const INITIAL_WIP = {
   sha: "000000",
@@ -136,7 +137,7 @@ const Main = (props: MainProps) => {
   };
 
   if (!repo) {
-    return <div>Loading</div>;
+    return <Spinner className="h-full" intent={Intent.PRIMARY} size={100} />;
   }
 
   return (

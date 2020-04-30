@@ -126,7 +126,7 @@ const CommitDetail = (props : CommitDetailProps) => {
       <span className="text-md font-bold mb-2">File Details</span>
       <div className="modified-file-list p-2">
         { details.files.map((file : IFile, key : number) => (
-          <div key={key} className="modified-file-entry p-1 flex cursor-pointer hover:bg-gray-800" onClick={() => setSelectedFile({
+          <div key={key} className={`modified-file-entry p-1 flex cursor-pointer ${selectedFile.path === file.path ? "bg-gray-700" : "hover:bg-gray-800"}`} onClick={() => setSelectedFile({
             commit: sha,
             path: file.path,
             diffType: file.isRenamed ? 'rename' : file.isModified ? 'modify' : file.isAdded ? 'add' : file.isDeleted ? 'delete' : 'copy'
