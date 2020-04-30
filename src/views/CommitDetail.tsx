@@ -101,7 +101,7 @@ const CommitDetail = (props : CommitDetailProps) => {
   }
  
   return (
-    <div className="commit-details-parent">
+    <div className="commit-details-parent flex flex-col">
       <div className="commit-details flex mb-5">
         <div className="committer-badge mr-3"
           style={Author.getColors(details.email)}>
@@ -122,41 +122,39 @@ const CommitDetail = (props : CommitDetailProps) => {
           }</span>
         </div>
       </div>
-      <div className="modified-file-list flex p-2 my-3">{details.message}</div>
-      <div className="file-details-container flex flex-col">
-        <span className="text-md font-bold">File Details</span>
-        <div className="modified-file-list p-2">
-          { details.files.map((file : IFile, key : number) => (
-            <div key={key} className="modified-file-entry p-1 flex cursor-pointer hover:bg-gray-800" onClick={() => setSelectedFile({
-              commit: sha,
-              path: file.path,
-              diffType: file.isRenamed ? 'rename' : file.isModified ? 'modify' : file.isAdded ? 'add' : file.isDeleted ? 'delete' : 'copy'
-            })}>
-            { file.isModified &&
-              <span className="mr-2 text-yellow-500">
-                <FileIcon />
-              </span>
-            }
-            { file.isAdded && !file.isRenamed &&
-              <span className="mr-2 text-green-500">
-                <FilePlusIcon />
-              </span>
-            }
-            { file.isDeleted && !file.isRenamed &&
-              <span className="mr-2 text-red-500">
-                <FileMinusIcon />
-              </span>
-            }
-            { file.isRenamed &&
-              <span className="mr-2 text-blue-500">
-                <FileCopyIcon />
-              </span>
-            }
-            { getShortenedPath(file.path) }
-          </div>
-          ))
+      <div className="commit-message flex p-2 my-3">{details.message}</div>
+      <span className="text-md font-bold mb-2">File Details</span>
+      <div className="modified-file-list p-2">
+        { details.files.map((file : IFile, key : number) => (
+          <div key={key} className="modified-file-entry p-1 flex cursor-pointer hover:bg-gray-800" onClick={() => setSelectedFile({
+            commit: sha,
+            path: file.path,
+            diffType: file.isRenamed ? 'rename' : file.isModified ? 'modify' : file.isAdded ? 'add' : file.isDeleted ? 'delete' : 'copy'
+          })}>
+          { file.isModified &&
+            <span className="mr-2 text-yellow-500">
+              <FileIcon />
+            </span>
           }
+          { file.isAdded && !file.isRenamed &&
+            <span className="mr-2 text-green-500">
+              <FilePlusIcon />
+            </span>
+          }
+          { file.isDeleted && !file.isRenamed &&
+            <span className="mr-2 text-red-500">
+              <FileMinusIcon />
+            </span>
+          }
+          { file.isRenamed &&
+            <span className="mr-2 text-blue-500">
+              <FileCopyIcon />
+            </span>
+          }
+          { getShortenedPath(file.path) }
         </div>
+        ))
+        }
       </div>
     </div>
   )

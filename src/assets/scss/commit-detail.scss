@@ -1,5 +1,6 @@
 .commit-details-parent {
-  margin: 20px;
+  height: 100%;
+  padding: 20px;
 }
 
 .committer-info-container {
@@ -23,6 +24,13 @@
     box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
 }
 
+.commit-message {
+  background-color: var(--bg-secondary);
+}
+
 .modified-file-list {
   background-color: var(--bg-secondary);
+  overflow-y: auto;
+  overflow-x: hidden;
+  min-height: 0;
 }
