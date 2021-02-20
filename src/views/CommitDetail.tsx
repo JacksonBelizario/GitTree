@@ -4,7 +4,7 @@ import { Author } from "../models/Author";
 
 import { connect } from 'redux-zero/react';
 import { IStore } from '../store/store';
-import { IRepo, ISelectedFile, ICommitDetail, IFile, IWipCommit } from '../utils/interfaces';
+import { IRepo, ISelectedFile, ICommitDetail, IWipCommit } from '../utils/interfaces';
 import ListFiles from "../components/ListFiles";
 
 import Git from "../utils/git";
@@ -37,33 +37,34 @@ const mapToProps = (state: IStore): StoreProps => ({
 type CommitDetailProps = StoreProps & BoundActions<IStore, typeof actions>;
 
 const CommitDetail = (props : CommitDetailProps) => {
-  const { repo, sha, selectedFile, setSelectedFile, setSelectedCommit, commit } = props;
+  const { repo, sha, selectedFile, setSelectedFile, setSelectedCommit, commit, setCommit } = props;
 
-  useEffect(() => {
-    getCommitDetails(repo, sha);
-  }, [repo, sha]);
+  const [details, setDetails] = useState<ICommitDetail | IWipCommit>();
 
   const getCommitDetails = async (repo : IRepo, sha : string) => {
-    console.log("getCommitDetail");
     if (sha === "workdir") {
       setDetails(commit);
-      console.log({details: commit});
     }
-    if(!repo || !sha || sha === "workdir") return;
-    try {
-      const details = await Git.getCommitDetails(repo, sha);
-      console.log({details});
-      setDetails(details);
-    } catch(err) {
-      console.log({err});
+    else if(!!repo && !!sha) {
+      try {
+        const details = await Git.getCommitDetails(repo, sha);
+        setDetails(details);
+      } catch(err) {
+        console.warn({err});
+      }
     }
+  }
+
+  const updateStatus = async () => {
+    let changes = await Git.getStatus(repo);
+    setCommit({...commit, ...changes});
   }
 
   const stageAll = async () => {
     if (commit.virtual && commit.unstaged.length) {
       let unstagedPaths = commit.unstaged.map(s => s.path);
       await Git.stageAll(repo, unstagedPaths);
-      //@todo update file watch
+      await updateStatus();
     }
   }
 
@@ -71,13 +72,15 @@ const CommitDetail = (props : CommitDetailProps) => {
     if (commit.virtual && commit.staged.length) {
       let stagedPaths = commit.staged.map(s => s.path);
       await Git.unstageAll(repo, stagedPaths);
-      //@todo update file watch
+      await updateStatus();
     }
   }
 
-  const [details, setDetails] = useState<ICommitDetail | IWipCommit | null>(null);
+  useEffect(() => {
+    getCommitDetails(repo, sha);
+  }, [repo, sha, commit]);
 
-  if(!details) {
+  if (!details) {
     return <></>
   }
  
