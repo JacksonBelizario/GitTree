@@ -2,27 +2,33 @@
   "name": "git-tree",
   "version": "0.1.0",
   "private": true,
-  "main": "src/start.js",
+  "author":{
+    "name": "Jackson Belizário",
+    "email": "jacksonluizzb@gmail.com",
+    "url": "https://www.linkedin.com/in/jacksonbelizario/"
+  },
+  "main": "main.js",
   "build": {
     "appId": "git-tree",
-    "directories": {
+    "directories":{
       "buildResources": "assets"
     },
     "win": {
-      "category": "productivity",
       "iconUrl": "./src/assets/images/git-branch.svg"
     },
     "mac": {
-      "category": "productivity",
       "iconUrl": "./src/assets/images/git-branch.svg"
     }
   },
   "scripts": {
-    "electron": "cross-env NODE_ENV=dev nodemon --exec \"\"electron .\"\"",
     "rebuild": "electron-rebuild --runtime=electron --target=10.4.0 --disturl=https://atom.io/download/electron --build-from-source",
-    "serve": "concurrently \"yarn start\" \"wait-on http://localhost:3000 && electron .\"",
-    "start": "cross-env BROWSER=none react-app-rewired start",
-    "build": "react-app-rewired build",
+    "electron": "cross-env NODE_ENV=dev nodemon --exec \"\"electron .\"\"",
+    "start:electron": "wait-on http://localhost:3000 && electron .",
+    "start:react": "cross-env BROWSER=none react-app-rewired start",
+    "start": "concurrently \"yarn start:react\" \"yarn start:electron\"",
+    "build:react": "react-app-rewired build",
+    "build:electron": "electron-packager . --overwrite --prune --asar --out=release-builds --ignore=/src",
+    "build": "yarn build:react && yarn build:electron",
     "test": "react-app-rewired test",
     "eject": "react-app-rewired eject"
   },
@@ -44,13 +50,11 @@
   "dependencies": {
     "@blueprintjs/core": "^3.24.0",
     "@blueprintjs/timezone": "^3.6.1",
-    "electron": "10.4.0",
     "electron-is-dev": "^1.1.0",
-    "electron-rebuild": "2.3.5",
     "localforage": "^1.7.3",
     "lodash": "^4.17.15",
     "moment": "^2.24.0",
-    "nodegit": "^0.26.5",
+    "nodegit": "^0.27.0",
     "prism-color-variables": "^1.0.0",
     "react": "^16.13.1",
     "react-diff-view": "^2.4.3",
@@ -79,8 +83,10 @@
     "concurrently": "^5.1.0",
     "cross-env": "^7.0.2",
     "css-loader": "^3.5.3",
-    "electron-builder": "^22.4.1",
-    "electron-reload": "^1.5.0",
+    "electron": "10.4.0",
+    "electron-devtools-installer": "^3.1.1",
+    "electron-packager": "^15.2.0",
+    "electron-rebuild": "2.3.5",
     "file-loader": "^6.0.0",
     "node-sass": "^4.14.0",
     "nodemon": "^2.0.2",

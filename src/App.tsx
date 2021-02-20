@@ -6,10 +6,10 @@ import { Provider } from "redux-zero/react";
 import store from "./store/store";
 import SplitPane from "react-split-pane/lib/SplitPane";
 import Pane from "react-split-pane/lib/Pane";
-import CommitDetail from "./views/CommitDetail";
 
 import "./assets/main.css";
 import "./assets/scss/main.scss";
+import CommitDetail from "./views/CommitDetail";
 import FileViewer from "./views/FileViewer";
 import Footer from "./components/Footer";
 

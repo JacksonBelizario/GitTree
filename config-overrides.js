@@ -1,6 +1,6 @@
 const rewireCss = require('react-app-rewire-postcss');
 module.exports = function override(config, env) {
-  //do stuff with the webpack config...
+  // webpack config...
   config = rewireCss(config, true);
 
   config.externals = {
@@ -17,5 +17,8 @@ module.exports = function override(config, env) {
       },
     ],
   });
+  if (env === "production") {
+    config.output.publicPath = './';
+  }
   return config;
 };
