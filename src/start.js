@@ -8,6 +8,7 @@ const BrowserWindow = electron.BrowserWindow;
 let mainWindow;
 
 function createWindow() {
+  app.allowRendererProcessReuse = false;
   mainWindow = new BrowserWindow({
     minWidth: 960,
     minHeight: 660,
@@ -15,6 +16,7 @@ function createWindow() {
     height: 680,
     webPreferences: {
       nodeIntegration: true,
+      enableRemoteModule: true
     },
   });
 

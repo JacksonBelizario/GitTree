@@ -18,9 +18,9 @@
     }
   },
   "scripts": {
-    "electron2": "cross-env NODE_ENV=dev nodemon --exec \"\"electron .\"\"",
-    "rebuild": "electron-rebuild --runtime=electron --target=8.2.0 --disturl=https://atom.io/download/electron --build-from-source",
-    "electron": "concurrently \"yarn start\" \"wait-on http://localhost:3000 && electron .\"",
+    "electron": "cross-env NODE_ENV=dev nodemon --exec \"\"electron .\"\"",
+    "rebuild": "electron-rebuild --runtime=electron --target=10.4.0 --disturl=https://atom.io/download/electron --build-from-source",
+    "serve": "concurrently \"yarn start\" \"wait-on http://localhost:3000 && electron .\"",
     "start": "cross-env BROWSER=none react-app-rewired start",
     "build": "react-app-rewired build",
     "test": "react-app-rewired test",
@@ -44,9 +44,9 @@
   "dependencies": {
     "@blueprintjs/core": "^3.24.0",
     "@blueprintjs/timezone": "^3.6.1",
-    "electron": "8.2.0",
+    "electron": "10.4.0",
     "electron-is-dev": "^1.1.0",
-    "electron-rebuild": "^1.10.1",
+    "electron-rebuild": "2.3.5",
     "localforage": "^1.7.3",
     "lodash": "^4.17.15",
     "moment": "^2.24.0",
