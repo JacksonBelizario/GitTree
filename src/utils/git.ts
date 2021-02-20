@@ -273,6 +273,28 @@ const getCommitDetails = async (Repo, sha) => {
   }
 }
 
+const stageAll = async (Repo, paths) => {
+    let statuses = await Repo.getStatus();
+    let index = await Repo.refreshIndex();
+    let req = [];
+    statuses.forEach(st => {
+      if (paths.indexOf(st.path()) !== -1 || paths.length === 0) {
+        if (st.isDeleted()) {
+          req.push(index.removeByPath(st.path()));
+        } else {
+          req.push(index.addByPath(st.path()));
+        }
+      }
+    });
+    await Promise.all(req);
+    await index.write();
+}
+
+const unstageAll = async (Repo, paths) => {
+  let commit = await Repo.getHeadCommit();
+  await NodeGit.Reset.default(Repo, commit, paths);
+}
+
 export default {
   openRepo,
   getCommits,
@@ -281,5 +303,7 @@ export default {
   getReferences,
   getSubmodules,
   // getSubmoduleDetails,
-  getCommitDetails
+  getCommitDetails,
+  stageAll,
+  unstageAll,
 };

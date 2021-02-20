@@ -27,7 +27,7 @@ export interface IStore {
   graph: IGraph | null;
   currentBranch: ICurrentCommit | null;
   commits: ICommit[];
-  wipCommit: IWipCommit;
+  commit: IWipCommit;
   refs: IRefs;
   selectedFile: ISelectedFile
 }
@@ -40,7 +40,7 @@ const initialState: IStore = {
   currentBranch: null,
   commits: [],
   refs: { references: [], refDict: null },
-  wipCommit: INITIAL_WIP,
+  commit: INITIAL_WIP,
   selectedFile: {
     commit: null,
     path: null,

@@ -24,7 +24,7 @@ interface StoreProps {
   refs: IRefs;
   currentBranch: ICurrentCommit | null;
   commits: ICommit[];
-  wipCommit: IWipCommit;
+  commit: IWipCommit;
 }
 
 const mapToProps = (state: IStore): StoreProps => ({
@@ -33,7 +33,7 @@ const mapToProps = (state: IStore): StoreProps => ({
   commits: state.commits,
   currentBranch: state.currentBranch,
   refs: state.refs,
-  wipCommit: state.wipCommit,
+  commit: state.commit,
 });
 
 const INTERVAL = 5 * 1000;
@@ -51,8 +51,8 @@ const Main = (props: MainProps) => {
     setRefs,
     commits,
     setCommits,
-    wipCommit,
-    setWipCommit
+    commit,
+    setCommit
   } = props;
 
   const [watch, setWatch] = useState<Boolean>(false);
@@ -94,7 +94,7 @@ const Main = (props: MainProps) => {
       const repo = await Git.openRepo(folder);
       setRepo(repo);
       setCurrentBranch(await Git.getCurrentBranch(repo));
-      setWipCommit(INITIAL_WIP);
+      setCommit(INITIAL_WIP);
       setCommits(await Git.getCommits(repo));
       setWatch(true);
     } catch (error) {
@@ -107,8 +107,8 @@ const Main = (props: MainProps) => {
       return;
     }
     let changes = await Git.getStatus(repo);
-    let oldStatus = wipCommit.enabled;
-    let wip = wipCommit;
+    let oldStatus = commit.enabled;
+    let wip = commit;
     wip.fileSummary = changes.fileSummary;
     wip.stagedSummary = changes.stagedSummary;
     wip.unstagedSummary = changes.unstagedSummary;
@@ -119,8 +119,8 @@ const Main = (props: MainProps) => {
     } else {
       wip.enabled = false;
     }
-    setWipCommit(wip);
-    console.log('setWipCommit', {wip});
+    setCommit(wip);
+    console.log('setCommit', {wip});
     if (oldStatus !== wip.enabled) {
       wip.parents = currentBranch ? [currentBranch.target] : [];
       if (wip.enabled) {

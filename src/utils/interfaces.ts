@@ -18,6 +18,9 @@ export interface ICommit {
   enabled?: boolean;
   ci?: string | any;
   fileSummary: object | any | null;
+  staged?: IWipFile[];
+  unstaged?: IWipFile[];
+  files?: IFile[];
 }
 
 export interface IFile {
@@ -33,22 +36,22 @@ export interface IWipFile extends IFile {
 }
 
 export interface IWipCommit extends ICommit {
-    staged: IWipFile[];
-    unstaged: IWipFile[];
-    stagedSummary: {
-        ignored: number;
-        newCount: number;
-        deleted: number;
-        modified: number;
-        renamed: number;
-    };
-    unstagedSummary: {
-        ignored: number;
-        newCount: number;
-        deleted: number;
-        modified: number;
-        renamed: number;
-    };
+  staged: IWipFile[];
+  unstaged: IWipFile[];
+  stagedSummary: {
+    ignored: number;
+    newCount: number;
+    deleted: number;
+    modified: number;
+    renamed: number;
+  };
+  unstagedSummary: {
+    ignored: number;
+    newCount: number;
+    deleted: number;
+    modified: number;
+    renamed: number;
+  };
 }
 
 export interface ICommitDetail extends ICommit {

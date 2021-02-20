@@ -25,7 +25,6 @@ const ListFiles = (props) => {
   
   return (
   <>
-    <span className="text-md font-bold mb-2">File Details</span>
     <div className="modified-file-list p-2">
       {
         files.map((file : IFile, key : number) => (

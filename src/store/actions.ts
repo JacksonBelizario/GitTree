@@ -14,7 +14,7 @@ const actions = (store: any) => ({
   }),
   setGraph: (state: IStore, graph: IGraph | null) => ({ graph }),
   setRefs: (state: IStore, refs: IRefs) => ({ refs }),
-  setWipCommit: (state: IStore, wipCommit: IWipCommit) => ({ wipCommit }),
+  setCommit: (state: IStore, commit: IWipCommit) => ({ commit }),
   scrollToCommit: (state: IStore, sha: string) => {
     const hash = "commit-info-" + sha;
     const element = document.getElementById(hash);
