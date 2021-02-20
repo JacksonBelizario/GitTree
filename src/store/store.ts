@@ -2,7 +2,8 @@ import createStore from "redux-zero";
 import { applyMiddleware } from "redux-zero/middleware";
 import storage from "localforage";
 import { IGraph } from "../models/SubwayMap";
-import { IRepo, ICommit, ICurrentCommit, IRefs, ISelectedFile } from "../utils/interfaces";
+import { IRepo, ICommit, ICurrentCommit, IRefs, ISelectedFile, IWipCommit } from "../utils/interfaces";
+import { INITIAL_WIP } from "../utils";
 
 const persist = require("redux-zero-persist");
 
@@ -26,7 +27,7 @@ export interface IStore {
   graph: IGraph | null;
   currentBranch: ICurrentCommit | null;
   commits: ICommit[];
-  wipCommit: ICommit;
+  wipCommit: IWipCommit;
   refs: IRefs;
   selectedFile: ISelectedFile
 }
@@ -39,19 +40,7 @@ const initialState: IStore = {
   currentBranch: null,
   commits: [],
   refs: { references: [], refDict: null },
-  wipCommit: {
-    sha: "000000",
-    author: "",
-    email: "",
-    parents: [],
-    message: "",
-    date: new Date(),
-    ci: "",
-    virtual: true,
-    isStash: false,
-    enabled: false,
-    fileSummary: {},
-  },
+  wipCommit: INITIAL_WIP,
   selectedFile: {
     commit: null,
     path: null,

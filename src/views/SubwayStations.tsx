@@ -70,33 +70,33 @@ const SubwayStations = (props: SubwayStationsProps) => {
                   {Author.getAcronym(commit.author)}
                 </div>
               )}
-              {commit.virtual && (
+              {commit.virtual && commit.fileSummary && (
                 <div className="files-summary ml-1 flex">
-                  {!!commit.fileSummary.modified && (
+                  {commit.fileSummary.modified && (
                     <span className="mr-1 commit-summary modification">
                       <FileIcon size={18} />
                       {commit.fileSummary.modified}
                     </span>
                   )}
-                  {!!commit.fileSummary.newCount && (
+                  {commit.fileSummary.newCount && (
                     <span className="mr-1 commit-summary addition">
                       <i className="icon-file-plus"></i>
                       {commit.fileSummary.newCount}
                     </span>
                   )}
-                  {!!commit.fileSummary.deleted && (
+                  {commit.fileSummary.deleted && (
                     <span className="mr-1 commit-summary deletion">
                       <i className="icon-file-minus"></i>
                       {commit.fileSummary.deleted}
                     </span>
                   )}
-                  {!!commit.fileSummary.renamed && (
+                  {commit.fileSummary.renamed && (
                     <span className="mr-1 commit-summary rename">
                       <i className="icon-file-minus"></i>
                       {commit.fileSummary.renamed}
                     </span>
                   )}
-                  {!!commit.fileSummary.ignored && (
+                  {commit.fileSummary.ignored && (
                     <span className="mr-1 commit-summary ignored">
                       <i className="icon-file-minus"></i>
                       {commit.fileSummary.ignored}

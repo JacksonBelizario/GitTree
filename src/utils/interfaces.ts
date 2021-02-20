@@ -12,12 +12,53 @@ export interface ICommit {
   email: string;
   author: string;
   parents: string[];
-  isStash: boolean;
+  isStash?: boolean;
   stashIndex?: number;
-  virtual: boolean;
+  virtual?: boolean;
   enabled?: boolean;
-  ci: string | any | null;
+  ci?: string | any;
   fileSummary: object | any | null;
+}
+
+export interface IFile {
+  path: string;
+  isAdded: boolean;
+  isModified: boolean;
+  isRenamed: boolean;
+  isDeleted: boolean;
+}
+
+export interface IWipFile extends IFile {
+  isIgnored: boolean;
+}
+
+export interface IWipCommit extends ICommit {
+    staged: IWipFile[];
+    unstaged: IWipFile[];
+    stagedSummary: {
+        ignored: number;
+        newCount: number;
+        deleted: number;
+        modified: number;
+        renamed: number;
+    };
+    unstagedSummary: {
+        ignored: number;
+        newCount: number;
+        deleted: number;
+        modified: number;
+        renamed: number;
+    };
+}
+
+export interface ICommitDetail extends ICommit {
+  fileSummary: {
+    added: number,
+    deleted: number,
+    modified: number,
+    renamed: number
+  };
+  files: IFile[];
 }
 
 export interface ICurrentCommit {

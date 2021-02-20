@@ -1,23 +1,4 @@
-import NodeGit, { Repository } from "nodegit";
-
-// declare type IRepo = Repository | null;
-
-/**
-declare type ICommit = {
-    sha: string,
-    message: string,
-    detail: string,
-    date: Date,
-    time: Date,
-    committer: string,
-    email: string,
-    author: string,
-    parents: any,
-    isStash: boolean,
-    stashIndex: number,
-    virtual: any,
-    fileSummary: any
-}; */
+import NodeGit from "nodegit"
 
 const openRepo = async (folder) => {
   return await NodeGit.Repository.open(folder);
@@ -25,6 +6,7 @@ const openRepo = async (folder) => {
 
 const getCommits = async (Repo) => {
   let walker = NodeGit.Revwalk.create(Repo);
+  //@ts-ignore
   walker.sorting(NodeGit.Revwalk.SORT.TOPOLOGICAL, NodeGit.Revwalk.SORT.TIME);
   walker.pushGlob("*");
   let stashes = [];
@@ -94,11 +76,11 @@ const getStatus = async (Repo) => {
   statuses.forEach((status) => {
     let item = {
       path: status.path(),
-      isNew: status.isNew(),
-      isModified: status.isModified(),
-      isRenamed: status.isRenamed(),
-      isIgnored: status.isIgnored(),
-      isDeleted: status.isDeleted(),
+      isAdded: !!status.isNew(),
+      isModified: !!status.isModified(),
+      isRenamed: !!status.isRenamed(),
+      isIgnored: !!status.isIgnored(),
+      isDeleted: !!status.isDeleted(),
     };
     if (status.inIndex()) {
       staged.push(item);
@@ -109,7 +91,7 @@ const getStatus = async (Repo) => {
       } else if (status.isIgnored()) {
         stagedSummary.ignored += 1;
       } else if (status.isRenamed()) {
-        stagedSummary.rename += 1;
+        stagedSummary.renamed += 1;
       } else if (status.isDeleted()) {
         stagedSummary.deleted += 1;
       }
@@ -123,7 +105,7 @@ const getStatus = async (Repo) => {
       } else if (status.isIgnored()) {
         unstagedSummary.ignored += 1;
       } else if (status.isRenamed()) {
-        unstagedSummary.rename += 1;
+        unstagedSummary.renamed += 1;
       } else if (status.isDeleted()) {
         unstagedSummary.deleted += 1;
       }
@@ -134,7 +116,7 @@ const getStatus = async (Repo) => {
     unstaged: unstaged,
     stagedSummary: stagedSummary,
     unstagedSummary: unstagedSummary,
-    summary: {
+    fileSummary: {
       ignored: stagedSummary.ignored + unstagedSummary.ignored,
       newCount: stagedSummary.newCount + unstagedSummary.newCount,
       deleted: stagedSummary.deleted + unstagedSummary.deleted,
@@ -218,26 +200,26 @@ const getSubmodules = async (Repo) => {
   }));
 };
 
-const getSubmoduleDetails = async (Repo, name) => {
-  let submodule = await NodeGit.Submodule.lookup(Repo, name);
-  let result = {};
-  result.hid = submodule.headId().toString();
-  result.path = submodule.path();
-  let subm = await submodule.open();
-  let cmt = await subm.getCommit(result.hid);
-  result.message = cmt.message().split("\n")[0];
-  result.detail = cmt
-    .message()
-    .split("\n")
-    .splice(1, cmt.message().split("\n").length)
-    .join("\n");
-  result.date = cmt.date();
-  result.time = cmt.time();
-  result.committer = cmt.committer();
-  result.email = cmt.author().email();
-  result.author = cmt.author().name();
-  return result;
-};
+// const getSubmoduleDetails = async (Repo, name) => {
+//   let submodule = await NodeGit.Submodule.lookup(Repo, name);
+//   let result = {};
+//   result.hid = submodule.headId().toString();
+//   result.path = submodule.path();
+//   let subm = await submodule.open();
+//   let cmt = await subm.getCommit(result.hid);
+//   result.message = cmt.message().split("\n")[0];
+//   result.detail = cmt
+//     .message()
+//     .split("\n")
+//     .splice(1, cmt.message().split("\n").length)
+//     .join("\n");
+//   result.date = cmt.date();
+//   result.time = cmt.time();
+//   result.committer = cmt.committer();
+//   result.email = cmt.author().email();
+//   result.author = cmt.author().name();
+//   return result;
+// };
 
 const getCommitDetails = async (Repo, sha) => {
   let x = await Repo.getCommit(sha);
@@ -298,6 +280,6 @@ export default {
   getCurrentBranch,
   getReferences,
   getSubmodules,
-  getSubmoduleDetails,
+  // getSubmoduleDetails,
   getCommitDetails
 };

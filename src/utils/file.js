@@ -32,8 +32,7 @@ export class FileDetails {
     } else {
       return this.Repo.getCommit(commit).then(x => {
         return x.getDiff().then(diffs => {
-          let diff = diffs[0]
-          return diff
+          return diffs[0];
         }).then(diff => {
           return this.processDiff(diff, path, commit, fullFile);
         })

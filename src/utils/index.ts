@@ -19,3 +19,33 @@ export const scrollTo = (hash: string) => {
     container.scrollTo({ top: element.offsetTop, behavior: "smooth" });
   }
 };
+
+export const INITIAL_WIP = {
+  sha: "workdir",
+  author: "",
+  email: "",
+  parents: [],
+  message: "",
+  date: new Date(),
+  ci: "",
+  virtual: true,
+  isStash: false,
+  enabled: false,
+  staged: null,
+  unstaged: null,
+  fileSummary: {},
+  stagedSummary: {
+    ignored: 0,
+    newCount: 0,
+    deleted: 0,
+    modified: 0,
+    renamed: 0,
+  },
+  unstagedSummary: {
+    ignored: 0,
+    newCount: 0,
+    deleted: 0,
+    modified: 0,
+    renamed: 0,
+  },
+};

@@ -1,6 +1,6 @@
 import { IStore } from "./store";
 import { IGraph } from "../models/SubwayMap";
-import { ICommit, IRepo, ICurrentCommit, IRefs, ISelectedFile } from "../utils/interfaces";
+import { ICommit, IRepo, ICurrentCommit, IRefs, ISelectedFile, IWipCommit } from "../utils/interfaces";
 
 const actions = (store: any) => ({
   setFolder: (state: IStore, folder: string) => ({ folder }),
@@ -14,7 +14,7 @@ const actions = (store: any) => ({
   }),
   setGraph: (state: IStore, graph: IGraph | null) => ({ graph }),
   setRefs: (state: IStore, refs: IRefs) => ({ refs }),
-  setWipCommit: (state: IStore, wipCommit: ICommit) => ({ wipCommit }),
+  setWipCommit: (state: IStore, wipCommit: IWipCommit) => ({ wipCommit }),
   scrollToCommit: (state: IStore, sha: string) => {
     const hash = "commit-info-" + sha;
     const element = document.getElementById(hash);

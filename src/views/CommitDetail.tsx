@@ -4,7 +4,8 @@ import { Author } from "../models/Author";
 
 import { connect } from 'redux-zero/react';
 import { IStore } from '../store/store';
-import { IRepo, ISelectedFile } from '../utils/interfaces';
+import { IRepo, ISelectedFile, ICommitDetail, IFile, IWipCommit } from '../utils/interfaces';
+import ListFiles from "../components/ListFiles";
 
 import Git from "../utils/git";
 
@@ -25,56 +26,36 @@ import actions from '../store/actions';
 import { BoundActions } from 'redux-zero/types';
 import { Button, Intent } from '@blueprintjs/core';
 
-interface IFile {
-  isModified: boolean;
-  isAdded: boolean;
-  isDeleted: boolean;
-  isRenamed: boolean;
-  path: string;
-}
-
-interface IDetails {
-  sha: string;
-  message: string;
-  detail: string;
-  date: Date;
-  time: number;
-  committer: any
-  email: string;
-  author: string;
-  parents: string[];
-  fileSummary: {
-    added: number,
-    deleted: number,
-    modified: number,
-    renamed: number
-  }
-  files: IFile[]
-}
-
 interface StoreProps {
   repo: IRepo;
   sha: string;
   selectedFile: ISelectedFile;
+  wipCommit: IWipCommit;
 }
 
 const mapToProps = (state: IStore): StoreProps => ({
   repo: state.repo,
   sha: state.selectedCommit,
   selectedFile: state.selectedFile,
+  wipCommit: state.wipCommit,
 });
 
 type CommitDetailProps = StoreProps & BoundActions<IStore, typeof actions>;
 
 const CommitDetail = (props : CommitDetailProps) => {
-  const { repo, sha, selectedFile, setSelectedFile, setSelectedCommit } = props;
+  const { repo, sha, selectedFile, setSelectedFile, setSelectedCommit, wipCommit } = props;
 
   useEffect(() => {
     getCommitDetails(repo, sha);
   }, [repo, sha]);
 
   const getCommitDetails = async (repo : IRepo, sha : string) => {
-    if(!repo || !sha || sha === "000000") return;
+    console.log("getCommitDetail");
+    if (sha === "workdir") {
+      setDetails(wipCommit);
+      console.log({details: wipCommit});
+    }
+    if(!repo || !sha || sha === "workdir") return;
     try {
       const details = await Git.getCommitDetails(repo, sha);
       console.log({details});
@@ -84,17 +65,7 @@ const CommitDetail = (props : CommitDetailProps) => {
     }
   }
 
-  const [details, setDetails] = useState<IDetails | null>(null);
-
-  const getShortenedPath = (path : string) => {
-    if (path.length > 55) {
-      let front = path.substring(0, 20);
-      let over = path.length - 55 - 3;
-      let back = path.substring(20 + over, path.length);
-      return `${front}...${back}`;
-    }
-    return path;
-  }
+  const [details, setDetails] = useState<ICommitDetail | IWipCommit | null>(null);
 
   if(!details) {
     return <></>
@@ -113,49 +84,28 @@ const CommitDetail = (props : CommitDetailProps) => {
           <small>{moment(details.date).format("YYYY-MM-DD")}</small>
         </div>
         <div className="flex flex-col text-right">
-          <Button className="mb-1 ml-1 cursor-default" icon={<CommitIcon />} outlined intent={Intent.NONE}>{sha.substring(0, 6)}</Button>
+          <Button className="mb-1 ml-1 cursor-default" icon={<CommitIcon />} intent={Intent.NONE}>{sha.substring(0, 6)}</Button>
           <span className="flex flex-row text-right">
           {
             details.parents.map((parent: string, idx: number) =>
-              <Button key={idx} className="ml-1" icon={<MergeIcon />} outlined intent={Intent.PRIMARY} onClick={() => setSelectedCommit(parent)}>{parent.substring(0, 6)}</Button>
+              <Button key={idx} className="ml-1" icon={<MergeIcon />} intent={Intent.PRIMARY} onClick={() => setSelectedCommit(parent)}>{parent.substring(0, 6)}</Button>
             )
           }</span>
         </div>
       </div>
       <div className="commit-message flex p-2 my-3">{details.message}</div>
-      <span className="text-md font-bold mb-2">File Details</span>
-      <div className="modified-file-list p-2">
-        { details.files.map((file : IFile, key : number) => (
-          <div key={key} className={`modified-file-entry p-1 flex cursor-pointer ${selectedFile.path === file.path ? "bg-gray-700" : "hover:bg-gray-800"}`} onClick={() => setSelectedFile({
-            commit: sha,
-            path: file.path,
-            diffType: file.isRenamed ? 'rename' : file.isModified ? 'modify' : file.isAdded ? 'add' : file.isDeleted ? 'delete' : 'copy'
-          })}>
-          { file.isModified &&
-            <span className="mr-2 text-yellow-500">
-              <FileIcon />
-            </span>
-          }
-          { file.isAdded && !file.isRenamed &&
-            <span className="mr-2 text-green-500">
-              <FilePlusIcon />
-            </span>
-          }
-          { file.isDeleted && !file.isRenamed &&
-            <span className="mr-2 text-red-500">
-              <FileMinusIcon />
-            </span>
-          }
-          { file.isRenamed &&
-            <span className="mr-2 text-blue-500">
-              <FileCopyIcon />
-            </span>
-          }
-          { getShortenedPath(file.path) }
-        </div>
-        ))
-        }
-      </div>
+      {
+        //@ts-ignore
+        details.staged && <ListFiles sha={sha} files={details.staged} selectedFile={selectedFile} setSelectedFile={setSelectedFile} />
+      }
+      {
+        //@ts-ignore
+        details.unstaged && <ListFiles sha={sha} files={details.unstaged} selectedFile={selectedFile} setSelectedFile={setSelectedFile} />
+      }
+      {
+        //@ts-ignore
+        details.files && <ListFiles sha={sha} files={details.files} selectedFile={selectedFile} setSelectedFile={setSelectedFile} />
+      }
     </div>
   )
 }

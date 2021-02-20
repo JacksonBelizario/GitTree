@@ -11,25 +11,12 @@ import actions from "../store/actions";
 import { isEqual } from "lodash";
 
 import Git from "../utils/git";
-import { IRepo, ICommit, ICurrentCommit, IRefs, IReference } from "../utils/interfaces";
+import { IRepo, ICommit, ICurrentCommit, IRefs, IReference, IWipCommit } from "../utils/interfaces";
 
 import "react-perfect-scrollbar/dist/css/styles.css";
 import MapSeparator from "./MapSeparator";
 import { Spinner, Intent } from "@blueprintjs/core";
-
-const INITIAL_WIP = {
-  sha: "000000",
-  author: "",
-  email: "",
-  parents: [],
-  message: "",
-  date: new Date(),
-  ci: "",
-  virtual: true,
-  isStash: false,
-  enabled: false,
-  fileSummary: {},
-};
+import { INITIAL_WIP } from "../utils";
 
 interface StoreProps {
   folder: string;
@@ -37,6 +24,7 @@ interface StoreProps {
   refs: IRefs;
   currentBranch: ICurrentCommit | null;
   commits: ICommit[];
+  wipCommit: IWipCommit;
 }
 
 const mapToProps = (state: IStore): StoreProps => ({
@@ -45,6 +33,7 @@ const mapToProps = (state: IStore): StoreProps => ({
   commits: state.commits,
   currentBranch: state.currentBranch,
   refs: state.refs,
+  wipCommit: state.wipCommit,
 });
 
 const INTERVAL = 5 * 1000;
@@ -62,9 +51,10 @@ const Main = (props: MainProps) => {
     setRefs,
     commits,
     setCommits,
+    wipCommit,
+    setWipCommit
   } = props;
 
-  const [wipCommit, setWipCommit] = useState<ICommit>(INITIAL_WIP);
   const [watch, setWatch] = useState<Boolean>(false);
   const [localRefs, setLocalRefs] = useState<IRefs>(refs);
 
@@ -119,13 +109,18 @@ const Main = (props: MainProps) => {
     let changes = await Git.getStatus(repo);
     let oldStatus = wipCommit.enabled;
     let wip = wipCommit;
-    wip.fileSummary = changes.summary;
+    wip.fileSummary = changes.fileSummary;
+    wip.stagedSummary = changes.stagedSummary;
+    wip.unstagedSummary = changes.unstagedSummary;
+    wip.staged = changes.staged;
+    wip.unstaged = changes.unstaged;
     if (changes.staged.length || changes.unstaged.length) {
       wip.enabled = true;
     } else {
       wip.enabled = false;
     }
     setWipCommit(wip);
+    console.log('setWipCommit', {wip});
     if (oldStatus !== wip.enabled) {
       wip.parents = currentBranch ? [currentBranch.target] : [];
       if (wip.enabled) {
