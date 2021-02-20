@@ -10,16 +10,16 @@ interface ILinkVisual {
 const LinkVisual = (props: ILinkVisual) => {
   const { link } = props;
   const [linkDirection, setLinkDirection] = React.useState<number>(-1);
-  const [mergeDirection, setMergeDirection] = React.useState<number>(1);
+  // const [mergeDirection, setMergeDirection] = React.useState<number>(1);
   React.useEffect(() => {
     if (!link.merge) {
-      setMergeDirection(-1);
+      // setMergeDirection(-1);
     }
     if (link.target.y > link.source.y && link.target.x > link.source.x) {
       setLinkDirection(1);
     }
     return () => {
-      setMergeDirection(1);
+      // setMergeDirection(1);
       setLinkDirection(-1);
     };
   }, [link]);

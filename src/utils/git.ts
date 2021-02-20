@@ -112,6 +112,8 @@ const getStatus = async (Repo) => {
     }
   });
   return {
+    enabled: (staged.length > 0 || unstaged.length > 0),
+    parents: [],
     staged: staged,
     unstaged: unstaged,
     stagedSummary: stagedSummary,
@@ -222,6 +224,9 @@ const getSubmodules = async (Repo) => {
 // };
 
 const getCommitDetails = async (Repo, sha) => {
+  if (typeof Repo.getCommit !== 'function') {
+    return;
+  }
   let x = await Repo.getCommit(sha);
   let [diff] = await x.getDiff();
   let patches = await diff.findSimilar({ renameThreshold: 50 }).then(() => {

@@ -58,65 +58,65 @@ const SubwayStationAnnot = (props: SubwayStationAnnotProps) => {
   const [branchInfos, setBranchInfos] = React.useState<IBranchInfo[]>([]);
 
   useEffect(() => {
-    updateBranchInfo();
-  }, []);
-
-  const updateBranchInfo = () => {
-    if (!commits || !refDict) {
-      return;
-    }
-    const branchInfos: IBranchInfo[] = [];
-    commits.forEach((cmt: ICommit, i: number) => {
-      //@ts-ignore
-      if (refDict[cmt.sha]) {
-        let bi = {
-          top: height * i,
-          names: [],
-          target: cmt.sha,
-        };
+    const updateBranchInfo = () => {
+      if (!commits || !refDict) {
+        return;
+      }
+      const branchInfos: IBranchInfo[] = [];
+      commits.forEach((cmt: ICommit, i: number) => {
         //@ts-ignore
-        refDict[cmt.sha].forEach((ref: any) => {
+        if (refDict[cmt.sha]) {
+          let bi = {
+            top: height * i,
+            names: [],
+            target: cmt.sha,
+          };
           //@ts-ignore
-          bi.names.push(ref);
+          refDict[cmt.sha].forEach((ref: any) => {
+            //@ts-ignore
+            bi.names.push(ref);
+          });
+          //@ts-ignore
+          branchInfos.push(bi);
+        }
+      });
+      branchInfos.forEach((bi) => {
+        let consolidated = new Map<string, IBranchInfo>();
+        bi.names.forEach((na) => {
+          //@ts-ignore
+          if (!consolidated[na.display]) {
+            //@ts-ignore
+            consolidated[na.display] = na;
+            na.current = false;
+          } else {
+            //@ts-ignore
+            consolidated[na.display].isRemote =
+              consolidated[na.display].isRemote || na.isRemote;
+            //@ts-ignore
+            consolidated[na.display].isBranch =
+              consolidated[na.display].isBranch || na.isBranch;
+            if (na.isBranch) {
+              //@ts-ignore
+              consolidated[na.display].shorthand = na.shorthand;
+            }
+          }
+        });
+        Object.values(consolidated).forEach((con) => {
+          if (con.isBranch && con.display.includes(currentBranch.name)) {
+            con.current = true;
+          }
         });
         //@ts-ignore
-        branchInfos.push(bi);
-      }
-    });
-    branchInfos.forEach((bi) => {
-      let consolidated = new Map<string, IBranchInfo>();
-      bi.names.forEach((na) => {
-        //@ts-ignore
-        if (!consolidated[na.display]) {
-          //@ts-ignore
-          consolidated[na.display] = na;
-          na.current = false;
-        } else {
-          //@ts-ignore
-          consolidated[na.display].isRemote =
-            consolidated[na.display].isRemote || na.isRemote;
-          //@ts-ignore
-          consolidated[na.display].isBranch =
-            consolidated[na.display].isBranch || na.isBranch;
-          if (na.isBranch) {
-            //@ts-ignore
-            consolidated[na.display].shorthand = na.shorthand;
-          }
+        bi.names = Object.values(consolidated);
+        if (graph && graph.nodeDict[bi.target]) {
+          bi.color = colors[graph.nodeDict[bi.target].x_order % colors.length];
         }
       });
-      Object.values(consolidated).forEach((con) => {
-        if (con.isBranch && con.display.includes(currentBranch.name)) {
-          con.current = true;
-        }
-      });
-      //@ts-ignore
-      bi.names = Object.values(consolidated);
-      if (graph && graph.nodeDict[bi.target]) {
-        bi.color = colors[graph.nodeDict[bi.target].x_order % colors.length];
-      }
-    });
-    setBranchInfos(branchInfos);
-  };
+      setBranchInfos(branchInfos);
+    };
+
+    updateBranchInfo();
+  }, [commits, graph, currentBranch, refDict, height]);
 
   return (
     <div className="annot-root">

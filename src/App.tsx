@@ -4,7 +4,6 @@ import Sidebar from "./components/Sidebar";
 import Main from "./views/Main";
 import { Provider } from "redux-zero/react";
 import store from "./store/store";
-// import SplitPane, { Pane } from 'react-split-pane';
 import SplitPane from "react-split-pane/lib/SplitPane";
 import Pane from "react-split-pane/lib/Pane";
 import CommitDetail from "./views/CommitDetail";

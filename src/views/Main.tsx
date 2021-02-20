@@ -58,24 +58,6 @@ const Main = (props: MainProps) => {
   const [watch, setWatch] = useState<Boolean>(false);
   const [localRefs, setLocalRefs] = useState<IRefs>(refs);
 
-  useEffect(() => {
-    loadRepo(folder);
-  }, [folder]);
-
-  useEffect(() => {
-    if (!isEqual(localRefs.references, refs.references)) {
-      console.log("!isEqual");
-      setRefs(localRefs);
-    }
-  }, [localRefs]);
-
-  useInterval(() => {
-    if (watch) {
-      watchChanges();
-      getRefs();
-    }
-  }, INTERVAL);
-
   const getRefs = async () => {
     let refs = await Git.getReferences(repo);
     refs.references = refs.references.map((ref: IReference)=> ({
@@ -86,50 +68,56 @@ const Main = (props: MainProps) => {
     setLocalRefs(refs);
   };
 
-  const loadRepo = async (folder: string) => {
-    if (!folder) {
-      return;
-    }
-    try {
-      const repo = await Git.openRepo(folder);
-      setRepo(repo);
-      setCurrentBranch(await Git.getCurrentBranch(repo));
-      setCommit(INITIAL_WIP);
-      setCommits(await Git.getCommits(repo));
-      setWatch(true);
-    } catch (error) {
-      console.warn({ error });
-    }
-  };
-
-  const watchChanges = async () => {
-    if (!repo || commits.length === 0) {
-      return;
-    }
-    let changes = await Git.getStatus(repo);
-    let oldStatus = commit.enabled;
-    let wip = commit;
-    wip.fileSummary = changes.fileSummary;
-    wip.stagedSummary = changes.stagedSummary;
-    wip.unstagedSummary = changes.unstagedSummary;
-    wip.staged = changes.staged;
-    wip.unstaged = changes.unstaged;
-    if (changes.staged.length || changes.unstaged.length) {
-      wip.enabled = true;
-    } else {
-      wip.enabled = false;
-    }
-    setCommit(wip);
-    console.log('setCommit', {wip});
-    if (oldStatus !== wip.enabled) {
-      wip.parents = currentBranch ? [currentBranch.target] : [];
-      if (wip.enabled) {
-        setCommits([wip, ...commits]);
-      } else {
-        // TODO
+  useEffect(() => {
+    const loadRepo = async (folder: string) => {
+      if (!folder) {
+        return;
       }
+      try {
+        const repo = await Git.openRepo(folder);
+        setRepo(repo);
+        setCurrentBranch(await Git.getCurrentBranch(repo));
+        setCommit(INITIAL_WIP);
+        setCommits(await Git.getCommits(repo));
+        setWatch(true);
+      } catch (error) {
+        console.warn({ error });
+      }
+    };
+
+    loadRepo(folder);
+  }, [folder, setCommit, setCommits, setCurrentBranch, setRepo]);
+
+  useEffect(() => {
+    if (!isEqual(localRefs.references, refs.references)) {
+      setRefs(localRefs);
     }
-  };
+  }, [localRefs, refs, setRefs]);
+
+  useInterval(() => {
+    const watchChanges = async () => {
+      if (!repo || commits.length === 0) {
+        return;
+      }
+      let changes = await Git.getStatus(repo);
+      let oldStatus = commit.enabled;
+      let wip = {...commit, ...changes};
+      if (oldStatus !== changes.enabled) {
+        wip.parents = currentBranch ? [currentBranch.target] : [];
+        if (changes.enabled) {
+          setCommits([wip, ...commits]);
+        } else {
+          // TODO
+        }
+      }
+      setCommit(wip);
+    };
+
+    if (watch) {
+      watchChanges();
+      getRefs();
+    }
+  }, INTERVAL);
 
   if (!repo) {
     return <Spinner className="h-full" intent={Intent.PRIMARY} size={100} />;

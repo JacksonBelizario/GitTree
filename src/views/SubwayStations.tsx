@@ -2,7 +2,6 @@ import React from "react";
 import { ICommit } from "../utils/interfaces";
 import { colors } from "../models/Color";
 import { IGraph } from "../models/SubwayMap";
-import { Icon } from "@blueprintjs/core";
 
 import { connect } from "redux-zero/react";
 import { BoundActions } from "redux-zero/types/Actions";
@@ -41,9 +40,6 @@ const SubwayStations = (props: SubwayStationsProps) => {
     return "#000";
   };
 
-  const select = (sha: string) => {
-    setSelectedCommit(sha);
-  };
   return (
     <div className="commit-info-root">
       <div className="commit-info-container">
@@ -51,7 +47,7 @@ const SubwayStations = (props: SubwayStationsProps) => {
           <div
             className="commit-info"
             key={idx}
-            onClick={() => select(commit.sha)}
+            onClick={() => setSelectedCommit(commit.sha)}
             id={"commit-info-" + commit.sha}
           >
             <div

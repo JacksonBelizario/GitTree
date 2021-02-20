@@ -41,20 +41,6 @@ const CommitDetail = (props : CommitDetailProps) => {
 
   const [details, setDetails] = useState<ICommitDetail | IWipCommit>();
 
-  const getCommitDetails = async (repo : IRepo, sha : string) => {
-    if (sha === "workdir") {
-      setDetails(commit);
-    }
-    else if(!!repo && !!sha) {
-      try {
-        const details = await Git.getCommitDetails(repo, sha);
-        setDetails(details);
-      } catch(err) {
-        console.warn({err});
-      }
-    }
-  }
-
   const updateStatus = async () => {
     let changes = await Git.getStatus(repo);
     setCommit({...commit, ...changes});
@@ -77,6 +63,20 @@ const CommitDetail = (props : CommitDetailProps) => {
   }
 
   useEffect(() => {
+    const getCommitDetails = async (repo : IRepo, sha : string) => {
+      if (sha === "workdir") {
+        setDetails(commit);
+      }
+      else if(!!repo && !!sha) {
+        try {
+          const details = await Git.getCommitDetails(repo, sha);
+          setDetails(details);
+        } catch(err) {
+          console.warn({err});
+        }
+      }
+    }
+
     getCommitDetails(repo, sha);
   }, [repo, sha, commit]);
 

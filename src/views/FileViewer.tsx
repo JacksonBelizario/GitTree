@@ -49,30 +49,30 @@ const FileViewer = (props: FileViewerProps) => {
       refractor: refractor,
       language: selectedFile.path && refractor.listLanguages().includes(selectedFile.path.split('.').pop()) ? selectedFile.path.split('.').pop() : 'xml',
       enhancers: [
-          markWord('\r', 'carriage-return'),
-          markWord('\t', 'tab'),
-          markEdits(hunks)
+        markWord('\r', 'carriage-return'),
+        markWord('\t', 'tab'),
+        markEdits(hunks)
       ]
     }), [hunks, selectedFile]);
 
   useEffect(() => {
+    const getFileDetails = async () => {
+      // console.log({repo, selectedFile});
+      if (!repo || !selectedFile.commit || !selectedFile.path) {
+        return;
+      }
+      try {
+        const file = new FileDetails(repo);
+        const hunks = await file.getFileDetail(selectedFile.path, selectedFile.commit, true);
+      
+        setHunks(hunks);
+      } catch (err) {
+        console.log({err});
+      }
+    }
+
     getFileDetails();
   }, [repo, selectedFile]);
-
-  const getFileDetails = async () => {
-    console.log({repo, selectedFile});
-    if (!repo || !selectedFile.commit || !selectedFile.path) {
-      return;
-    }
-    try {
-      const file = new FileDetails(repo);
-      const hunks = await file.getFileDetail(selectedFile.path, selectedFile.commit, true);
-    
-      setHunks(hunks);
-    } catch (err) {
-      console.log({err});
-    }
-  }
 
 
   if (!repo || !selectedFile.commit || !selectedFile.path) {

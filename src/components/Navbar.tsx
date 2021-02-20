@@ -15,7 +15,7 @@ import {
   FiGitBranch as GitBranchIcon,
 } from "react-icons/fi";
 
-import { ICurrentCommit, IReference } from "../utils/interfaces";
+import { ICurrentCommit } from "../utils/interfaces";
 import { connect } from "redux-zero/react";
 import { BoundActions } from "redux-zero/types/Actions";
 import actions from "../store/actions";
