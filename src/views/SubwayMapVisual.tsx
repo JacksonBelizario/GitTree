@@ -110,17 +110,6 @@ const SubwayMapVisual = (props: SubwayMapVisualProps) => {
         let addedToBl = null;
         branchLines.forEach((bl) => {
           if (!node.processed) {
-            // now a bl can be closed if all the commits in there is after this node
-            // let allAfter = bl.nodes.every(bln => nodes.indexOf(bln) > nodes.indexOf(node));
-            // check if any parent is above this node but that node is after this node
-            // let's see if this works better
-            // let parentAbove = bl.nodes.find(bln => {
-            //   if (!bln.commit.parents.length) {
-            //     return false;
-            //   } else {
-            //     return (!bln.commit.parents.every(parent => nodes.indexOf(nodeDict[parent]) > nodes.indexOf(node)) && nodes.indexOf(bln) > nodes.indexOf(node));
-            //   }
-            // });
             //@ts-ignore
             let lastCross = !bl.nodes[bl.nodes.length - 1].commit.parents.every(
               (parent) => {
@@ -152,9 +141,7 @@ const SubwayMapVisual = (props: SubwayMapVisualProps) => {
         branchLines.forEach((bl) => {
           if (!node.processed) {
             //@ts-ignore
-            if (
-              bl.nodes[bl.nodes.length - 1].commit.parents[0] === node.commit.sha
-            ) {
+            if (bl.nodes[bl.nodes.length - 1].commit.parents[0] === node.commit.sha) {
               // else if a bl's last node is it's parent
               // it's impossible for anything other than the last one to be the parent
               // because that whould have been a merge which is processed in special case
@@ -171,7 +158,7 @@ const SubwayMapVisual = (props: SubwayMapVisualProps) => {
         //@ts-ignore
         let parent0 = nodeDict[n.commit.parents[0]];
         let processGrandparent0 = false;
-        if (parent0 && !parent0.processed) {
+        if (parent0 && !parent0.processed && bl) {
           bl.nodes.push(parent0);
           //@ts-ignore
           if (nodeDict[n.commit.parents[0]].commit.parents.length > 1) {
@@ -180,26 +167,9 @@ const SubwayMapVisual = (props: SubwayMapVisualProps) => {
           //@ts-ignore
           nodeDict[n.commit.parents[0]].processed = true;
         }
-        // if there's a second parent, try to place that too
-        //@ts-ignore
-        let parent1 = nodeDict[n.commit.parents[1]];
-        let newbl;
-        let processGrandparent = false;
-        if (parent1 && !parent1.processed) {
-          if (!placeNodeInExisting(parent1)) {
-            if (parent1.commit.parents.length > 1) {
-              processGrandparent = true;
-            }
-            newbl = placeNodeInNewOrClosed(parent1);
-          }
-        }
         if (processGrandparent0) {
           //@ts-ignore
           processParents(nodeDict[n.commit.parents[0]], bl);
-        }
-        if (processGrandparent) {
-          //@ts-ignore
-          processParents(parent1, newbl);
         }
       }
       nodes.forEach((n, i) => {
@@ -220,10 +190,7 @@ const SubwayMapVisual = (props: SubwayMapVisualProps) => {
         //@ts-ignore
         branchLines.forEach((bl) => {
           //@ts-ignore
-          if (
-            bl.nodes[bl.nodes.length - 1].commit.parents.indexOf(currentSha) !==
-            -1
-          ) {
+          if (bl.nodes[bl.nodes.length - 1].commit.parents.indexOf(currentSha) !== -1) {
             bl.open = false;
           }
         });
