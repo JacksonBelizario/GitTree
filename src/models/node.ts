@@ -16,4 +16,9 @@ export class Node {
   constructor(id: string) {
     this.id = id;
   }
+
+  setVertice(x: number, y: number) {
+    this.x = x;
+    this.y = y;
+  }
 }

@@ -36,7 +36,7 @@ const mapToProps = (state: IStore): StoreProps => ({
   commit: state.commit,
 });
 
-const INTERVAL = 5 * 1000;
+const INTERVAL = 2 * 1000;
 
 type MainProps = StoreProps & BoundActions<IStore, typeof actions>;
 
@@ -57,6 +57,7 @@ const Main = (props: MainProps) => {
 
   const [watch, setWatch] = useState<Boolean>(false);
   const [localRefs, setLocalRefs] = useState<IRefs>(refs);
+  const [loading, setLoading] = useState<Boolean>(true);
 
   const getRefs = async () => {
     let refs = await Git.getReferences(repo);
@@ -111,6 +112,7 @@ const Main = (props: MainProps) => {
         }
       }
       setCommit(wip);
+      setLoading(false);
     };
 
     if (watch) {
@@ -119,7 +121,7 @@ const Main = (props: MainProps) => {
     }
   }, INTERVAL);
 
-  if (!repo) {
+  if (!repo || loading) {
     return <Spinner className="h-full" intent={Intent.PRIMARY} size={100} />;
   }
 

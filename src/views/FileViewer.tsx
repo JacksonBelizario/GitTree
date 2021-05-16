@@ -49,9 +49,9 @@ const FileViewer = (props: FileViewerProps) => {
       refractor: refractor,
       language: selectedFile.path && refractor.listLanguages().includes(selectedFile.path.split('.').pop()) ? selectedFile.path.split('.').pop() : 'xml',
       enhancers: [
+        markEdits(hunks, { type: 'block' }),
         markWord('\r', 'carriage-return'),
         markWord('\t', 'tab'),
-        markEdits(hunks)
       ]
     }), [hunks, selectedFile]);
 
@@ -94,10 +94,10 @@ const FileViewer = (props: FileViewerProps) => {
           viewType={viewType}
           diffType={selectedFile.diffType}
           hunks={hunks}
-          tokens={tokens}
+          // tokens={tokens}
           renderToken={renderToken}
         >
-          {hunks => hunks.map(hunk => <Hunk key={hunk.content} hunk={hunk} />)}
+          {hunks => hunks.map((hunk, idx) => <Hunk key={idx} hunk={hunk} />)}
         </Diff>
       </div>
     </div>

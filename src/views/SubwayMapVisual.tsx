@@ -167,7 +167,6 @@ const SubwayMapVisual = (props: SubwayMapVisualProps) => {
       branchLines = branchLines.map((bl, i) => {
         bl.nodes = bl.nodes.map((n) => {
           n.x = _start + i * _offset;
-          //@ts-ignore
           n.color.setHex(colors[i % colors.length]);
           n.x_order = i;
           return n;
