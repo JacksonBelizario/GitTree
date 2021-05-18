@@ -117,7 +117,7 @@ const CommitDetail = (props : CommitDetailProps) => {
             <span className="text-md font-bold mt-2">Unstaged Files</span>
             { details.unstaged.length > 0 && <Button className="self-end" onClick={() => stageAll()}>Stage All</Button> }
           </div>
-          <ListFiles sha={sha} files={details.unstaged} selectedFile={selectedFile} setSelectedFile={setSelectedFile} />
+          <ListFiles sha={'workdir'} files={details.unstaged} selectedFile={selectedFile} setSelectedFile={setSelectedFile} />
         </>
       }
       {
@@ -126,7 +126,7 @@ const CommitDetail = (props : CommitDetailProps) => {
             <span className="text-md font-bold mt-2">Staged Files</span>
             { details.staged.length > 0 && <Button className="self-end" onClick={() => unstageAll()}>Unstage All</Button> }
           </div>
-          <ListFiles sha={sha} files={details.staged} selectedFile={selectedFile} setSelectedFile={setSelectedFile} />
+          <ListFiles sha={'tree'} files={details.staged} selectedFile={selectedFile} setSelectedFile={setSelectedFile} />
         </>
       }
       {

@@ -71,11 +71,12 @@ const FileViewer = (props: FileViewerProps) => {
       }
     }
 
+    setHunks([]);
     getFileDetails();
   }, [repo, selectedFile, fullFile]);
 
 
-  if (!repo || !selectedFile.commit || !selectedFile.path) {
+  if (!repo || !selectedFile.commit || !selectedFile.path || tokens.length === 0) {
     return <></>;
   }
   return (
