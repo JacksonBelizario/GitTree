@@ -11,6 +11,7 @@ import { FiFile as FileIcon } from 'react-icons/fi';
 
 import '../assets/scss/subway-stations.scss'
 import { Author } from "../models/Author";
+import moment from 'moment';
 
 export interface ISubwayStations {
   commits: ICommit[];
@@ -105,6 +106,9 @@ const SubwayStations = (props: SubwayStationsProps) => {
                   <span className="text-muted">Message...</span>
                 )}
                 {commit.message}
+              </div>
+              <div className="ml-2" style={{width: 160}}>
+                {moment(commit.date).format("YYYY-MM-DD HH:mm")}
               </div>
             </div>
           </div>

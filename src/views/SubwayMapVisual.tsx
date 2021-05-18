@@ -37,7 +37,7 @@ const SubwayMapVisual = (props: SubwayMapVisualProps) => {
   const { commits, graph, setGraph } = props;
 
   const [height, setHeight] = useState("100%");
-  const [width] = useState("500px");
+  // const [width] = useState("500px");
 
   React.useEffect(() => {
 
@@ -187,7 +187,7 @@ const SubwayMapVisual = (props: SubwayMapVisualProps) => {
   }, [commits, setGraph]);
 
   return (
-    <div style={{ width, height, flexShrink: 0 }}>
+    <div style={{ /*width, */height, flexShrink: 0 }}>
       <svg width="100%" height="100%">
         <g>
           {graph &&
