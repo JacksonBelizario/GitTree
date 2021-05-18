@@ -161,7 +161,7 @@ export class FileDetails {
         return [{ op: "binary", content: "Binary File Content", oldLineNumber: -1, newLineNumber: -1 }]
       }
       let lines = blob.toString().split(/\r?\n/);
-      if (lines.length > 0 && lines[lines.length -1].content == '\\ No newline at end of file') {
+      if (lines.length > 0 && lines[lines.length -1].content === '\\ No newline at end of file') {
         lines.pop();
       }
       let hunkLike = lines.map((l, index) => {
@@ -204,10 +204,10 @@ export class FileDetails {
    * @returns 
    */
   removeEOL(result) {
-    if (result.length == 0 || result[result.length -1].changes.length == 0) {
+    if (result.length === 0 || result[result.length -1].changes.length === 0) {
       return;
     }
-    if (result[result.length -1].changes[result[result.length -1].changes.length -1].content == '\\ No newline at end of file') {
+    if (result[result.length -1].changes[result[result.length -1].changes.length -1].content === '\\ No newline at end of file') {
       result[result.length -1].changes.pop();
     }
   }

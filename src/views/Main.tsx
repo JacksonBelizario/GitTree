@@ -52,7 +52,8 @@ const Main = (props: MainProps) => {
     commits,
     setCommits,
     commit,
-    setCommit
+    setCommit,
+    setSelectedCommit
   } = props;
 
   const [watch, setWatch] = useState<Boolean>(false);
@@ -75,10 +76,14 @@ const Main = (props: MainProps) => {
         return;
       }
       try {
+        setLoading(true);
+        setCommits([]);
+        setCommit(INITIAL_WIP);
+        setSelectedCommit(INITIAL_WIP.sha);
+
         const repo = await Git.openRepo(folder);
         setRepo(repo);
         setCurrentBranch(await Git.getCurrentBranch(repo));
-        setCommit(INITIAL_WIP);
         setCommits(await Git.getCommits(repo));
         setWatch(true);
       } catch (error) {
@@ -87,7 +92,7 @@ const Main = (props: MainProps) => {
     };
 
     loadRepo(folder);
-  }, [folder, setCommit, setCommits, setCurrentBranch, setRepo]);
+  }, [folder, setCommit, setCommits, setCurrentBranch, setRepo, setSelectedCommit]);
 
   useEffect(() => {
     if (!isEqual(localRefs.references, refs.references)) {
@@ -106,13 +111,14 @@ const Main = (props: MainProps) => {
       if (oldStatus !== changes.enabled) {
         wip.parents = currentBranch ? [currentBranch.target] : [];
         if (changes.enabled) {
+          setLoading(true);
           setCommits([wip, ...commits]);
         } else {
-          // TODO
+          // setCommits(commits);
         }
       }
       setCommit(wip);
-      setLoading(false);
+      setTimeout(() => setLoading(false), 1000);
     };
 
     if (watch) {
