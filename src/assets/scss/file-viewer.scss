@@ -28,8 +28,9 @@
 .file-viewer {
   // background-color: #2e303c;
   background-color: var(--bg-secondary);
+  font-size: 12px;
   .diff-viewer {
-    height: calc(100vh - 80px);
+    height: calc(100vh - 107px);
   }
 }
 

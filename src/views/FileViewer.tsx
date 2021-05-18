@@ -11,7 +11,7 @@ import { FileDetails } from '../utils/file';
 import { Button, ButtonGroup } from '@blueprintjs/core';
 
 import '../assets/scss/file-viewer.scss'
-import { FiColumns, FiList } from 'react-icons/fi';
+import { FiColumns, FiList, FiFileText } from 'react-icons/fi';
 
 const renderToken = (token, defaultRender, i) => {
   switch (token.type) {
@@ -42,6 +42,7 @@ const FileViewer = (props: FileViewerProps) => {
   const { repo, selectedFile, setSelectedFile } = props;
   const [hunks, setHunks] = useState([]);
   const [viewType, setViewTipe] = useState<'unified' | 'split'>('split');
+  const [fullFile, setFullFile] = useState<boolean>(true);
   
   const tokens = useMemo(() =>
     tokenize(hunks, {
@@ -50,20 +51,19 @@ const FileViewer = (props: FileViewerProps) => {
       language: selectedFile.path && refractor.listLanguages().includes(selectedFile.path.split('.').pop()) ? selectedFile.path.split('.').pop() : 'xml',
       enhancers: [
         markEdits(hunks, { type: 'block' }),
-        markWord('\r', 'carriage-return'),
-        markWord('\t', 'tab'),
+        markWord('\r\n', 'carriage-return', '␍'),
+        markWord('\t', 'tab', '→'),
       ]
     }), [hunks, selectedFile]);
 
   useEffect(() => {
     const getFileDetails = async () => {
-      // console.log({repo, selectedFile});
       if (!repo || !selectedFile.commit || !selectedFile.path) {
         return;
       }
       try {
         const file = new FileDetails(repo);
-        const hunks = await file.getFileDetail(selectedFile.path, selectedFile.commit, true);
+        const hunks = await file.getFileDetail(selectedFile.path, selectedFile.commit, fullFile);
       
         setHunks(hunks);
       } catch (err) {
@@ -72,7 +72,7 @@ const FileViewer = (props: FileViewerProps) => {
     }
 
     getFileDetails();
-  }, [repo, selectedFile]);
+  }, [repo, selectedFile, fullFile]);
 
 
   if (!repo || !selectedFile.commit || !selectedFile.path) {
@@ -83,8 +83,9 @@ const FileViewer = (props: FileViewerProps) => {
       <div className="flex justify-center space-x-4">
         <div className="flex-1 flex justify-center">
           <ButtonGroup >
-            <Button icon={<FiColumns />} active={viewType === "split"} onClick={() => setViewTipe("split")} />
-            <Button icon={<FiList />} active={viewType === "unified"} onClick={() => setViewTipe("unified")} />
+            <Button icon={<FiColumns />} active={viewType === "split" && fullFile} onClick={() => {setViewTipe("split"); setFullFile(true)}} />
+            <Button icon={<FiFileText />} active={viewType === "unified" && fullFile} onClick={() => {setViewTipe("unified"); setFullFile(true)}} />
+            <Button icon={<FiList />} active={viewType === "unified" && !fullFile} onClick={() => {setViewTipe("unified"); setFullFile(false)}} />
           </ButtonGroup>
         </div>
         <Button className="self-end" onClick={() => setSelectedFile({commit: null, path: null, diffType: null})} >X</Button>
@@ -94,7 +95,7 @@ const FileViewer = (props: FileViewerProps) => {
           viewType={viewType}
           diffType={selectedFile.diffType}
           hunks={hunks}
-          // tokens={tokens}
+          tokens={tokens}
           renderToken={renderToken}
         >
           {hunks => hunks.map((hunk, idx) => <Hunk key={idx} hunk={hunk} />)}
