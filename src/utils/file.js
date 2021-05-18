@@ -86,15 +86,8 @@ export class FileDetails {
       })
     }
     if (!fullFile) {
-      // Carriage-return is getting wrong on diff view with highlight
-      // then let's remove
-      return result.map(hunk => {
-        hunk.changes = hunk.changes.map(line => {
-          line.content = line.content.replace(/(\r\n|\n|\r)/gm, "");
-          return line;
-        })
-        return hunk;
-      });
+      this.removeEOL(result);
+      return this.removeCarriageReturn(result);
     }
     let hunkLikeLines = await this.getFileLines(commit, path);
     for (let j = 0; j < result.length; j++) {
@@ -119,15 +112,8 @@ export class FileDetails {
     }
     
     if (hunkLikeLines.length === 0) {
-      // Carriage-return is getting wrong on diff view with highlight
-      // then let's remove
-      return result.map(hunk => {
-        hunk.changes = hunk.changes.map(line => {
-          line.content = line.content.replace(/(\r\n|\n|\r)/gm, "");
-          return line;
-        })
-        return hunk;
-      });
+      this.removeEOL(result);
+      return this.removeCarriageReturn(result);
     }
 
     let oldLineNumber = 1;
@@ -175,6 +161,9 @@ export class FileDetails {
         return [{ op: "binary", content: "Binary File Content", oldLineNumber: -1, newLineNumber: -1 }]
       }
       let lines = blob.toString().split(/\r?\n/);
+      if (lines.length > 0 && lines[lines.length -1].content == '\\ No newline at end of file') {
+        lines.pop();
+      }
       let hunkLike = lines.map((l, index) => {
         return {
           op: " ",
@@ -207,5 +196,35 @@ export class FileDetails {
     for (const patch of patches) {
       console.log(patch.newFile().path());
     }
+  }
+  
+  /**
+   * remove 'No newline at end of file' warning
+   * @param {*} result 
+   * @returns 
+   */
+  removeEOL(result) {
+    if (result.length == 0 || result[result.length -1].changes.length == 0) {
+      return;
+    }
+    if (result[result.length -1].changes[result[result.length -1].changes.length -1].content == '\\ No newline at end of file') {
+      result[result.length -1].changes.pop();
+    }
+  }
+
+  /**
+   * Carriage-return is getting wrong on diff view with highlight
+   * then let's remove
+   * @param {*} result 
+   * @returns 
+   */
+  removeCarriageReturn(result) {
+    return result.map(hunk => {
+      hunk.changes = hunk.changes.map(line => {
+        line.content = line.content.replace(/(\r\n|\n|\r)/gm, "");
+        return line;
+      })
+      return hunk;
+    })
   }
 }
