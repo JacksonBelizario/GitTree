@@ -6,27 +6,32 @@ export class FileDetails {
     this.Repo = Repo;
   }
 
-  async getFileDetail(path, commit, fullFile = false) {
+  async getFileDetail(path, commit, fullFile = false, ignoreWhiteSpaces = true) {
+    let diffOptions = {
+      flags: NodeGit.Diff.OPTION.NORMAL
+    };
+    if (ignoreWhiteSpaces) {
+      diffOptions.flags |= NodeGit.Diff.OPTION.IGNORE_WHITESPACE | NodeGit.Diff.OPTION.IGNORE_WHITESPACE_CHANGE | NodeGit.Diff.OPTION.IGNORE_WHITESPACE_EOL
+    }
     if (commit === 'tree') {
       let index = await this.Repo.index();
       let cmt = await this.Repo.getHeadCommit();
       let tree = await cmt.getTree();
       try {
-        let diff = await NodeGit.Diff.treeToIndex(this.Repo, tree, index);
+        let diff = await NodeGit.Diff.treeToIndex(this.Repo, tree, index, diffOptions);
         return this.processDiff(diff, path, commit, fullFile);
       } catch(err) {
-        let diff = await NodeGit.Diff.treeToIndex(this.Repo, null, index);
+        let diff = await NodeGit.Diff.treeToIndex(this.Repo, null, index, diffOptions);
         return this.processDiff(diff, path, commit, fullFile);
       }
     } else if (commit === 'workdir') {
       let index = await this.Repo.index();
-      let diff = await NodeGit.Diff.indexToWorkdir(this.Repo, index, {
-        flags: NodeGit.Diff.OPTION.SHOW_UNTRACKED_CONTENT | NodeGit.Diff.OPTION.RECURSE_UNTRACKED_DIRS
-      });
+      diffOptions.flags |= NodeGit.Diff.OPTION.SHOW_UNTRACKED_CONTENT | NodeGit.Diff.OPTION.RECURSE_UNTRACKED_DIRS;
+      let diff = await NodeGit.Diff.indexToWorkdir(this.Repo, index, diffOptions);
       return this.processDiff(diff, path, commit, fullFile);
     } else {
       let x = await this.Repo.getCommit(commit);
-      let [diff] = await x.getDiff();
+      let [diff] = await x.getDiffWithOptions(diffOptions);
       return this.processDiff(diff, path, commit, fullFile);
     }
   }
@@ -142,13 +147,16 @@ export class FileDetails {
       return line;
     });
 
+    const oldLines = hunkLikeLines[hunkLikeLines.length - 1].oldLineNumber;
+    const newLines = hunkLikeLines[hunkLikeLines.length - 1].newLineNumber;
+
     return [{
       changes: hunkLikeLines,
       newStart: 1,
       oldStart: 1,
-      oldLines: hunkLikeLines[hunkLikeLines.length - 1].oldLineNumber,
-      newLines: hunkLikeLines[hunkLikeLines.length - 1].newLineNumber,
-      content: '-',
+      oldLines,
+      newLines,
+      content: `@@ -1,${oldLines} +1,${newLines} @@`,
     }];
   }
 
@@ -183,6 +191,21 @@ export class FileDetails {
       return hunkLike;
     } catch(err) {
       return Promise.resolve([]);
+    }
+  }
+
+  async getDiffBetween(fromCommitSHA, toCommitSHA) {
+    const from = await this.Repo.getCommit(fromCommitSHA);
+    const fromTree = await from.getTree();
+
+    const to = await this.Repo.getCommit(toCommitSHA);
+    const toTree = await to.getTree();
+
+    const diff = await toTree.diff(fromTree);
+    const patches = await diff.patches();
+
+    for (const patch of patches) {
+      console.log(patch.newFile().path());
     }
   }
 }

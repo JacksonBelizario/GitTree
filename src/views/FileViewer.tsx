@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import refractor from 'refractor';
-import {Diff, Hunk, tokenize, markWord, markEdits} from 'react-diff-view';
+import {Diff, Hunk, Decoration, tokenize, markWord, markEdits} from 'react-diff-view';
 import { IStore } from '../store/store';
 import { ISelectedFile, IRepo } from '../utils/interfaces';
 import { BoundActions } from 'redux-zero/types';
@@ -26,6 +26,13 @@ const renderToken = (token, defaultRender, i) => {
   }
 };
 
+const renderHunk = (hunk) => [
+  <Decoration key={'decoration-' + hunk.content}>
+      {hunk.content}
+  </Decoration>,
+  <Hunk key={'hunk-' + hunk.content} hunk={hunk} />
+];
+
 interface StoreProps {
   repo: IRepo;
   selectedFile: ISelectedFile;
@@ -41,8 +48,8 @@ type FileViewerProps = StoreProps & BoundActions<IStore, typeof actions>;
 const FileViewer = (props: FileViewerProps) => {
   const { repo, selectedFile, setSelectedFile } = props;
   const [hunks, setHunks] = useState([]);
-  const [viewType, setViewTipe] = useState<'unified' | 'split'>('split');
-  const [fullFile, setFullFile] = useState<boolean>(true);
+  const [viewType, setViewTipe] = useState<'unified' | 'split'>('unified');
+  const [fullFile, setFullFile] = useState<boolean>(false);
   
   const tokens = useMemo(() =>
     tokenize(hunks, {
@@ -99,7 +106,7 @@ const FileViewer = (props: FileViewerProps) => {
           tokens={tokens}
           renderToken={renderToken}
         >
-          {hunks => hunks.map((hunk, idx) => <Hunk key={idx} hunk={hunk} />)}
+          {hunks => hunks.flatMap(renderHunk)}
         </Diff>
       </div>
     </div>
