@@ -2,7 +2,7 @@ import createStore from "redux-zero";
 import { applyMiddleware } from "redux-zero/middleware";
 import storage from "localforage";
 import { IGraph } from "../models/SubwayMap";
-import { IRepo, ICommit, ICurrentCommit, IRefs, ISelectedFile, IWipCommit } from "../utils/interfaces";
+import { IRepo, ICommit, ICurrentCommit, IRefs, ISelectedFile, IWipCommit, ISettings } from "../utils/interfaces";
 import { INITIAL_WIP } from "../utils";
 
 const persist = require("redux-zero-persist");
@@ -29,7 +29,8 @@ export interface IStore {
   commits: ICommit[];
   commit: IWipCommit;
   refs: IRefs;
-  selectedFile: ISelectedFile
+  selectedFile: ISelectedFile,
+  settings: ISettings
 }
 
 const initialState: IStore = {
@@ -45,6 +46,21 @@ const initialState: IStore = {
     commit: null,
     path: null,
     diffType: null
+  },
+  settings: {
+    show: false,
+    general: {
+      fetchInterval: 5
+    },
+    auth: {
+      username: '',
+      password: '',
+      useSshLocalAgent: true,
+      sshPrivateKey: '',
+      sshPrivateContent: '',
+      sshPublicKey: '',
+      sshPublicContent: ''
+    }
   }
 };
 

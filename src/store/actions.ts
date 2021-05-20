@@ -28,7 +28,23 @@ const actions = (store: any) => ({
       selectedCommit: sha,
     };
   },
-  setSelectedFile: (state: IStore, selectedFile: ISelectedFile) => ({selectedFile})
+  setSelectedFile: (state: IStore, selectedFile: ISelectedFile) => ({selectedFile}),
+  setSettings: (state: IStore, settings: object) => {
+    return {
+      settings: {
+        ...state.settings,
+        ...settings
+      }
+    }
+  },
+  setShowSettings: (state: IStore, show: boolean) => {
+    return {
+      settings: {
+        ...state.settings,
+        show
+      }
+    }
+  }
 });
 
 export default actions;

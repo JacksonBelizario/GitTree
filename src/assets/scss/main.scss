@@ -58,6 +58,11 @@ $footer-size: 77px;
     overflow-y: auto;
     overflow-x: hidden;
   }
+
+  .settings {
+    background-color: var(--bg-secondary);
+    color: #ddd;
+  }
 }
 
 .footer {
@@ -110,6 +115,12 @@ $footer-size: 77px;
 
 .ps__thumb-y {
   background: var(--gray);
+}
+
+.grow, .spacer {
+  -webkit-box-flex: 1!important;
+  -ms-flex-positive: 1!important;
+  flex-grow: 1!important;
 }
 
 @import "resizer.scss";

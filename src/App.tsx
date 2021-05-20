@@ -10,6 +10,7 @@ import "./assets/main.css";
 import "./assets/scss/main.scss";
 import CommitDetail from "./views/CommitDetail";
 import FileViewer from "./views/FileViewer";
+import Settings from "./views/Settings";
 import Footer from "./components/Footer";
 import { IStore } from './store/store';
 import { ISelectedFile } from './utils/interfaces';
@@ -25,7 +26,7 @@ const App = (props: StoreProps) => {
   return (
     <div className="bp3-dark flex flex-col h-screen">
       <Navbar />
-      <div className="main-layout flex-1">
+      <div className="main-layout flex-1 relative">
         <SplitPane split="vertical">
           <Pane
             className={`sidebar ${props.selectedFile.path ? "hidden" : ""}`}
@@ -43,6 +44,7 @@ const App = (props: StoreProps) => {
             <CommitDetail />
           </Pane>
         </SplitPane>
+        <Settings />
       </div>
       <Footer />
     </div>

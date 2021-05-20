@@ -1,4 +1,6 @@
 import NodeGit from "nodegit"
+import { isSSH } from "./index"
+import { IAuth } from "./interfaces";
 
 const openRepo = async (folder) => {
   return await NodeGit.Repository.open(folder);
@@ -300,6 +302,26 @@ const unstageAll = async (Repo, paths) => {
   await NodeGit.Reset.default(Repo, commit, paths);
 }
 
+const fetchAll = async (Repo, auth: IAuth) => {
+  return await Repo.fetchAll({
+    callbacks: {
+      credentials: function (url, userName) {
+        console.info('Repository fetchAll, using url and userName', {url, userName});
+        if (isSSH(url)) {
+          if (auth.useSshLocalAgent) {
+            return NodeGit.Cred.sshKeyFromAgent(userName);
+          }
+          return NodeGit.Cred.sshKeyMemoryNew(userName, auth.sshPublicContent, auth.sshPrivateContent, auth.password)
+        }
+        return NodeGit.Cred.userpassPlaintextNew(auth.username, auth.password);
+      },
+      certificateCheck: function () {
+          return 1;
+      }
+    }
+  });
+}
+
 export default {
   openRepo,
   getCommits,
@@ -311,4 +333,5 @@ export default {
   getCommitDetails,
   stageAll,
   unstageAll,
+  fetchAll,
 };

@@ -13,9 +13,10 @@ import {
   FiFolderPlus as FolderIcon,
   FiBook as BookIcon,
   FiGitBranch as GitBranchIcon,
+  FiSettings as SettingsIcon,
 } from "react-icons/fi";
 
-import { ICurrentCommit } from "../utils/interfaces";
+import { ICurrentCommit, ISettings } from "../utils/interfaces";
 import { connect } from "redux-zero/react";
 import { BoundActions } from "redux-zero/types/Actions";
 import actions from "../store/actions";
@@ -26,17 +27,19 @@ const { dialog } = window.require("electron").remote;
 interface StoreProps {
   folder: string;
   currentBranch: ICurrentCommit | null;
+  settings: ISettings
 }
 
 const mapToProps = (state: IStore): StoreProps => ({
   folder: state.folder,
   currentBranch: state.currentBranch,
+  settings: state.settings,
 });
 
 type NavProps = StoreProps & BoundActions<IStore, typeof actions>;
 
 const Nav = (props: NavProps) => {
-  const { folder, setFolder, currentBranch } = props;
+  const { folder, setFolder, currentBranch, setShowSettings, settings: {show: showSettings} } = props;
 
   const selectFolder = async () => {
     try {
@@ -78,6 +81,13 @@ const Nav = (props: NavProps) => {
             {currentBranch.name}
           </Tag>
         )}
+      </NavbarGroup>
+      <NavbarGroup align={Alignment.RIGHT}>
+        <Button
+          className={Classes.MINIMAL}
+          icon={<SettingsIcon size={20} />}
+          onClick={() => setShowSettings(!showSettings)}
+        />
       </NavbarGroup>
     </Navbar>
   );

@@ -95,3 +95,21 @@ export interface ISelectedFile {
   path: string;
   diffType: 'add' | 'delete' | 'modify' | 'rename' | 'copy';
 }
+
+export interface IAuth {
+  username: string,
+  password: string,
+  useSshLocalAgent: boolean,
+  sshPrivateKey: string,
+  sshPrivateContent: string,
+  sshPublicKey: string,
+  sshPublicContent: string,
+}
+
+export interface ISettings {
+  show: boolean,
+  general: {
+    fetchInterval: number,
+  },
+  auth: IAuth
+}

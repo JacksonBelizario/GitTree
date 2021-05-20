@@ -11,7 +11,7 @@ import actions from "../store/actions";
 import { isEqual } from "lodash";
 
 import Git from "../utils/git";
-import { IRepo, ICommit, ICurrentCommit, IRefs, IReference, IWipCommit } from "../utils/interfaces";
+import { IRepo, ICommit, ICurrentCommit, IRefs, IReference, IWipCommit, ISettings } from "../utils/interfaces";
 
 import "react-perfect-scrollbar/dist/css/styles.css";
 import MapSeparator from "./MapSeparator";
@@ -25,6 +25,7 @@ interface StoreProps {
   currentBranch: ICurrentCommit | null;
   commits: ICommit[];
   commit: IWipCommit;
+  settings: ISettings
 }
 
 const mapToProps = (state: IStore): StoreProps => ({
@@ -34,9 +35,11 @@ const mapToProps = (state: IStore): StoreProps => ({
   currentBranch: state.currentBranch,
   refs: state.refs,
   commit: state.commit,
+  settings: state.settings,
 });
 
-const INTERVAL = 2 * 1000;
+const ONE_SECOND = 1000;
+const INTERVAL = 2 * ONE_SECOND;
 
 type MainProps = StoreProps & BoundActions<IStore, typeof actions>;
 
@@ -53,7 +56,11 @@ const Main = (props: MainProps) => {
     setCommits,
     commit,
     setCommit,
-    setSelectedCommit
+    setSelectedCommit,
+    settings: {
+      general: {fetchInterval},
+      auth
+    }
   } = props;
 
   const [watch, setWatch] = useState<Boolean>(false);
@@ -126,6 +133,18 @@ const Main = (props: MainProps) => {
       getRefs();
     }
   }, INTERVAL);
+
+  // useInterval(() => {
+  //   const fetch = async () => {
+  //     if (!repo) {
+  //       return;
+  //     }
+  //     const res = await Git.fetchAll(repo, auth);
+  //     console.log({res, auth})
+  //   };
+
+  //   fetch();
+  // }, fetchInterval * ONE_SECOND);
 
   if (!repo || loading) {
     return <Spinner className="h-full" intent={Intent.PRIMARY} size={100} />;
