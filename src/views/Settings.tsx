@@ -101,7 +101,7 @@ const Settings = (props: SerringsProps) => {
             />
           </span>
           <span style={{display: 'block', width: 500, marginBottom: 10}}>
-            <H6>SSH Private Key</H6>
+            <H6>SSH Public Key</H6>
             <InputGroup
                 large={true}
                 disabled={auth.useSshLocalAgent}

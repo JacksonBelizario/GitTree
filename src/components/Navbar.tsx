@@ -3,6 +3,7 @@ import {
   Alignment,
   Button,
   Classes,
+  Intent,
   Navbar,
   NavbarDivider,
   NavbarGroup,
@@ -16,21 +17,28 @@ import {
   FiSettings as SettingsIcon,
 } from "react-icons/fi";
 
-import { ICurrentCommit, ISettings } from "../utils/interfaces";
+import Git from "../utils/git";
+import { useInterval } from "../utils/hooks";
+import { IRepo, ICurrentCommit, ISettings } from "../utils/interfaces";
 import { connect } from "redux-zero/react";
 import { BoundActions } from "redux-zero/types/Actions";
 import actions from "../store/actions";
 import { IStore } from "../store/store";
+import { AppToaster } from "../utils/toaster";
 
 const { dialog } = window.require("electron").remote;
 
+const ONE_SECOND = 1000;
+
 interface StoreProps {
+  repo: IRepo;
   folder: string;
   currentBranch: ICurrentCommit | null;
   settings: ISettings
 }
 
 const mapToProps = (state: IStore): StoreProps => ({
+  repo: state.repo,
   folder: state.folder,
   currentBranch: state.currentBranch,
   settings: state.settings,
@@ -39,7 +47,18 @@ const mapToProps = (state: IStore): StoreProps => ({
 type NavProps = StoreProps & BoundActions<IStore, typeof actions>;
 
 const Nav = (props: NavProps) => {
-  const { folder, setFolder, currentBranch, setShowSettings, settings: {show: showSettings} } = props;
+  const {
+    repo,
+    folder,
+    setFolder,
+    currentBranch,
+    setShowSettings,
+    settings: {
+      show: showSettings,
+      general: { fetchInterval },
+      auth
+    }
+  } = props;
 
   const selectFolder = async () => {
     try {
@@ -51,6 +70,31 @@ const Nav = (props: NavProps) => {
       console.log({ error });
     }
   };
+
+  useInterval(() => {
+    const fetch = async () => {
+      if (!repo || showSettings) {
+        return;
+      }
+      try {
+        await Git.fetchAll(repo, auth);
+      }
+      catch(err) {
+        AppToaster.show({
+          icon: "warning-sign",
+          intent: Intent.WARNING,
+          message: <span>Error to fetch remotes<br />{err.message}</span>,
+          action: {
+              onClick: () => setShowSettings(true),
+              text: "Settings",
+          },
+        })
+      }
+    };
+
+    fetch();
+  }, fetchInterval * ONE_SECOND);
+
   return (
     <Navbar>
       <NavbarGroup align={Alignment.LEFT}>

@@ -57,10 +57,6 @@ const Main = (props: MainProps) => {
     commit,
     setCommit,
     setSelectedCommit,
-    settings: {
-      general: {fetchInterval},
-      auth
-    }
   } = props;
 
   const [watch, setWatch] = useState<Boolean>(false);
@@ -133,18 +129,6 @@ const Main = (props: MainProps) => {
       getRefs();
     }
   }, INTERVAL);
-
-  // useInterval(() => {
-  //   const fetch = async () => {
-  //     if (!repo) {
-  //       return;
-  //     }
-  //     const res = await Git.fetchAll(repo, auth);
-  //     console.log({res, auth})
-  //   };
-
-  //   fetch();
-  // }, fetchInterval * ONE_SECOND);
 
   if (!repo || loading) {
     return <Spinner className="h-full" intent={Intent.PRIMARY} size={100} />;
