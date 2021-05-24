@@ -302,24 +302,47 @@ const unstageAll = async (Repo, paths) => {
   await NodeGit.Reset.default(Repo, commit, paths);
 }
 
-const fetchAll = async (Repo, auth: IAuth) => {
-  return await Repo.fetchAll({
-    callbacks: {
-      credentials: function (url, userName) {
-        console.info('Repository fetchAll, using url and userName', {url, userName});
-        if (isSSH(url)) {
-          if (auth.useSshLocalAgent) {
-            return NodeGit.Cred.sshKeyFromAgent(userName);
-          }
-          return NodeGit.Cred.sshKeyMemoryNew(userName, auth.sshPublicContent, auth.sshPrivateContent, auth.password)
+const repoCallbacks = (auth) => {
+  return {
+    credentials: (url, userName) => {
+      if (isSSH(url)) {
+        if (auth.useSshLocalAgent) {
+          return NodeGit.Cred.sshKeyFromAgent(userName);
         }
-        return NodeGit.Cred.userpassPlaintextNew(auth.username, auth.password);
-      },
-      certificateCheck: function () {
-          return 1;
+        return NodeGit.Cred.sshKeyMemoryNew(userName, auth.sshPublicContent, auth.sshPrivateContent, auth.password)
       }
-    }
-  });
+      return NodeGit.Cred.userpassPlaintextNew(auth.username, auth.password);
+    },
+    certificateCheck: () => 1
+  }
+}
+
+const fetchAll = async (Repo, auth: IAuth) => {
+  return await Repo.fetchAll(repoCallbacks(auth));
+}
+
+const getCurrentFirstRemote = async (Repo) => {
+  const [firstRemote] = await Repo.getRemotes();
+  if (!firstRemote) {
+    return Promise.reject('NO_REMOTE');
+  }
+  return firstRemote;
+}
+
+const fetch = async (Repo, auth: IAuth) => {
+  const remote = await getCurrentFirstRemote(Repo);
+  return await Repo.fetch(remote, repoCallbacks(auth));
+}
+
+export const pull = async (Repo, origin, branch, auth) => {
+  await Repo.fetch(origin, repoCallbacks(auth));
+  return Repo.mergeBranches(branch, `${origin}/${branch}`)
+}
+
+export const push = async (repo, origin, branches, auth) => {
+  const remote = await repo.getRemote(origin);
+  const refs = branches.map((branch) => `${branch.path}:${branch.path}`);
+  return remote.push(refs, repoCallbacks(auth))
 }
 
 export default {
@@ -334,4 +357,7 @@ export default {
   stageAll,
   unstageAll,
   fetchAll,
+  fetch,
+  pull,
+  push,
 };
