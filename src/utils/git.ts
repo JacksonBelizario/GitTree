@@ -304,16 +304,18 @@ const unstageAll = async (Repo, paths) => {
 
 const repoCallbacks = (auth) => {
   return {
-    credentials: (url, userName) => {
-      if (isSSH(url)) {
-        if (auth.useSshLocalAgent) {
-          return NodeGit.Cred.sshKeyFromAgent(userName);
+    callbacks: {
+      credentials: (url, userName) => {
+        if (isSSH(url)) {
+          if (auth.useSshLocalAgent) {
+            return NodeGit.Cred.sshKeyFromAgent(userName);
+          }
+          return NodeGit.Cred.sshKeyMemoryNew(userName, auth.sshPublicContent, auth.sshPrivateContent, auth.password)
         }
-        return NodeGit.Cred.sshKeyMemoryNew(userName, auth.sshPublicContent, auth.sshPrivateContent, auth.password)
-      }
-      return NodeGit.Cred.userpassPlaintextNew(auth.username, auth.password);
-    },
-    certificateCheck: () => 1
+        return NodeGit.Cred.userpassPlaintextNew(auth.username, auth.password);
+      },
+      certificateCheck: () => 1
+    }
   }
 }
 
