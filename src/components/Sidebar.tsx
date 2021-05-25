@@ -70,13 +70,13 @@ const Sidebar = (props: SidebarProps) => {
   const [showSubmodules, setShowSubmodules] = useState<boolean>(true);
   const [submodules, setSubmodules] = useState<any[]>([]);
 
-  const getSubmodules = async (Repo: any) => {
-    if (Repo && Repo.getSubmodules) {
-      setSubmodules(await Repo.getSubmodules());
-    }
-  };
-
   useEffect(() => {
+    const getSubmodules = async (Repo: any) => {
+      if (Repo && Repo.getSubmodules) {
+        setSubmodules(await Repo.getSubmodules());
+      }
+    };
+
     getSubmodules(repo);
   }, [repo]);
 

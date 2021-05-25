@@ -146,22 +146,57 @@ const getCurrentBranch = async (Repo) => {
   }
 };
 
+const compareCommits = async (Repo, firstSHA, secondSHA) => {
+
+  let [localCommit, remoteCommit] = await Promise.all([
+    Repo.getCommit(firstSHA),
+    Repo.getCommit(secondSHA)
+  ]);
+  
+  let [firstTree, secondTree] = await Promise.all([
+    localCommit.getTree(),
+    remoteCommit.getTree()
+  ]);
+
+  // return await NodeGit.Diff.treeToTree(Repo, ref.getTree(), matching.getTree());
+  return await firstTree.diff(secondTree);
+}
+
+const getRefsChanges = async (Repo, refs, currentBranch) => {
+  let remoteRefs = refs.filter((_) => _.isRemote);
+
+  let res = [];
+  await refs.forEach(async (ref) => {
+    if (ref.isBranch) {
+      let remoteRefWithDiff = remoteRefs.find(remoteRef => remoteRef.shorthand.indexOf(ref.shorthand) !== -1 && remoteRefs.target !== ref.target);
+      if (remoteRefWithDiff) {
+        const res = await compareCommits(Repo, ref.target, remoteRefWithDiff.target);
+        const filesChanged = res.numDeltas();
+        // var stats = await res.getStats();
+        // console.log({
+        //   filesChanged: stats.filesChanged(),
+        //   deletions: stats.deletions(),
+        //   insertions: stats.insertions(),
+        // })
+        console.log({filesChanged});
+        ref.diff = filesChanged;
+      }
+    }
+    ref.current = ref.display.includes(currentBranch)
+    res.push(ref)
+  });
+
+  return res;
+}
+
 const getReferences = async (Repo) => {
   try {
     let refs = await Repo.getReferences();
     refs = refs.filter((_) => _.shorthand() !== "stash");
-    let remoteRefs = refs.filter((_) => _.isRemote());
-    let localRefs = refs.filter((_) => _.isBranch());
-    localRefs.forEach((localR) => {
-      let matching = remoteRefs.filter(
-        (ref) => ref.shorthand().indexOf(localR.shorthand()) !== -1
-      );
-      if (matching.length) {
-        localR.diff = localR.cmp(matching[0]);
-      }
-    });
 
-    let references = refs.map((ref) => {
+    const commits = refs.map(o => o.target().toString()).join(',');
+
+    let references = refs.map(ref => {
       let display = "";
       if (ref.isBranch()) {
         display = ref.shorthand();
@@ -178,7 +213,9 @@ const getReferences = async (Repo) => {
         isTag: ref.isTag(),
         name: ref.name(),
         shorthand: ref.shorthand(),
-        display: display,
+        display,
+        diff: 0,
+        current: false
       };
     });
     let refDict = {};
@@ -189,10 +226,10 @@ const getReferences = async (Repo) => {
         refDict[ref.target] = [ref];
       }
     });
-    return { references: references, refDict: refDict };
+    return { references, refDict, commits };
   } catch (err) {
     console.warn("getReferences", { err });
-    return { references: [], refDict: null };
+    return { references: [], refDict: null, commits: '' };
   }
 };
 
@@ -353,6 +390,7 @@ export default {
   getStatus,
   getCurrentBranch,
   getReferences,
+  getRefsChanges,
   getSubmodules,
   // getSubmoduleDetails,
   getCommitDetails,

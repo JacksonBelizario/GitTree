@@ -13,7 +13,6 @@ import {
   FiFolder as FolderIcon,
   FiGitBranch as GitBranchIcon
 } from "react-icons/fi";
-import { MdCheckBox as CheckBoxIcon } from "react-icons/md"
 import { IReference } from "../utils/interfaces";
 
 declare interface IFolder {
@@ -22,6 +21,7 @@ declare interface IFolder {
   childNodes: IFolder[];
   secondaryLabel?: string | JSX.Element | null;
   icon?: any;
+  isSelected?: boolean;
 }
 
 const buildList = (branchs: IReference[]) => {
@@ -53,7 +53,8 @@ function placeBranchInFolder(
         id: `${folder.id}_${folder.childNodes.length}`,
         label: paths[0],
         icon: <GitBranchIcon size={15} style={{ marginRight: "10px" }} />,
-        secondaryLabel: branch.current ? <CheckBoxIcon size={20} color={'#62C122'} /> : null,
+        isSelected: !!branch.current,
+        secondaryLabel: branch.diff ? <div style={{fontSize: 11}}>{branch.diff}</div> : null,
         ...branch,
       });
       folder.childNodes.sort(order);

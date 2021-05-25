@@ -40,7 +40,7 @@ const initialState: IStore = {
   graph: null,
   currentBranch: null,
   commits: [],
-  refs: { references: [], refDict: null },
+  refs: { references: [], refDict: null, commits: '' },
   commit: INITIAL_WIP,
   selectedFile: {
     commit: null,

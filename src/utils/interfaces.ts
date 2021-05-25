@@ -80,6 +80,7 @@ export interface IReference {
   shorthand: string;
   display: string;
   current?: boolean;
+  diff?: number;
 }
 
 export type IRefDict = Map<string, IReference> | null;
@@ -87,6 +88,7 @@ export type IRefDict = Map<string, IReference> | null;
 export interface IRefs {
   references: IReference[];
   refDict: IRefDict;
+  commits: ''
 }
 
 
