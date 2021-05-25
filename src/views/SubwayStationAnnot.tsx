@@ -25,7 +25,7 @@ interface IBranchInfo {
       isRemote: boolean;
       isBranch: boolean;
       isTag: boolean;
-      current: boolean;
+      isCurrent: boolean;
       display: string;
       remoteName: string;
       localName: string;
@@ -87,7 +87,7 @@ const SubwayStationAnnot = (props: SubwayStationAnnotProps) => {
           if (!consolidated[na.display]) {
             //@ts-ignore
             consolidated[na.display] = na;
-            na.current = false;
+            na.isCurrent = false;
           } else {
             //@ts-ignore
             consolidated[na.display].isRemote =
@@ -103,7 +103,7 @@ const SubwayStationAnnot = (props: SubwayStationAnnotProps) => {
         });
         Object.values(consolidated).forEach((con) => {
           if (con.isBranch && con.display.includes(currentBranch.name)) {
-            con.current = true;
+            con.isCurrent = true;
           }
         });
         //@ts-ignore
@@ -125,7 +125,7 @@ const SubwayStationAnnot = (props: SubwayStationAnnotProps) => {
           <div className="annot" style={{ height, top: branch.top }} key={key}>
             <ul>
               <li style={{ backgroundColor: branch.color }} className="summary">
-                {!!branch.names[0].current && (
+                {!!branch.names[0].isCurrent && (
                   <CheckIcon size={14} />
                 )}
                 {!!branch.names[0].isRemote && (
@@ -144,7 +144,7 @@ const SubwayStationAnnot = (props: SubwayStationAnnotProps) => {
                   style={{ backgroundColor: branch.color }}
                   key={key}
                 >
-                  {!!name.current && <CheckIcon size={14} />}
+                  {!!name.isCurrent && <CheckIcon size={14} />}
                   {!!name.isRemote && <CloudIcon size={14} />}
                   {!!name.isBranch && <MonitorIcon size={14} />}
                   {!!name.isTag && <TagIcon size={14} />}

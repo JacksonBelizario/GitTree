@@ -181,7 +181,7 @@ const getRefsChanges = async (Repo, refs, currentBranch) => {
         ref.diff = filesChanged;
       }
     }
-    ref.current = ref.display.includes(currentBranch)
+    ref.isCurrent = ref.display.includes(currentBranch)
     res.push(ref)
   };
 
@@ -214,7 +214,7 @@ const getReferences = async (Repo) => {
         shorthand: ref.shorthand(),
         display,
         diff: 0,
-        current: false
+        isCurrent: false
       };
     });
     let refDict = {};

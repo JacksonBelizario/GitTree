@@ -79,7 +79,7 @@ export interface IReference {
   name: string;
   shorthand: string;
   display: string;
-  current?: boolean;
+  isCurrent?: boolean;
   diff?: number;
 }
 

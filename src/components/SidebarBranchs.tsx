@@ -15,15 +15,6 @@ import {
 } from "react-icons/fi";
 import { IReference } from "../utils/interfaces";
 
-declare interface IFolder {
-  id: number | string;
-  label: string | JSX.Element;
-  childNodes: IFolder[];
-  secondaryLabel?: string | JSX.Element | null;
-  icon?: any;
-  isSelected?: boolean;
-}
-
 const buildList = (branchs: IReference[]) => {
   let rootFolder = { id: 0, label: "", childNodes: [] };
   branchs.forEach((b) => {
@@ -39,37 +30,32 @@ const order = (a: any, b: any) => {
 
 function placeBranchInFolder(
   paths: string[],
-  folder: IFolder,
+  folder: ITreeNode,
   branch: IReference,
   depth: number
 ) {
   if (!folder) {
     return;
   }
+  let currentLabel = paths[0];
   if (paths.length === 1) {
-    if (folder.childNodes.findIndex((_) => _.label === paths[0]) === -1) {
-      //@ts-ignore
+    if (folder.childNodes.findIndex(o => o.label === currentLabel) === -1) {
       folder.childNodes.push({
         id: `${folder.id}_${folder.childNodes.length}`,
-        label: paths[0],
+        label: currentLabel,
         icon: <GitBranchIcon size={15} style={{ marginRight: "10px" }} />,
-        isSelected: !!branch.current,
+        isSelected: !!branch.isCurrent,
         secondaryLabel: branch.diff ? <div style={{fontSize: 11}}>{branch.diff}</div> : null,
-        ...branch,
+        nodeData: branch,
       });
       folder.childNodes.sort(order);
     }
   } else {
-    let currentFolderPath = paths[0];
     let currentFolder;
-    if (
-      folder.childNodes.filter(
-        (_) => _.label === currentFolderPath && _.childNodes
-      ).length === 0
-    ) {
+    if (folder.childNodes.filter(o => o.label === currentLabel && o.childNodes).length === 0) {
       let newFolder = {
         id: folder.childNodes.length,
-        label: currentFolderPath,
+        label: currentLabel,
         childNodes: [],
         isExpanded: false,
         icon: <FolderIcon size={15} style={{ marginRight: "10px" }} />,
@@ -78,9 +64,7 @@ function placeBranchInFolder(
       folder.childNodes.sort(order);
       currentFolder = newFolder;
     } else {
-      currentFolder = folder.childNodes.find(
-        (_) => _.label === currentFolderPath
-      );
+      currentFolder = folder.childNodes.find(o => o.label === currentLabel);
     }
     placeBranchInFolder(
       paths.splice(1, paths.length),
@@ -106,46 +90,53 @@ const SidebarBranchs = (props: SidebarBranchsProps) => {
     setContents([...items]);
   }, [branchs]);
 
-  const handleNodeClick = (
-    nodeData: ITreeNode,
-    _nodePath: number[],
-    e: React.MouseEvent<HTMLElement>
-  ) => {
-    if (!!nodeData.childNodes?.length) {
-      nodeData.isExpanded ? onCollapse(nodeData) : onExpand(nodeData);
+  const handleNodeClick = (treeNode: ITreeNode, _nodePath: number[], e: React.MouseEvent<HTMLElement>) => {
+    if (!!treeNode.childNodes?.length) {
+      treeNode.isExpanded ? onCollapse(treeNode) : onExpand(treeNode);
     } else {
-      //@ts-ignore
-      scrollToCommit(nodeData.target);
+      scrollToCommit(treeNode.nodeData['target']);
     }
   };
-  const handleNodeCollapse = (nodeData: ITreeNode) => {
-    nodeData.isExpanded = false;
+  const handleNodeCollapse = (treeNode: ITreeNode) => {
+    treeNode.isExpanded = false;
     setContents([...contents]);
   };
-  const handleNodeExpand = (nodeData: ITreeNode) => {
-    nodeData.isExpanded = true;
+  const handleNodeExpand = (treeNode: ITreeNode) => {
+    treeNode.isExpanded = true;
     setContents([...contents]);
   };
   const onExpand = useCallback(handleNodeExpand, [contents]);
   const onCollapse = useCallback(handleNodeCollapse, [contents]);
   const onNodeClick = useCallback(handleNodeClick, [contents]);
 
-  const showContextMenu = (
-    nodeData: ITreeNode,
-    path: number[],
-    e: React.MouseEvent<HTMLElement>
-  ) => {
+  const showContextMenu = (treeNode: ITreeNode, path: number[], e: React.MouseEvent<HTMLElement>) => {
+    const {nodeData: branch} = treeNode;
     e.preventDefault();
+    if (!!treeNode.childNodes?.length) {
+      return;
+    }
+    const branchName = branch['shorthand'];
+    const isCurrent = branch['isCurrent'];
+    const isLocalBranch = !!branch['isBranch'] && !branch['isRemote'];
+    // @todo On remote branch check if has permission to delete
     ContextMenu.show(
       <Menu>
-        <MenuItem icon="search-around" text="Search around..." />
-        <MenuItem icon="search" text="Object viewer" />
-        <MenuItem icon="graph-remove" text="Remove" />
-        <MenuItem icon="group-objects" text="Group" />
+        {isLocalBranch && <MenuItem text={`Pull`} />}
+        {isLocalBranch && <MenuItem text={`Push`} />}
+        {!isCurrent && <MenuItem text={`Checkout ${branchName}...`} />}
         <MenuDivider />
-        <MenuItem disabled={true} text="Clicked on node" />
+        {!isCurrent && <MenuItem text={`Merge ${branchName} into current branch`} />}
+        {!isCurrent && <MenuItem text={`Rebase ${branchName} into current branch`} />}
+        {!isCurrent && <MenuItem disabled text="Diff against current" />}
+        <MenuItem text="Copy branch name" />
+        <MenuItem text="Copy branch sha" />
+        <MenuDivider />
+        <MenuItem text={"Rename " + branchName} />
+        <MenuItem disabled text={"Delete " + branchName} /> 
       </Menu>,
-      { left: e.clientX, top: e.clientY }
+      { left: e.clientX, top: e.clientY },
+      null,
+      true // isDarkTheme
     );
   };
 
