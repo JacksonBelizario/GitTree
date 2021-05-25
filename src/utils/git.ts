@@ -166,7 +166,7 @@ const getRefsChanges = async (Repo, refs, currentBranch) => {
   let remoteRefs = refs.filter((_) => _.isRemote);
 
   let res = [];
-  await refs.forEach(async (ref) => {
+  for(let ref of refs) {
     if (ref.isBranch) {
       let remoteRefWithDiff = remoteRefs.find(remoteRef => remoteRef.shorthand.indexOf(ref.shorthand) !== -1 && remoteRefs.target !== ref.target);
       if (remoteRefWithDiff) {
@@ -178,13 +178,12 @@ const getRefsChanges = async (Repo, refs, currentBranch) => {
         //   deletions: stats.deletions(),
         //   insertions: stats.insertions(),
         // })
-        console.log({filesChanged});
         ref.diff = filesChanged;
       }
     }
     ref.current = ref.display.includes(currentBranch)
     res.push(ref)
-  });
+  };
 
   return res;
 }

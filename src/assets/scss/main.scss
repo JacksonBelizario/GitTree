@@ -39,8 +39,8 @@ $footer-size: 77px;
     overflow-y: auto;
     overflow-x: hidden;
     min-height: 0;
-    .selected {
-      background-color: green;
+    .bp3-tree-node-content {
+      height: 25px;
     }
   }
   .section {
