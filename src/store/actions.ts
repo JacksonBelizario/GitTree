@@ -1,6 +1,6 @@
 import { IStore } from "./store";
 import { IGraph } from "../models/SubwayMap";
-import { ICommit, IRepo, ICurrentCommit, IRefs, ISelectedFile, IWipCommit } from "../utils/interfaces";
+import { ICommit, IRepo, ICurrentCommit, IRefs, ISelectedFile, IWipCommit, IReference } from "../utils/interfaces";
 
 const actions = (store: any) => ({
   setFolder: (state: IStore, folder: string) => ({ folder }),
@@ -8,6 +8,13 @@ const actions = (store: any) => ({
   setCommits: (state: IStore, commits: ICommit[]) => ({ commits }),
   setCurrentBranch: (state: IStore, currentBranch: ICurrentCommit | null) => ({
     currentBranch,
+    refs: {
+      ...state.refs,
+      references: state.refs.references.map((ref: IReference)=> ({
+        current: ref.display.includes(currentBranch.name),
+        ...ref
+      }))
+    }
   }),
   setSelectedCommit: (state: IStore, selectedCommit: string) => ({
     selectedCommit,

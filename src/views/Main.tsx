@@ -69,7 +69,9 @@ const Main = (props: MainProps) => {
       return;
     }
 
-    repoRefs.references = await Git.getRefsChanges(repo, repoRefs.references, currentBranch.name);
+    repoRefs.references = await Git.getRefsChanges(repo, repoRefs.references);
+    setCurrentBranch(await Git.getCurrentBranch(repo));
+    
     //@ts-ignore
     setLocalRefs(repoRefs);
   };
@@ -109,6 +111,11 @@ const Main = (props: MainProps) => {
       if (!repo || commits.length === 0) {
         return;
       }
+      let curBranch = await Git.getCurrentBranch(repo);
+      if (curBranch.shorthand !== currentBranch.shorthand) {
+        setCurrentBranch(curBranch);
+      }
+
       let changes = await Git.getStatus(repo);
       let oldStatus = commit.enabled;
       let wip = {...commit, ...changes};

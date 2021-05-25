@@ -14,6 +14,7 @@ import {
   FiGitBranch as GitBranchIcon
 } from "react-icons/fi";
 import { IReference } from "../utils/interfaces";
+import Git from "../utils/git";
 
 const buildList = (branchs: IReference[]) => {
   let rootFolder = { id: 0, label: "", childNodes: [] };
@@ -78,10 +79,11 @@ function placeBranchInFolder(
 interface SidebarBranchsProps {
   branchs: IReference[];
   scrollToCommit: Function;
+  checkoutBranch?: Function;
 }
 
 const SidebarBranchs = (props: SidebarBranchsProps) => {
-  const { branchs, scrollToCommit } = props;
+  const { branchs, scrollToCommit, checkoutBranch } = props;
 
   const [contents, setContents] = useState<ITreeNode[]>([]);
 
@@ -97,6 +99,11 @@ const SidebarBranchs = (props: SidebarBranchsProps) => {
       scrollToCommit(treeNode.nodeData['target']);
     }
   };
+  const handleNodeDoubleClick = (treeNode: ITreeNode, _nodePath: number[], e: React.MouseEvent<HTMLElement>) => {
+    if (!treeNode.childNodes?.length) {
+      checkoutBranch(treeNode.nodeData);
+    }
+  };
   const handleNodeCollapse = (treeNode: ITreeNode) => {
     treeNode.isExpanded = false;
     setContents([...contents]);
@@ -108,6 +115,7 @@ const SidebarBranchs = (props: SidebarBranchsProps) => {
   const onExpand = useCallback(handleNodeExpand, [contents]);
   const onCollapse = useCallback(handleNodeCollapse, [contents]);
   const onNodeClick = useCallback(handleNodeClick, [contents]);
+  const onNodeDoubleClick = useCallback(handleNodeDoubleClick, [contents]);
 
   const showContextMenu = (treeNode: ITreeNode, path: number[], e: React.MouseEvent<HTMLElement>) => {
     const {nodeData: branch} = treeNode;
@@ -123,7 +131,7 @@ const SidebarBranchs = (props: SidebarBranchsProps) => {
       <Menu>
         {isLocalBranch && <MenuItem text={`Pull`} />}
         {isLocalBranch && <MenuItem text={`Push`} />}
-        {!isCurrent && <MenuItem text={`Checkout ${branchName}...`} />}
+        {!isCurrent && <MenuItem text={`Checkout ${branchName}...`} onClick={() => checkoutBranch(branch)} />}
         <MenuDivider />
         {!isCurrent && <MenuItem text={`Merge ${branchName} into current branch`} />}
         {!isCurrent && <MenuItem text={`Rebase ${branchName} into current branch`} />}
@@ -146,6 +154,7 @@ const SidebarBranchs = (props: SidebarBranchsProps) => {
       onNodeContextMenu={showContextMenu}
       onNodeCollapse={onCollapse}
       onNodeClick={onNodeClick}
+      onNodeDoubleClick={onNodeDoubleClick}
       onNodeExpand={onExpand}
       className={Classes.ELEVATION_0}
     />

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, FunctionComponent } from "react";
 
-import { Classes, Button, IButtonProps, Divider } from "@blueprintjs/core";
+import { Classes, Button, IButtonProps, Divider, Intent } from "@blueprintjs/core";
 
 import {
   FiMonitor as MonitorIcon,
@@ -18,6 +18,8 @@ import SidebarBranchs from "./SidebarBranchs";
 import { Submodule } from "nodegit";
 import actions from "../store/actions";
 import { BoundActions } from "redux-zero/types";
+import { AppToaster } from "../utils/toaster";
+import Git from "../utils/git";
 
 interface ISidebarBtn extends IButtonProps {
   icon: any;
@@ -57,7 +59,7 @@ const mapToProps = (state: IStore): StoreProps => ({
 type SidebarProps = StoreProps & BoundActions<IStore, typeof actions>;
 
 const Sidebar = (props: SidebarProps) => {
-  const { refs: {references}, commits, repo, scrollToCommit } = props;
+  const { refs: {references}, commits, repo, scrollToCommit, setCurrentBranch } = props;
 
   const [showLocal, setShowLocal] = useState<boolean>(true);
   const [showRemote, setShowRemote] = useState<boolean>(false);
@@ -91,6 +93,25 @@ const Sidebar = (props: SidebarProps) => {
     getSubmodules(repo);
   }, [repo]);
 
+  const checkoutBranch = async (reference) => {
+    try {
+      await Git.checkout(repo, reference);
+      setCurrentBranch(await Git.getCurrentBranch(repo));
+      AppToaster.show({
+        icon: "info-sign",
+        intent: Intent.PRIMARY,
+        message: <span>Checkout successful</span>,
+      })
+    } catch(err) {
+      console.log({err});
+      AppToaster.show({
+        icon: "warning-sign",
+        intent: Intent.DANGER,
+        message: <span>Error on checkout branch<br />{err.message}</span>,
+      })
+    }
+  }
+
   return (
     <>
       <SidebarBtn
@@ -100,7 +121,7 @@ const Sidebar = (props: SidebarProps) => {
         Local
       </SidebarBtn>
       {showLocal && (
-        <SidebarBranchs branchs={local} scrollToCommit={scrollToCommit} />
+        <SidebarBranchs branchs={local} scrollToCommit={scrollToCommit} checkoutBranch={checkoutBranch} />
       )}
       <SidebarBtn
         icon={<CloudIcon size={18} />}
@@ -109,7 +130,7 @@ const Sidebar = (props: SidebarProps) => {
         Remote
       </SidebarBtn>
       {showRemote && (
-        <SidebarBranchs branchs={remote} scrollToCommit={scrollToCommit} />
+        <SidebarBranchs branchs={remote} scrollToCommit={scrollToCommit} checkoutBranch={checkoutBranch} />
       )}
       <SidebarBtn
         icon={<InboxIcon size={18} />}
