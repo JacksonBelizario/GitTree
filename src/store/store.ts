@@ -30,7 +30,8 @@ export interface IStore {
   commit: IWipCommit;
   refs: IRefs;
   selectedFile: ISelectedFile,
-  settings: ISettings
+  settings: ISettings,
+  expandedMenu: string[]
 }
 
 const initialState: IStore = {
@@ -61,7 +62,8 @@ const initialState: IStore = {
       sshPublicKey: '',
       sshPublicContent: ''
     }
-  }
+  },
+  expandedMenu: []
 };
 
 const store = createStore(initialState, middlewares);

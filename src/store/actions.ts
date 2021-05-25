@@ -36,22 +36,19 @@ const actions = (store: any) => ({
     };
   },
   setSelectedFile: (state: IStore, selectedFile: ISelectedFile) => ({selectedFile}),
-  setSettings: (state: IStore, settings: object) => {
-    return {
-      settings: {
-        ...state.settings,
-        ...settings
-      }
+  setSettings: (state: IStore, settings: object) => ({
+    settings: {
+      ...state.settings,
+      ...settings
     }
-  },
-  setShowSettings: (state: IStore, show: boolean) => {
-    return {
-      settings: {
-        ...state.settings,
-        show
-      }
+  }),
+  setShowSettings: (state: IStore, show: boolean) => ({
+    settings: {
+      ...state.settings,
+      show
     }
-  }
+  }),
+  setExpandedMenu: (state: IStore, expandedMenu: string[]) => ({ expandedMenu })
 });
 
 export default actions;

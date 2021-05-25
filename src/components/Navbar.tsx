@@ -57,7 +57,8 @@ const Nav = (props: NavProps) => {
       show: showSettings,
       general: { fetchInterval },
       auth
-    }
+    },
+    setExpandedMenu
   } = props;
 
   const selectFolder = async () => {
@@ -66,6 +67,7 @@ const Nav = (props: NavProps) => {
         properties: ["openDirectory"],
       });
       setFolder(path);
+      setExpandedMenu([]);
     } catch (error) {
       console.log({ error });
     }
