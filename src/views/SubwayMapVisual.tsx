@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ICommit } from "../utils/interfaces";
 import { Node } from "../models/Node";
 import { Link } from "../models/Link";
@@ -39,7 +39,7 @@ const SubwayMapVisual = (props: SubwayMapVisualProps) => {
   const [height, setHeight] = useState("100%");
   // const [width] = useState("500px");
 
-  React.useEffect(() => {
+  useEffect(() => {
 
     const getSubwayMap = (commits: ICommit[]) => {
       let _infinityY = Node.height * (commits.length + 1);

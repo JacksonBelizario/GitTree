@@ -63,19 +63,6 @@ const Main = (props: MainProps) => {
   const [localRefs, setLocalRefs] = useState<IRefs>(refs);
   const [loading, setLoading] = useState<Boolean>(true);
 
-  const getRefs = async () => {
-    let repoRefs = await Git.getReferences(repo);
-    if (refs.commits === repoRefs.commits) {
-      return;
-    }
-
-    repoRefs.references = await Git.getRefsChanges(repo, repoRefs.references);
-    setCurrentBranch(await Git.getCurrentBranch(repo));
-    
-    //@ts-ignore
-    setLocalRefs(repoRefs);
-  };
-
   useEffect(() => {
     const loadRepo = async (folder: string) => {
       if (!folder) {
@@ -107,6 +94,20 @@ const Main = (props: MainProps) => {
   }, [localRefs, refs, setRefs]);
 
   useInterval(() => {
+
+    const getRefs = async () => {
+      let repoRefs = await Git.getReferences(repo);
+      if (refs.commits === repoRefs.commits) {
+        return;
+      }
+  
+      repoRefs.references = await Git.getRefsChanges(repo, repoRefs.references);
+      setCurrentBranch(await Git.getCurrentBranch(repo));
+      
+      //@ts-ignore
+      setLocalRefs(repoRefs);
+    };
+    
     const watchChanges = async () => {
       if (!repo || commits.length === 0) {
         return;
@@ -123,9 +124,9 @@ const Main = (props: MainProps) => {
         wip.parents = currentBranch ? [currentBranch.target] : [];
         if (changes.enabled) {
           setLoading(true);
-          setCommits([wip, ...commits]);
+          setCommits([wip, ...commits.filter(({sha}) => sha !== 'workdir')]);
         } else {
-          // setCommits(commits);
+          setCommits(commits.filter(({sha}) => sha !== 'workdir'));
         }
       }
       setCommit(wip);
