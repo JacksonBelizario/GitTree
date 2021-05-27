@@ -29,6 +29,7 @@ export interface IFile {
   isModified: boolean;
   isRenamed: boolean;
   isDeleted: boolean;
+  isConflicted: boolean;
 }
 
 export interface IWipFile extends IFile {
@@ -94,8 +95,7 @@ export interface IRefs {
 
 export interface ISelectedFile {
   commit: string;
-  path: string;
-  diffType: 'add' | 'delete' | 'modify' | 'rename' | 'copy';
+  file?: IFile;
 }
 
 export interface IAuth {

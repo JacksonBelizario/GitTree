@@ -29,7 +29,7 @@ const App = (props: StoreProps) => {
       <div className="main-layout flex-1 relative">
         <SplitPane split="vertical">
           <Pane
-            className={`sidebar ${props.selectedFile.path ? "hidden" : ""}`}
+            className={`sidebar ${props.selectedFile.file ? "hidden" : ""}`}
             minSize="210px"
             defaultSize="210px"
             maxSize="390px"

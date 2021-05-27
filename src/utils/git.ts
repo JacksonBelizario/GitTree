@@ -1,4 +1,4 @@
-import NodeGit from "nodegit"
+import NodeGit, { Repository } from "nodegit"
 import { isSSH } from "./index"
 import { IAuth, IReference } from "./interfaces";
 
@@ -6,7 +6,7 @@ const openRepo = async (folder) => {
   return await NodeGit.Repository.open(folder);
 };
 
-const getCommits = async (Repo) => {
+const getCommits = async (Repo: Repository) => {
   let walker = NodeGit.Revwalk.create(Repo);
   //@ts-ignore
   walker.sorting(NodeGit.Revwalk.SORT.TOPOLOGICAL, NodeGit.Revwalk.SORT.TIME);
@@ -83,6 +83,7 @@ const getStatus = async (Repo) => {
       isRenamed: !!status.isRenamed(),
       isIgnored: !!status.isIgnored(),
       isDeleted: !!status.isDeleted(),
+      isConflicted: !!status.isConflicted(),
     };
     if (status.inIndex()) {
       staged.push(item);
@@ -111,6 +112,9 @@ const getStatus = async (Repo) => {
       } else if (status.isDeleted()) {
         unstagedSummary.deleted += 1;
       }
+    }
+    if (status.isConflicted()) {
+      unstaged.push(item);
     }
   });
   return {

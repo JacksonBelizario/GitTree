@@ -3,6 +3,7 @@ import {
   FiFileText as FileIcon,
   FiFilePlus as FilePlusIcon,
   FiFileMinus as FileMinusIcon,
+  FiAlertTriangle as AlertIcon,
 } from 'react-icons/fi';
 import {
   FaRegCopy as FileCopyIcon
@@ -30,8 +31,7 @@ const ListFiles = (props) => {
         files.map((file : IFile, key : number) => (
         <div key={key} className={`modified-file-entry p-1 flex cursor-pointer ${selectedFile.path === file.path ? "bg-gray-700" : "hover:bg-gray-800"}`} onClick={() => setSelectedFile({
           commit: sha,
-          path: file.path,
-          diffType: file.isRenamed ? 'rename' : file.isModified ? 'modify' : file.isAdded ? 'add' : file.isDeleted ? 'delete' : 'copy'
+          file: file
         })}>
         { file.isModified &&
           <span className="mr-2 text-yellow-500">
@@ -51,6 +51,11 @@ const ListFiles = (props) => {
         { file.isRenamed &&
           <span className="mr-2 text-blue-500">
             <FileCopyIcon />
+          </span>
+        }
+        { file.isConflicted &&
+          <span className="mr-2 text-yellow-500">
+            <AlertIcon />
           </span>
         }
         { getShortenedPath(file.path) }

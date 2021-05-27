@@ -1,4 +1,8 @@
 import NodeGit from "nodegit";
+import {formatLines, diffLines} from 'unidiff';
+import {parseDiff} from 'react-diff-view';
+
+const fs = window.require('fs');
 
 export class FileDetails {
 
@@ -26,6 +30,12 @@ export class FileDetails {
       }
     } else if (commit === 'workdir') {
       let index = await this.Repo.index();
+      // if (index.hasConflicts()) {
+      //   let conflict = await index.conflictGet(path);
+      //   if (conflict) {
+      //     return this.processConflictedDiff(conflict, path);
+      //   }
+      // }
       diffOptions.flags |= NodeGit.Diff.OPTION.SHOW_UNTRACKED_CONTENT | NodeGit.Diff.OPTION.RECURSE_UNTRACKED_DIRS;
       let diff = await NodeGit.Diff.indexToWorkdir(this.Repo, index, diffOptions);
       return this.processDiff(diff, path, commit, fullFile);
@@ -183,6 +193,68 @@ export class FileDetails {
     }
   }
 
+  async processConflictedDiff(conflict, path) {
+    let [ancestorBlob, ourBlob, theirBlob] = await Promise.all([
+      this.Repo.getBlob(conflict.ancestor_out.id),
+      this.Repo.getBlob(conflict.our_out.id),
+      this.Repo.getBlob(conflict.their_out.id)
+    ]);
+
+    let hunks = [];
+    let lines = [];
+    await NodeGit.Diff.blobToBuffer(ourBlob, null, theirBlob.toString(), null, null, null,
+      function() {/** Binary callback */},
+      function(diffDelta, hunk) {
+        // Hunk callback
+        hunks.push({
+          oldStart: hunk.oldStart(),
+          oldLines: hunk.oldLines(),
+          newStart: hunk.newStart(),
+          newLines: hunk.newLines(),
+          content: hunk.header(),
+          highlight: true,
+          changes: []
+        });
+      },
+      function(diffDelta, diffHunk, line) {
+        // Line callback
+        const op = String.fromCharCode(line.origin());
+        const isNewLine = ['<','>','='].includes(op);
+        const isNormal = op === " ";
+        const isInsert = op === "+";
+        const isDelete = op === "-";
+        let type = 'normal';
+        let lineNumber = line.newLineno();
+        if (isInsert) {
+          type = 'insert';
+          lineNumber = line.newLineno();
+        }
+        if (isDelete) {
+          type = 'delete';
+          lineNumber = line.oldLineno();
+        }
+        lines.push({
+          type,
+          content: isNewLine ? line.content().trim() : line.content(),
+          isNormal,
+          isInsert,
+          isDelete,
+          lineNumber,
+          oldLineNumber: line.oldLineno(),
+          newLineNumber: line.newLineno(),
+        });
+      });
+      
+    const result = hunks.map(hunk => {
+      return {
+        ...hunk,
+        changes: lines.splice(0, hunk.newLines + hunk.oldLines)
+      }
+    });
+    this.removeEOL(result);
+    return this.removeCarriageReturn(result);
+  }
+
   async getDiffBetween(fromCommitSHA, toCommitSHA) {
     const from = await this.Repo.getCommit(fromCommitSHA);
     const fromTree = await from.getTree();
@@ -196,6 +268,36 @@ export class FileDetails {
     for (const patch of patches) {
       console.log(patch.newFile().path());
     }
+  }
+
+  async getConflictDiff(path) {
+    let index = await this.Repo.index();
+    if (!index.hasConflicts()) {
+      return;
+    }
+
+    const fullPath = this.Repo.workdir() + path;
+
+    const conflictedText = fs.readFileSync(fullPath, { encoding: "ascii" });
+
+    // const regexp = RegExp('<<<<<<< HEAD(.+?)=======(.+?)>>>>>>> master','g');
+    const regexp = /(<<<<<<<.+?[\r\n|\r|\n])(.+?)([\s\S]=======[\s\S])(.+?)([\s\S]>>>>>>>.+?[\r\n|\r|\n])/sg;
+    const matches = conflictedText.matchAll(regexp);
+    
+    let firstText = conflictedText;
+    let secondText = conflictedText;
+    for (const match of matches) {
+      firstText = firstText.replace(match[0], match[2]);
+      secondText = secondText.replace(match[0], match[4]);
+    }
+
+    const diffText = formatLines(diffLines(firstText, secondText), { context: 10000 });
+    
+    let [diff] = parseDiff(diffText, {nearbySequences: 'zip'});
+    return {
+      diff: diff,
+      source: firstText,
+    };
   }
   
   /**

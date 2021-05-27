@@ -45,8 +45,7 @@ const initialState: IStore = {
   commit: INITIAL_WIP,
   selectedFile: {
     commit: null,
-    path: null,
-    diffType: null
+    file: null,
   },
   settings: {
     show: false,
