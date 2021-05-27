@@ -97,14 +97,16 @@ const FileViewer = (props: FileViewerProps) => {
   }, [repo, file, commit, fullFile]);
 
   useEffect(() => {
-    // const element = document.getElementById(hash);
-    const element = document.querySelector(".diff-gutter-insert");
-    const container = document.querySelector(".file-viewer");
-    if (container && element) {
-      // const top = element.offsetTop - sidebar.clientHeight / 2;
-      const top = element.getBoundingClientRect().top;
-      container.scrollTo({ top: top > 0 ? top : 0, behavior: "smooth" });
-    }
+    setTimeout(() => {
+      const element = document.querySelector(".diff-gutter-insert");
+      const container = document.querySelector(".diff-viewer");
+      if (container && element) {
+        const top = element.getBoundingClientRect().top - 100;
+        if (top > 0) {
+          container.scrollTo({ top, behavior: "smooth" });
+        }
+      }
+    }, 1000);
   }, [hunks]);
 
 
