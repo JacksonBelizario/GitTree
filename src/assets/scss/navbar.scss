@@ -1,14 +1,13 @@
 .bp3-navbar {
+  display: flex;
   .bp3-navbar-group {
-    width: 33%;
+    flex: 1 1 0;
   }
 }
 .actions-btn {
   display: flex;
   align-items: center;
-  flex-grow: 1 !important;
   justify-content: center;
-  width: 34%;
 
   .bp3-button {
     display: flex;

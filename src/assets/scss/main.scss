@@ -29,7 +29,7 @@ pre {
 $footer-size: 77px;
 
 .main-layout {
-  height: calc(100vh - 77px);
+  height: calc(100vh - 107px);
 
   .sidebar {
     flex: 0 0 200px;
@@ -121,6 +121,10 @@ $footer-size: 77px;
   -webkit-box-flex: 1!important;
   -ms-flex-positive: 1!important;
   flex-grow: 1!important;
+}
+
+.h-screen {
+  height: calc(100vh - 30px) !important;
 }
 
 @import "resizer.scss";

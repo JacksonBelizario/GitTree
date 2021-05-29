@@ -21,7 +21,7 @@
     }
   },
   "scripts": {
-    "rebuild": "electron-rebuild --runtime=electron --target=10.4.0 --disturl=https://atom.io/download/electron --build-from-source",
+    "rebuild": "electron-rebuild --runtime=electron --target=11.4.7 --disturl=https://atom.io/download/electron --build-from-source",
     "postinstall": "electron-rebuild",
     "electron": "cross-env NODE_ENV=dev nodemon --exec \"\"electron .\"\"",
     "start:electron": "wait-on http://localhost:3000 && electron .",
@@ -51,6 +51,7 @@
   "dependencies": {
     "@blueprintjs/core": "^3.24.0",
     "@blueprintjs/timezone": "^3.6.1",
+    "custom-electron-titlebar": "^3.2.7",
     "electron-is-dev": "^1.1.0",
     "localforage": "^1.7.3",
     "lodash": "^4.17.15",
@@ -85,7 +86,7 @@
     "concurrently": "^5.1.0",
     "cross-env": "^7.0.2",
     "css-loader": "^3.5.3",
-    "electron": "10.4.0",
+    "electron": "11.4.7",
     "electron-devtools-installer": "^3.1.1",
     "electron-packager": "^15.2.0",
     "electron-rebuild": "2.3.5",

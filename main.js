@@ -14,6 +14,8 @@ function createWindow() {
     minHeight: 660,
     width: 1024,
     height: 680,
+    frame: false,
+    titleBarStyle: 'hiddenInset',
     webPreferences: {
       nodeIntegration: true,
       enableRemoteModule: true
