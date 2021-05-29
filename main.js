@@ -3,9 +3,11 @@ const app = electron.app;
 const path = require("path");
 const isDev = require("electron-is-dev");
 const BrowserWindow = electron.BrowserWindow;
-const { ipcMain } = require('electron');
+const { ipcMain, nativeImage } = require('electron');
 
 let mainWindow;
+
+var image = nativeImage.createFromPath(__dirname + '/src/assets/images/logo.png');
 
 function createWindow() {
   app.allowRendererProcessReuse = false;
@@ -16,6 +18,7 @@ function createWindow() {
     height: 680,
     frame: false,
     titleBarStyle: 'hiddenInset',
+    icon: image,
     webPreferences: {
       nodeIntegration: true,
       enableRemoteModule: true
