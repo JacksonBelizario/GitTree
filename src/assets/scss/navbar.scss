@@ -1,0 +1,25 @@
+.bp3-navbar {
+  .bp3-navbar-group {
+    width: 33%;
+  }
+}
+.actions-btn {
+  display: flex;
+  align-items: center;
+  flex-grow: 1 !important;
+  justify-content: center;
+  width: 34%;
+
+  .bp3-button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 12px;
+    min-width: 50px;
+    margin: 0 2px 0 2px;
+
+    &::before,  > * {
+      margin-right: 0 !important;
+    }
+  }
+}

@@ -1,6 +1,5 @@
 import * as React from "react";
 import {
-  Alignment,
   Button,
   Classes,
   Intent,
@@ -15,7 +14,14 @@ import {
   FiBook as BookIcon,
   FiGitBranch as GitBranchIcon,
   FiSettings as SettingsIcon,
+  FiArrowDown as ArrowDownIcon,
+  FiArrowUp as ArrowUpIcon,
+  FiGitMerge as GitMergeIcon
 } from "react-icons/fi";
+import {
+  RiInboxArchiveLine as StashIcon,
+  RiInboxUnarchiveLine as PopStashIcon,
+} from "react-icons/ri";
 
 import Git from "../utils/git";
 import { useInterval } from "../utils/hooks";
@@ -25,6 +31,9 @@ import { BoundActions } from "redux-zero/types/Actions";
 import actions from "../store/actions";
 import { IStore } from "../store/store";
 import { AppToaster } from "../utils/toaster";
+import { basename } from "path";
+
+import '../assets/scss/navbar.scss'
 
 const { dialog } = window.require("electron").remote;
 
@@ -99,7 +108,7 @@ const Nav = (props: NavProps) => {
 
   return (
     <Navbar>
-      <NavbarGroup align={Alignment.LEFT}>
+      <NavbarGroup>
         <NavbarHeading>GitTree</NavbarHeading>
         <NavbarDivider />
         <Button
@@ -114,7 +123,7 @@ const Nav = (props: NavProps) => {
             minimal
             style={{ marginLeft: 10 }}
           >
-            {folder}
+            {folder.split('\\').slice(-1)[0]}
           </Tag>
         )}
         {currentBranch && (
@@ -127,8 +136,41 @@ const Nav = (props: NavProps) => {
             {currentBranch.name}
           </Tag>
         )}
+        </NavbarGroup>
+        <NavbarGroup className="actions-btn">
+          <Button
+            className={Classes.MINIMAL}
+            icon={<ArrowDownIcon size={20} />}
+            text="Pull"
+          />
+          <Button
+            className={Classes.MINIMAL}
+            icon={<ArrowUpIcon size={20} />}
+            text="Push"
+          />
+          <Button
+            className={Classes.MINIMAL}
+            icon={<GitMergeIcon size={20} />}
+            text="Merge"
+          />
+          <Button
+            className={Classes.MINIMAL}
+            icon={<GitBranchIcon size={20} />}
+            text="Branch"
+          />
+          <Button
+            className={Classes.MINIMAL}
+            icon={<StashIcon size={20} />}
+            text="Stash"
+          />
+          <Button
+            className={Classes.MINIMAL}
+            icon={<PopStashIcon size={20} />}
+            text="Pop"
+          />
       </NavbarGroup>
-      <NavbarGroup align={Alignment.RIGHT}>
+      <NavbarGroup>
+        <div className="spacer"></div>
         <Button
           className={Classes.MINIMAL}
           icon={<SettingsIcon size={20} />}

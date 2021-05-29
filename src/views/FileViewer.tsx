@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import refractor from 'refractor';
-import {Diff, Hunk, Decoration, tokenize, markWord, markEdits, parseDiff} from 'react-diff-view';
+import {Diff, Hunk, Decoration, tokenize, markWord, markEdits} from 'react-diff-view';
 import { IStore } from '../store/store';
 import { ISelectedFile, IRepo } from '../utils/interfaces';
 import { BoundActions } from 'redux-zero/types';

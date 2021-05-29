@@ -5,6 +5,7 @@ import Main from "./views/Main";
 import SplitPane from "react-split-pane/lib/SplitPane";
 import Pane from "react-split-pane/lib/Pane";
 import { connect } from 'redux-zero/react';
+import { FocusStyleManager } from "@blueprintjs/core";
 
 import "./assets/main.css";
 import "./assets/scss/main.scss";
@@ -17,6 +18,8 @@ import { ISelectedFile } from './utils/interfaces';
 interface StoreProps {
   selectedFile: ISelectedFile;
 }
+ 
+FocusStyleManager.onlyShowFocusOnTabs();
 
 const mapToProps = (state: IStore): StoreProps => ({
   selectedFile: state.selectedFile
