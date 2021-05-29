@@ -16,12 +16,16 @@ import {
   FiSettings as SettingsIcon,
   FiArrowDown as ArrowDownIcon,
   FiArrowUp as ArrowUpIcon,
-  FiGitMerge as GitMergeIcon
+  FiGitMerge as GitMergeIcon,
+  FiTag as TagIcon
 } from "react-icons/fi";
 import {
   RiInboxArchiveLine as StashIcon,
   RiInboxUnarchiveLine as PopStashIcon,
 } from "react-icons/ri";
+import {
+  BsTerminal as TerminalIcon,
+} from "react-icons/bs";
 
 import Git from "../utils/git";
 import { useInterval } from "../utils/hooks";
@@ -31,7 +35,6 @@ import { BoundActions } from "redux-zero/types/Actions";
 import actions from "../store/actions";
 import { IStore } from "../store/store";
 import { AppToaster } from "../utils/toaster";
-import { basename } from "path";
 
 import '../assets/scss/navbar.scss'
 
@@ -148,6 +151,7 @@ const Nav = (props: NavProps) => {
             icon={<ArrowUpIcon size={20} />}
             text="Push"
           />
+          <NavbarDivider />
           <Button
             className={Classes.MINIMAL}
             icon={<GitMergeIcon size={20} />}
@@ -158,6 +162,7 @@ const Nav = (props: NavProps) => {
             icon={<GitBranchIcon size={20} />}
             text="Branch"
           />
+          <NavbarDivider />
           <Button
             className={Classes.MINIMAL}
             icon={<StashIcon size={20} />}
@@ -168,9 +173,19 @@ const Nav = (props: NavProps) => {
             icon={<PopStashIcon size={20} />}
             text="Pop"
           />
+          <NavbarDivider />
+          <Button
+            className={Classes.MINIMAL}
+            icon={<TagIcon size={20} />}
+            text="Tag"
+          />
       </NavbarGroup>
       <NavbarGroup>
         <div className="spacer"></div>
+        <Button
+          className={Classes.MINIMAL}
+          icon={<TerminalIcon size={25} />}
+        />
         <Button
           className={Classes.MINIMAL}
           icon={<SettingsIcon size={20} />}

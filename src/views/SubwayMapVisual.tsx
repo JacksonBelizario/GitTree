@@ -40,9 +40,10 @@ const SubwayMapVisual = (props: SubwayMapVisualProps) => {
   // const [width] = useState("500px");
 
   useEffect(() => {
+    
+    let _infinityY = Node.height * (commits.length + 1);
 
     const getSubwayMap = (commits: ICommit[]) => {
-      let _infinityY = Node.height * (commits.length + 1);
       let nodeDict: object | any = {};
 
       let nodes = commits.map((c, i) => {
@@ -53,40 +54,12 @@ const SubwayMapVisual = (props: SubwayMapVisualProps) => {
         nodeDict[node.commit.sha] = node;
         return node;
       });
-
-      // edge creation
-      let links = commits.reduce((acc, c) => {
-        if (c.parents.length === 0) {
-          let infinityNode = new Node("infty-" + c.sha);
-          infinityNode.x = nodeDict[c.sha].x;
-          infinityNode.y = _infinityY;
-          let newLink = new Link(nodeDict[c.sha], infinityNode);
-          newLink.color = nodeDict[c.sha].color;
-          acc.push(newLink);
-        } else {
-          c.parents.forEach((p) => {
-            if (nodeDict[p]) {
-              let newLink = new Link(nodeDict[c.sha], nodeDict[p]);
-              if (c.parents.length > 1) {
-                newLink.color = nodeDict[p].color;
-                nodeDict[c.sha].secondColor = nodeDict[p].color;
-                newLink.merge = true;
-              } else {
-                newLink.color = nodeDict[c.sha].color;
-                newLink.merge = false;
-              }
-              acc.push(newLink);
-            }
-          });
-        }
-        return acc;
-      }, []);
       
-      return startSubWayMap(nodes, links, nodeDict);
+      return startSubWayMap(nodes, nodeDict);
     };
 
-    const startSubWayMap = (nodes: Node[], links : any[], nodeDict) => {
-      let map = new SubwayMap(nodes, links, nodeDict);
+    const startSubWayMap = (nodes: Node[], nodeDict) => {
+      let map = new SubwayMap(nodes, nodeDict);
       let _start = 25;
       let _offset = Node.height;
       // New x algorithm, branch lines, closed and open concept
@@ -173,6 +146,34 @@ const SubwayMapVisual = (props: SubwayMapVisualProps) => {
         });
         return bl;
       });
+
+      // edge creation
+      map.links = commits.reduce((acc, c) => {
+        if (c.parents.length === 0) {
+          let infinityNode = new Node("infty-" + c.sha);
+          infinityNode.x = nodeDict[c.sha].x;
+          infinityNode.y = _infinityY;
+          let newLink = new Link(nodeDict[c.sha], infinityNode);
+          newLink.color = nodeDict[c.sha].color;
+          acc.push(newLink);
+        } else {
+          c.parents.forEach((p) => {
+            if (nodeDict[p]) {
+              let newLink = new Link(nodeDict[c.sha], nodeDict[p]);
+              if (c.parents.length > 1) {
+                newLink.color = nodeDict[p].color;
+                nodeDict[c.sha].secondColor = nodeDict[p].color;
+                newLink.merge = true;
+              } else {
+                newLink.color = nodeDict[c.sha].color;
+                newLink.merge = false;
+              }
+              acc.push(newLink);
+            }
+          });
+        }
+        return acc;
+      }, []);
 
       map.width = branchLines.length;
       return map;

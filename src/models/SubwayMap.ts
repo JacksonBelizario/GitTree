@@ -16,29 +16,9 @@ export class SubwayMap {
   }
   public width = 0;
   private _initialized = false;
-  // private eleRef: ElementRef;
-  constructor(nodes: Node[], links: Link[], nodeDict: any) {
+  constructor(nodes: Node[], nodeDict: any) {
     this.nodes = nodes;
-    this.links = links;
     this.nodeDict = nodeDict;
-  }
-
-  /**
-    initGraph(element: ElementRef) {
-        let svg = d3.select(element.nativeElement);
-        d3.selectAll('.commit-info .background')
-            .data(this.nodes)
-            .style('background', function (d) { return d.color.stringValue; });
-        this.eleRef = element;
-        this._initialized = true;
-    }
-    */
-
-  scrollTo(commit: string) {
-    let node = document.getElementById(`commit-info-${commit}`);
-    if (node) {
-      //node.scrollIntoView({behavior: "smooth", block: "center", inline: "center"});
-    }
   }
 
   updateCommitStatus(commit: string, status: string) {
