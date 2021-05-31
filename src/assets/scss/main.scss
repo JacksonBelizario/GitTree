@@ -28,6 +28,17 @@ pre {
 
 $footer-size: 77px;
 
+.loading-content {
+  position: absolute;
+  inset: 0;
+  z-index: 15;
+  background-color: rgba(0, 0, 0, 0.48);
+
+  .bp3-spinner {
+    height: 100%;
+  }
+}
+
 .main-layout {
   height: calc(100vh - 107px);
 

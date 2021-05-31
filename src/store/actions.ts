@@ -78,8 +78,10 @@ const actions = (store: any) => ({
       }).catch(err => {
         console.warn(err)
         showDanger('Error on pull: ' + err.message)
+      }).finally(() => {
+        store.setState({ loading: false })
       })
-    return {};
+    return { loading: true };
   },
 
   push: (state: IStore, reference: IReference = null) => {
@@ -89,8 +91,10 @@ const actions = (store: any) => ({
       }).catch(err => {
         console.warn(err)
         showDanger('Error on push: ' + err.message)
+      }).finally(() => {
+        store.setState({ loading: false })
       })
-    return {};
+    return { loading: true };
   },
 
   checkoutBranch: (state: IStore, reference: IReference) => {
@@ -112,8 +116,10 @@ const actions = (store: any) => ({
       }).catch(err => {
         console.warn(err)
         showDanger('Error on checkout branch: ' + err.message)
+      }).finally(() => {
+        store.setState({ loading: false })
       })
-    return {};
+    return { loading: true };
   },
 });
 

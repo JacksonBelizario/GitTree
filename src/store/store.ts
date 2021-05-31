@@ -21,6 +21,7 @@ const persistMiddleware = persist({ key: "[key]", storage }, function (
 const middlewares = applyMiddleware(persistMiddleware);
 
 export interface IStore {
+  loading: boolean;
   folder: string;
   repo: IRepo;
   selectedCommit: string;
@@ -35,6 +36,7 @@ export interface IStore {
 }
 
 const initialState: IStore = {
+  loading: false,
   folder: "",
   repo: null,
   selectedCommit: "",

@@ -33,28 +33,38 @@ const Settings = (props: SettingsProps) => {
 
   const selectFile = async () => {
     try {
-      const [path] = await dialog.showOpenDialogSync({
+      const {canceled, filePaths} = await dialog.showOpenDialog({
         properties: ["openFile"],
       });
+      if (canceled) {
+        return {success: false, path: '', content: ''}
+      }
+      const [path] = filePaths;
       
       const content = fs.readFileSync(path, {
         encoding: "ascii"
       });
 
-      return {path, content};
+      return {success: true, path, content};
     } catch (error) {
       console.log({ error });
-      return {path: '', content: ''};
+      return {success: false, path: '', content: ''};
     }
   };
 
   const setSSHPrivateKey = async () => {
-    const {path, content} = await selectFile();
+    const {success, path, content} = await selectFile();
+    if (!success) {
+      return;
+    }
     setAuthSettings({ sshPrivateKey: path, sshPrivateContent: content });
   }
 
   const setSSHPublicKey = async () => {
-    const {path, content} = await selectFile();
+    const {success, path, content} = await selectFile();
+    if (!success) {
+      return;
+    }
     setAuthSettings({ sshPublicKey: path, sshPublicContent: content });
   }
 

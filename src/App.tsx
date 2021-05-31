@@ -5,7 +5,7 @@ import Main from "./views/Main";
 import SplitPane from "react-split-pane/lib/SplitPane";
 import Pane from "react-split-pane/lib/Pane";
 import { connect } from 'redux-zero/react';
-import { FocusStyleManager } from "@blueprintjs/core";
+import { Spinner, Intent, FocusStyleManager } from "@blueprintjs/core";
 
 import "./assets/main.css";
 import "./assets/scss/main.scss";
@@ -16,18 +16,25 @@ import Footer from "./components/Footer";
 import { IStore } from './store/store';
 import { ISelectedFile } from './utils/interfaces';
 interface StoreProps {
+  loading: boolean;
   selectedFile: ISelectedFile;
 }
  
 FocusStyleManager.onlyShowFocusOnTabs();
 
 const mapToProps = (state: IStore): StoreProps => ({
+  loading: state.loading,
   selectedFile: state.selectedFile
 });
 
 const App = (props: StoreProps) => {
   return (
     <div className="bp3-dark flex flex-col h-screen">
+      { props.loading &&
+          <div className="loading-content">
+          <Spinner intent={Intent.PRIMARY} size={100} />
+        </div>
+      }
       <Navbar />
       <div className="main-layout flex-1 relative">
         <SplitPane split="vertical">
