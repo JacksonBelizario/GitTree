@@ -1,13 +1,11 @@
-const electron = require("electron");
-const app = electron.app;
+const { app, BrowserWindow, nativeImage } = require("electron");
 const path = require("path");
 const isDev = require("electron-is-dev");
-const BrowserWindow = electron.BrowserWindow;
-const { nativeImage } = require('electron');
+const Store = require('electron-store');
+
+Store.initRenderer();
 
 let mainWindow;
-
-var image = nativeImage.createFromPath(__dirname + '/src/assets/images/logo.png');
 
 function createWindow() {
   app.allowRendererProcessReuse = false;
@@ -18,7 +16,7 @@ function createWindow() {
     height: 680,
     frame: false,
     titleBarStyle: 'hiddenInset',
-    icon: image,
+    icon: nativeImage.createFromPath(path.join(__dirname, "/src/assets/images/logo.png")),
     webPreferences: {
       nodeIntegration: true,
       enableRemoteModule: true
@@ -27,7 +25,7 @@ function createWindow() {
 
   mainWindow.loadURL(
     isDev
-      ? "http://localhost:3000"
+      ? "http://localhost:4000"
       : `file://${path.join(__dirname, "/build/index.html")}`
   );
 

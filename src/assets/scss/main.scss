@@ -37,6 +37,7 @@ $footer-size: 77px;
   inset: 0;
   z-index: 15;
   background-color: rgba(0, 0, 0, 0.48);
+  cursor: wait;
 
   .bp3-spinner {
     height: 100%;
@@ -90,6 +91,7 @@ $footer-size: 77px;
   background-color: var(--bg);
   height: 50px;
   border-top: 1px solid var(--bg-graph);
+  cursor: default;
 }
 
 .recipe-toaster {

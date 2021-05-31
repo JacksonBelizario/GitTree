@@ -7,6 +7,7 @@ import Git from "../utils/git";
 const { dialog } = window.require("electron").remote;
 
 const actions = (store: any) => ({
+  setLoading: (state: IStore, loading: boolean) => ({ loading }),
   setFolder: (state: IStore, folder: string) => ({ folder }),
   setRepo: (state: IStore, repo: IRepo) => ({ repo }),
   setCommits: (state: IStore, commits: ICommit[]) => ({ commits }),

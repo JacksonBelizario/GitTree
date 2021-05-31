@@ -1,6 +1,6 @@
 import NodeGit, { Repository } from "nodegit"
 import { isSSH } from "./index"
-import { IAuth, IRefDict, IReference, IRefs } from "./interfaces";
+import { IAuth, IRefDict, IReference, IRefs, ICommit, IStatusCommit } from "./interfaces";
 
 const openRepo = async (path: string) => {
   return await NodeGit.Repository.open(path);
@@ -43,7 +43,7 @@ const getCommits = async (Repo: Repository) => {
         .join("\n"),
       date: x.date(),
       time: x.time(),
-      committer: x.committer(),
+      committer: x.committer().name(),
       email: x.author().email(),
       author: x.author().name(),
       parents: parents,
@@ -57,7 +57,7 @@ const getCommits = async (Repo: Repository) => {
   return commits;
 };
 
-const getStatus = async (Repo: Repository) => {
+const getStatus = async (Repo: Repository) : Promise<IStatusCommit> => {
   const statuses = await Repo.getStatus();
   let stagedSummary = {
     ignored: 0,
@@ -119,7 +119,6 @@ const getStatus = async (Repo: Repository) => {
   });
   return {
     enabled: (staged.length > 0 || unstaged.length > 0),
-    parents: [],
     staged: staged,
     unstaged: unstaged,
     stagedSummary: stagedSummary,
@@ -168,13 +167,13 @@ const compareCommits = async (Repo: Repository, firstSHA: string, secondSHA: str
   return await firstTree.diff(secondTree);
 }
 
-const getRefsChanges = async (Repo: Repository, refs: IReference[]) => {
+const getRefsChanges = async (Repo: Repository, refs: IReference[]) : Promise<IReference[]> => {
   let remoteRefs = refs.filter((_) => _.isRemote);
 
   let res = [];
   for(let ref of refs) {
     if (ref.isBranch) {
-      let remoteRefWithDiff = remoteRefs.find(remoteRef => remoteRef.shorthand.indexOf(ref.shorthand) !== -1 && remoteRefs.target !== ref.target);
+      let remoteRefWithDiff = remoteRefs.find(remoteRef => remoteRef.shorthand.indexOf(ref.shorthand) !== -1 && remoteRef.target !== ref.target);
       if (remoteRefWithDiff) {
         const res = await compareCommits(Repo, ref.target, remoteRefWithDiff.target);
         const filesChanged = res.numDeltas();
@@ -260,15 +259,15 @@ const getSubmodules = async (Repo) => {
 //     .join("\n");
 //   result.date = cmt.date();
 //   result.time = cmt.time();
-//   result.committer = cmt.committer();
+//   result.committer = cmt.committer().name();
 //   result.email = cmt.author().email();
 //   result.author = cmt.author().name();
 //   return result;
 // };
 
-const getCommitDetails = async (Repo: Repository, sha: string) => {
+const getCommitDetails = async (Repo: Repository, sha: string) : Promise<ICommit> => {
   if (typeof Repo.getCommit !== 'function') {
-    return;
+    return null;
   }
   let x = await Repo.getCommit(sha);
   let [diff] = await x.getDiff();
@@ -307,7 +306,7 @@ const getCommitDetails = async (Repo: Repository, sha: string) => {
     detail: x.message().split('\n').splice(1, x.message().split('\n').length).join('\n'),
     date: x.date(),
     time: x.time(),
-    committer: x.committer(),
+    committer: x.committer().name(),
     email: x.author().email(),
     author: x.author().name(),
     parents: x.parents().map(p => p.toString()),

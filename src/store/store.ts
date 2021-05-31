@@ -1,11 +1,41 @@
 import createStore from "redux-zero";
 import { applyMiddleware } from "redux-zero/middleware";
-import storage from "localforage";
 import { IGraph } from "../models/SubwayMap";
 import { IRepo, ICommit, ICurrentCommit, IRefs, ISelectedFile, IWipCommit, ISettings } from "../utils/interfaces";
 import { INITIAL_WIP } from "../utils";
+import persist from "redux-zero-persist";
 
-const persist = require("redux-zero-persist");
+const ElectronStore = window.require('electron-store');
+
+ class Storage {
+  store: any;
+  constructor() {
+    this.store = new ElectronStore();
+  }
+  async getItem(key, cb) {
+    try {
+      cb(null, await this.store.get(key));
+    } catch(err) {
+      cb(err);
+    }
+  }
+  async setItem(key, item, cb) {
+    try {
+      cb(null, await this.store.set(key, item))
+    } catch(err) {
+      cb(err, {});
+    }
+  }
+  async removeItem(key, cb) {
+    try {
+      cb(null, await this.store.delete(key))
+    } catch(err) {
+      cb(err, {});
+    }
+  }
+}
+
+const storage = new Storage();
 
 const persistMiddleware = persist({ key: "[key]", storage }, function (
   err: any,

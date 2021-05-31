@@ -36,7 +36,8 @@ export interface IWipFile extends IFile {
   isIgnored: boolean;
 }
 
-export interface IWipCommit extends ICommit {
+export interface IStatusCommit {
+  enabled?: boolean;
   staged: IWipFile[];
   unstaged: IWipFile[];
   stagedSummary: {
@@ -53,7 +54,16 @@ export interface IWipCommit extends ICommit {
     modified: number;
     renamed: number;
   };
+  fileSummary: {
+    ignored: number;
+    newCount: number;
+    deleted: number;
+    modified: number;
+    renamed: number;
+  },
 }
+
+export type IWipCommit = ICommit & IStatusCommit;
 
 export interface ICommitDetail extends ICommit {
   fileSummary: {

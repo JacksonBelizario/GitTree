@@ -1,10 +1,10 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import "./index.css";
 import { Provider } from "redux-zero/react";
 import store from "./store/store";
 import App from "./App";
 import Menu from "./Menu";
+import "./index.css";
 
 ReactDOM.render(
   <React.StrictMode>

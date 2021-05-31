@@ -15,7 +15,6 @@ import { IRepo, ICommit, ICurrentCommit, IRefs, IWipCommit, ISettings } from "..
 
 import "react-perfect-scrollbar/dist/css/styles.css";
 import MapSeparator from "./MapSeparator";
-import { Spinner, Intent } from "@blueprintjs/core";
 import { INITIAL_WIP } from "../utils";
 
 interface StoreProps {
@@ -57,11 +56,11 @@ const Main = (props: MainProps) => {
     commit,
     setCommit,
     setSelectedCommit,
+    setLoading,
   } = props;
 
   const [watch, setWatch] = useState<Boolean>(false);
   const [localRefs, setLocalRefs] = useState<IRefs>(refs);
-  const [loading, setLoading] = useState<Boolean>(true);
 
   useEffect(() => {
     const loadRepo = async (folder: string) => {
@@ -85,7 +84,7 @@ const Main = (props: MainProps) => {
     };
 
     loadRepo(folder);
-  }, [folder, setCommit, setCommits, setCurrentBranch, setRepo, setSelectedCommit]);
+  }, [folder, setCommit, setCommits, setCurrentBranch, setRepo, setSelectedCommit, setLoading]);
 
   useEffect(() => {
     if (!isEqual(localRefs.references, refs.references)) {
@@ -109,7 +108,7 @@ const Main = (props: MainProps) => {
     };
     
     const watchChanges = async () => {
-      if (!repo || commits.length === 0) {
+      if (!repo) {
         return;
       }
       let curBranch = await Git.getCurrentBranch(repo);
@@ -119,8 +118,8 @@ const Main = (props: MainProps) => {
 
       let changes = await Git.getStatus(repo);
       let oldStatus = commit.enabled;
-      let wip = {...commit, ...changes};
-      if (oldStatus !== changes.enabled) {
+      let wip = {...commit, ...changes} as IWipCommit;
+      if (oldStatus !== wip.enabled) {
         wip.parents = currentBranch ? [currentBranch.target] : [];
         if (changes.enabled) {
           setLoading(true);
@@ -139,8 +138,8 @@ const Main = (props: MainProps) => {
     }
   }, INTERVAL);
 
-  if (!repo || loading) {
-    return <Spinner className="h-full" intent={Intent.PRIMARY} size={100} />;
+  if (!repo || commits.length === 0) {
+    return <></>;
   }
 
   return (

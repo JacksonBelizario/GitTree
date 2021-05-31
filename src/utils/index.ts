@@ -1,3 +1,5 @@
+import { IWipCommit } from "./interfaces";
+
 export const isSSH = (url: string) => {
   return !(url.startsWith("http://") || url.startsWith("https://"));
 };
@@ -48,4 +50,4 @@ export const INITIAL_WIP = {
     modified: 0,
     renamed: 0,
   },
-};
+} as IWipCommit;

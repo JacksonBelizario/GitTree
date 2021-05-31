@@ -4,7 +4,7 @@ import { Author } from "../models/Author";
 
 import { connect } from 'redux-zero/react';
 import { IStore } from '../store/store';
-import { IRepo, ISelectedFile, ICommitDetail, IWipCommit } from '../utils/interfaces';
+import { IRepo, ISelectedFile, IWipCommit, ICommit } from '../utils/interfaces';
 import ListFiles from "../components/ListFiles";
 
 import Git from "../utils/git";
@@ -39,7 +39,7 @@ type CommitDetailProps = StoreProps & BoundActions<IStore, typeof actions>;
 const CommitDetail = (props : CommitDetailProps) => {
   const { repo, sha, selectedFile, setSelectedFile, setSelectedCommit, commit, setCommit } = props;
 
-  const [details, setDetails] = useState<ICommitDetail | IWipCommit>();
+  const [details, setDetails] = useState<ICommit | IWipCommit>();
 
   const updateStatus = async () => {
     let changes = await Git.getStatus(repo);
