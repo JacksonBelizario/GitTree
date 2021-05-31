@@ -26,8 +26,6 @@ const Settings = (props: SettingsProps) => {
   const setAuthSettings = (data: object)=> {
     setSettings({
       auth: {
-        username: '',
-        password: '',
         ...auth,
         ...data
     }});
@@ -73,6 +71,30 @@ const Settings = (props: SettingsProps) => {
       </Menu>
       <div className="p-3 w-full">
         <Callout className="mb-3 w-full">
+          <H4>Credentials</H4>
+        </Callout>
+        <Callout className="w-full">
+          <span style={{display: 'block', width: 500, marginBottom: 10}}>
+            <H6>Username</H6>
+            <InputGroup
+              large={true}
+              placeholder="Enter your username..."
+              value={auth.username}
+              onChange={({target}) => setAuthSettings({ username: target.value })}
+            />
+          </span>
+          <span style={{display: 'block', width: 500, marginBottom: 10}}>
+            <H6>Password</H6>
+            <InputGroup
+              large={true}
+              type="password"
+              placeholder="Enter your password..."
+              value={auth.password}
+              onChange={({target}) => setAuthSettings({ password: target.value })}
+            />
+          </span>
+        </Callout>
+        <Callout className="mb-3 mt-3 w-full">
           <H4>SSH</H4>
         </Callout>
         <Callout className="w-full">
@@ -85,14 +107,14 @@ const Settings = (props: SettingsProps) => {
           <span style={{display: 'block', width: 500, marginBottom: 10}}>
             <H6>SSH Private Key</H6>
             <InputGroup
-                large={true}
-                disabled={auth.useSshLocalAgent}
-                onChange={() => {}}
-                placeholder="Choose file..."
-                value={auth.sshPrivateKey}
-                readOnly
-                onClick={() => setSSHPrivateKey()}
-                rightElement={
+              large={true}
+              disabled={auth.useSshLocalAgent}
+              onChange={() => {}}
+              placeholder="Choose file..."
+              value={auth.sshPrivateKey}
+              readOnly
+              onClick={() => setSSHPrivateKey()}
+              rightElement={
                 <Button
                   disabled={auth.useSshLocalAgent}
                   onClick={() => setSSHPrivateKey()}
@@ -103,14 +125,14 @@ const Settings = (props: SettingsProps) => {
           <span style={{display: 'block', width: 500, marginBottom: 10}}>
             <H6>SSH Public Key</H6>
             <InputGroup
-                large={true}
-                disabled={auth.useSshLocalAgent}
-                onChange={() => {}}
-                placeholder="Choose file..."
-                value={auth.sshPublicKey}
-                readOnly
-                onClick={() => setSSHPublicKey()}
-                rightElement={
+              large={true}
+              disabled={auth.useSshLocalAgent}
+              onChange={() => {}}
+              placeholder="Choose file..."
+              value={auth.sshPublicKey}
+              readOnly
+              onClick={() => setSSHPublicKey()}
+              rightElement={
                 <Button
                   disabled={auth.useSshLocalAgent}
                   onClick={() => setSSHPublicKey()}
