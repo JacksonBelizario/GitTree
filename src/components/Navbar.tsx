@@ -2,7 +2,6 @@ import * as React from "react";
 import {
   Button,
   Classes,
-  Intent,
   Navbar,
   NavbarDivider,
   NavbarGroup,
@@ -34,11 +33,9 @@ import { connect } from "redux-zero/react";
 import { BoundActions } from "redux-zero/types/Actions";
 import actions from "../store/actions";
 import { IStore } from "../store/store";
-import { AppToaster } from "../utils/toaster";
+import { showWarning } from "../utils/toaster";
 
 import '../assets/scss/navbar.scss'
-
-const { dialog } = window.require("electron").remote;
 
 const ONE_SECOND = 1000;
 
@@ -62,7 +59,7 @@ const Nav = (props: NavProps) => {
   const {
     repo,
     folder,
-    setFolder,
+    openRepo,
     currentBranch,
     setShowSettings,
     settings: {
@@ -70,20 +67,9 @@ const Nav = (props: NavProps) => {
       general: { fetchInterval },
       auth
     },
-    setExpandedMenu
+    pull,
+    push
   } = props;
-
-  const selectFolder = async () => {
-    try {
-      let [path] = await dialog.showOpenDialogSync({
-        properties: ["openDirectory"],
-      });
-      setFolder(path);
-      setExpandedMenu([]);
-    } catch (error) {
-      console.log({ error });
-    }
-  };
 
   useInterval(() => {
     const fetch = async () => {
@@ -94,15 +80,10 @@ const Nav = (props: NavProps) => {
         await Git.fetchAll(repo, auth);
       }
       catch(err) {
-        AppToaster.show({
-          icon: "warning-sign",
-          intent: Intent.WARNING,
-          message: <span>Error to fetch remotes<br />{err.message}</span>,
-          action: {
-              onClick: () => setShowSettings(true),
-              text: "Settings",
-          },
-        })
+        showWarning(
+          <>Error to fetch remotes<br />{err.message}</>,
+          { text: "Settings", onClick: () => setShowSettings(true) }
+        )
       }
     };
 
@@ -117,7 +98,7 @@ const Nav = (props: NavProps) => {
         <Button
           className={Classes.MINIMAL}
           icon={<FolderIcon size={20} />}
-          onClick={() => selectFolder()}
+          onClick={() => openRepo()}
         />
         {folder && (
           <Tag
@@ -145,11 +126,13 @@ const Nav = (props: NavProps) => {
             className={Classes.MINIMAL}
             icon={<ArrowDownIcon size={20} />}
             text="Pull"
+            onClick={() => pull()}
           />
           <Button
             className={Classes.MINIMAL}
             icon={<ArrowUpIcon size={20} />}
             text="Push"
+            onClick={() => push()}
           />
           <NavbarDivider />
           <Button

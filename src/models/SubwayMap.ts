@@ -11,11 +11,7 @@ export class SubwayMap {
   public nodes: Node[] = [];
   public links: Link[] = [];
   public nodeDict: any;
-  public get initialized(): boolean {
-    return this._initialized;
-  }
   public width = 0;
-  private _initialized = false;
   constructor(nodes: Node[], nodeDict: any) {
     this.nodes = nodes;
     this.nodeDict = nodeDict;

@@ -18,9 +18,9 @@ const mapToProps = (state: IStore): StoreProps => ({
   settings: state.settings,
 });
 
-type SerringsProps = StoreProps & BoundActions<IStore, typeof actions>;
+type SettingsProps = StoreProps & BoundActions<IStore, typeof actions>;
 
-const Settings = (props: SerringsProps) => {
+const Settings = (props: SettingsProps) => {
   const { settings: {show, auth}, setSettings } = props;
 
   const setAuthSettings = (data: object)=> {

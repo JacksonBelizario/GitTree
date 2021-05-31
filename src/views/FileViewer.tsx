@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import refractor from 'refractor';
-import {Diff, Hunk, Decoration, tokenize, markWord, markEdits} from 'react-diff-view';
+import {Diff, Hunk, Decoration, tokenize, markEdits} from 'react-diff-view';
 import { IStore } from '../store/store';
 import { ISelectedFile, IRepo } from '../utils/interfaces';
 import { BoundActions } from 'redux-zero/types';
@@ -97,16 +97,18 @@ const FileViewer = (props: FileViewerProps) => {
   }, [repo, file, commit, fullFile]);
 
   useEffect(() => {
-    setTimeout(() => {
-      const element = document.querySelector(".diff-gutter-insert");
-      const container = document.querySelector(".diff-viewer");
-      if (container && element) {
-        const top = element.getBoundingClientRect().top - 100;
-        if (top > 0) {
-          container.scrollTo({ top, behavior: "smooth" });
+    if (viewType === "split") {
+      setTimeout(() => {
+        const element = document.querySelector(".diff-gutter-insert");
+        const container = document.querySelector(".diff-viewer");
+        if (container && element) {
+          const top = element.getBoundingClientRect().top - 130;
+          if (top > 0) {
+            container.scrollTo({ top, behavior: "smooth" });
+          }
         }
-      }
-    }, 1000);
+      }, 1000);
+    }
   }, [hunks]);
 
 

@@ -2,8 +2,8 @@ import NodeGit, { Repository } from "nodegit"
 import { isSSH } from "./index"
 import { IAuth, IReference } from "./interfaces";
 
-const openRepo = async (folder) => {
-  return await NodeGit.Repository.open(folder);
+const openRepo = async (path: string) => {
+  return await NodeGit.Repository.open(path);
 };
 
 const getCommits = async (Repo: Repository) => {
@@ -57,7 +57,7 @@ const getCommits = async (Repo: Repository) => {
   return commits;
 };
 
-const getStatus = async (Repo) => {
+const getStatus = async (Repo: Repository) => {
   const statuses = await Repo.getStatus();
   let stagedSummary = {
     ignored: 0,
@@ -134,7 +134,7 @@ const getStatus = async (Repo) => {
   };
 };
 
-const getCurrentBranch = async (Repo) => {
+const getCurrentBranch = async (Repo: Repository) => {
   try {
     const ref = await Repo.getCurrentBranch();
     let branchNames = ref.name().split("/");
@@ -150,7 +150,7 @@ const getCurrentBranch = async (Repo) => {
   }
 };
 
-const compareCommits = async (Repo, firstSHA, secondSHA) => {
+const compareCommits = async (Repo: Repository, firstSHA: string, secondSHA: string) => {
 
   let [localCommit, remoteCommit] = await Promise.all([
     Repo.getCommit(firstSHA),
@@ -168,7 +168,7 @@ const compareCommits = async (Repo, firstSHA, secondSHA) => {
   return await firstTree.diff(secondTree);
 }
 
-const getRefsChanges = async (Repo, refs) => {
+const getRefsChanges = async (Repo: Repository, refs: IReference[]) => {
   let remoteRefs = refs.filter((_) => _.isRemote);
 
   let res = [];
@@ -193,7 +193,7 @@ const getRefsChanges = async (Repo, refs) => {
   return res;
 }
 
-const getReferences = async (Repo) => {
+const getReferences = async (Repo: Repository) => {
   try {
     let refs = await Repo.getReferences();
     refs = refs.filter((_) => _.shorthand() !== "stash");
@@ -266,7 +266,7 @@ const getSubmodules = async (Repo) => {
 //   return result;
 // };
 
-const getCommitDetails = async (Repo, sha) => {
+const getCommitDetails = async (Repo: Repository, sha: string) => {
   if (typeof Repo.getCommit !== 'function') {
     return;
   }
@@ -338,12 +338,12 @@ const stageAll = async (Repo, paths) => {
     await index.write();
 }
 
-const unstageAll = async (Repo, paths) => {
+const unstageAll = async (Repo: Repository, paths: string[]) => {
   let commit = await Repo.getHeadCommit();
   await NodeGit.Reset.default(Repo, commit, paths);
 }
 
-const repoCallbacks = (auth) => {
+const repoCallbacks = (auth: IAuth) => {
   return {
     callbacks: {
       credentials: (url, userName) => {
@@ -364,11 +364,11 @@ const repoCallbacks = (auth) => {
   }
 }
 
-const fetchAll = async (Repo, auth: IAuth) => {
+const fetchAll = async (Repo: Repository, auth: IAuth) => {
   return await Repo.fetchAll(repoCallbacks(auth));
 }
 
-const getCurrentFirstRemote = async (Repo) => {
+const getCurrentFirstRemote = async (Repo: Repository) => {
   const [firstRemote] = await Repo.getRemotes();
   if (!firstRemote) {
     throw new Error('No remote found');
@@ -376,30 +376,48 @@ const getCurrentFirstRemote = async (Repo) => {
   return firstRemote;
 }
 
-const fetch = async (Repo, auth: IAuth) => {
+const fetch = async (Repo: Repository, auth: IAuth) => {
   const remote = await getCurrentFirstRemote(Repo);
   return await Repo.fetch(remote, repoCallbacks(auth));
 }
 
-export const pull = async (Repo, origin, branch, auth) => {
-  await Repo.fetch(origin, repoCallbacks(auth));
-  return Repo.mergeBranches(branch, `${origin}/${branch}`);
+export const pull = async (Repo: Repository, reference: IReference = null, auth: IAuth) => {
+  const remote = await getCurrentFirstRemote(Repo);
+  await Repo.fetch(remote, repoCallbacks(auth));
+
+  if (reference) {
+    const branch = reference.shorthand;
+    return Repo.mergeBranches(branch, `${remote.name()}/${branch}`);
+  }
+  else {
+    const head = await Repo.head();
+    return Repo.mergeBranches(head, `${remote.name()}/${head.shorthand()}`);
+  }
 }
 
-export const push = async (repo, origin, branches, auth) => {
-  const remote = await repo.getRemote(origin);
-  const refs = branches.map((branch) => `${branch.path}:${branch.path}`);
-  return remote.push(refs, repoCallbacks(auth));
+export const push = async (Repo: Repository, reference: IReference = null, auth: IAuth) => {
+  const remote = await getCurrentFirstRemote(Repo);
+  await Repo.fetch(remote, repoCallbacks(auth));
+
+  if (reference) {
+    const branch = reference.shorthand;
+    const ref = await Repo.getReference(branch);
+    return remote.push([ref], repoCallbacks(auth));
+  }
+  else {
+    const head = await Repo.head();
+    return remote.push([head], repoCallbacks(auth));
+  }
 }
 
-export const checkout = async (Repo, reference: IReference) => {
-  let branchName = reference.shorthand;
-  let ref = await Repo.getReference(branchName);
+export const checkout = async (Repo: Repository, reference: IReference) => {
+  const branch = reference.shorthand;
+  const ref = await Repo.getReference(branch);
   if (reference.isRemote && !reference.isBranch) {
     // Removes 'origin/' from branch name
-    let newName = branchName.split('/').slice(1).join('/');
-    let localRef = await Repo.createBranch(newName, ref.target(), true);
-    await NodeGit.Branch.setUpstream(localRef, branchName);
+    const newName = branch.split('/').slice(1).join('/');
+    const localRef = await Repo.createBranch(newName, ref.target(), true);
+    await NodeGit.Branch.setUpstream(localRef, branch);
     return Repo.checkoutBranch(localRef);
   }
   else {

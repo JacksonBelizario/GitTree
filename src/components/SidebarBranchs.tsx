@@ -38,7 +38,7 @@ type SidebarBranchsProps = {
 } & StoreProps & BoundActions<IStore, typeof actions>;
 
 const SidebarBranchs = (props: SidebarBranchsProps) => {
-  const { branchs, scrollToCommit, checkoutBranch, expandedMenu, setExpandedMenu } = props;
+  const { branchs, scrollToCommit, checkoutBranch, pull, push, expandedMenu, setExpandedMenu } = props;
 
   const [contents, setContents] = useState<ITreeNode[]>([]);
 
@@ -112,7 +112,7 @@ const SidebarBranchs = (props: SidebarBranchsProps) => {
   };
   const handleNodeDoubleClick = (treeNode: ITreeNode, _nodePath: number[], e: React.MouseEvent<HTMLElement>) => {
     if (!treeNode.childNodes?.length) {
-      checkoutBranch(treeNode.nodeData);
+      checkoutBranch(treeNode.nodeData as IReference);
     }
   };
   const handleNodeCollapse = (treeNode: ITreeNode) => {
@@ -131,19 +131,20 @@ const SidebarBranchs = (props: SidebarBranchsProps) => {
   const onNodeDoubleClick = useCallback(handleNodeDoubleClick, [contents]);
 
   const showContextMenu = (treeNode: ITreeNode, path: number[], e: React.MouseEvent<HTMLElement>) => {
-    const {nodeData: branch} = treeNode;
+    const {nodeData} = treeNode;
     e.preventDefault();
     if (!!treeNode.childNodes?.length) {
       return;
     }
+    const branch = nodeData as IReference;
     const branchName = branch['shorthand'];
     const isCurrent = branch['isCurrent'];
     const isLocalBranch = !!branch['isBranch'] && !branch['isRemote'];
     // @todo On remote branch check if has permission to delete
     ContextMenu.show(
       <Menu>
-        {isLocalBranch && <MenuItem text={`Pull`} />}
-        {isLocalBranch && <MenuItem text={`Push`} />}
+        {isLocalBranch && <MenuItem text={`Pull`} onClick={() => pull(branch) } />}
+        {isLocalBranch && <MenuItem text={`Push`} onClick={() => push(branch) } />}
         {!isCurrent && <MenuItem text={`Checkout ${branchName}...`} onClick={() => checkoutBranch(branch)} />}
         <MenuDivider />
         {!isCurrent && <MenuItem text={`Merge ${branchName} into current branch`} />}

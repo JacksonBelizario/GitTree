@@ -1,6 +1,10 @@
 import { IStore } from "./store";
 import { IGraph } from "../models/SubwayMap";
 import { ICommit, IRepo, ICurrentCommit, IRefs, ISelectedFile, IWipCommit, IReference } from "../utils/interfaces";
+import { showDanger, showInfo } from "../utils/toaster";
+import Git from "../utils/git";
+
+const { dialog } = window.require("electron").remote;
 
 const actions = (store: any) => ({
   setFolder: (state: IStore, folder: string) => ({ folder }),
@@ -48,7 +52,69 @@ const actions = (store: any) => ({
       show
     }
   }),
-  setExpandedMenu: (state: IStore, expandedMenu: string[]) => ({ expandedMenu })
+  setExpandedMenu: (state: IStore, expandedMenu: string[]) => ({ expandedMenu }),
+
+  openRepo: (state: IStore) => {
+    dialog.showOpenDialog({ properties: ["openDirectory"] })
+      .then(res => {
+        if (!res.canceled) {
+          const [folder] = res.filePaths;
+          store.setState({
+            folder,
+            expandedMenu: []
+          })
+        }
+      }).catch(err => {
+        console.warn(err)
+        showDanger('Error on select folder: ' + err.message)
+      })
+    return {};
+  },
+
+  pull: (state: IStore, reference: IReference = null) => {
+    Git.pull(state.repo, reference, state.settings.auth)
+      .then(() => {
+        showInfo('Pulled successful')
+      }).catch(err => {
+        console.warn(err)
+        showDanger('Error on pull: ' + err.message)
+      })
+    return {};
+  },
+
+  push: (state: IStore, reference: IReference = null) => {
+    Git.push(state.repo, reference, state.settings.auth)
+      .then(() => {
+        showInfo('Pushed successful')
+      }).catch(err => {
+        console.warn(err)
+        showDanger('Error on push: ' + err.message)
+      })
+    return {};
+  },
+
+  checkoutBranch: (state: IStore, reference: IReference) => {
+    Git.checkout(state.repo, reference)
+      .then(() => {
+        return Git.getCurrentBranch(state.repo);
+      }).then(currentBranch => {
+        store.setState({
+          currentBranch,
+          refs: {
+            ...state.refs,
+            references: state.refs.references.map((ref: IReference)=> ({
+              current: ref.display.includes(currentBranch.name),
+              ...ref
+            }))
+          }
+        })
+        showInfo('Checkout successful')
+      }).catch(err => {
+        console.warn(err)
+        showDanger('Error on checkout branch: ' + err.message)
+      })
+    return {};
+  },
 });
 
 export default actions;

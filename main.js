@@ -3,7 +3,7 @@ const app = electron.app;
 const path = require("path");
 const isDev = require("electron-is-dev");
 const BrowserWindow = electron.BrowserWindow;
-const { ipcMain, nativeImage } = require('electron');
+const { nativeImage } = require('electron');
 
 let mainWindow;
 

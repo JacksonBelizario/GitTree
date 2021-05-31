@@ -30,7 +30,7 @@ const LinkVisual = (props: ILinkVisual) => {
   return (
     <g>
     {
-      link.source && (!link.merge || (link.merge && link.source.commit.parents[0] == link.target.commit.sha)) ?
+      link.source && (!link.merge || (link.merge && link.source.commit.parents[0] === link.target.commit.sha)) ?
       <g>{`<!--link.source && !link.merge | ${linkDirection < 0 ? '╝' : ''} ${linkDirection > 0 ? '╚' : ''} -->`}
         <line strokeDasharray={link.source.commit.virtual || link.source.commit.isStash? '2' : 'none'} className="line" x1={link.source.x} y1={link.source.y + 7} x2={link.source.x} y2={(link.target.y || 0) - 5}
           style={{ stroke: link.color.stringValue }}></line>
