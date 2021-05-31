@@ -26,6 +26,10 @@ pre {
   white-space: pre-wrap;
 }
 
+a:hover {
+  text-decoration: none;
+}
+
 $footer-size: 77px;
 
 .loading-content {
@@ -50,8 +54,14 @@ $footer-size: 77px;
     overflow-y: auto;
     overflow-x: hidden;
     min-height: 0;
-    .bp3-tree-node-content {
-      height: 25px;
+
+    .bp3-tree {
+      background-color: rgba(0, 0, 0, 0.2);
+
+      .bp3-tree-node-content {
+        height: 22px;
+        font-size: 13px;
+      }
     }
   }
   .section {

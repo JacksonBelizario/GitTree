@@ -147,14 +147,14 @@ const SidebarBranchs = (props: SidebarBranchsProps) => {
         {isLocalBranch && <MenuItem text={`Push`} onClick={() => push(branch) } />}
         {!isCurrent && <MenuItem text={`Checkout ${branchName}...`} onClick={() => checkoutBranch(branch)} />}
         <MenuDivider />
-        {!isCurrent && <MenuItem text={`Merge ${branchName} into current branch`} />}
-        {!isCurrent && <MenuItem text={`Rebase ${branchName} into current branch`} />}
+        {!isCurrent && <MenuItem disabled text={`Merge ${branchName} into current branch`} />}
+        {!isCurrent && <MenuItem disabled text={`Rebase ${branchName} into current branch`} />}
         {!isCurrent && <MenuItem disabled text="Diff against current" />}
-        <MenuItem text="Copy branch name" />
-        <MenuItem text="Copy branch sha" />
+        <MenuItem disabled text="Copy branch name" />
+        <MenuItem disabled text="Copy branch sha" />
         <MenuDivider />
-        <MenuItem text={"Rename " + branchName} />
-        <MenuItem disabled text={"Delete " + branchName} /> 
+        <MenuItem disabled text={"Rename " + branchName} />
+        <MenuItem disabled text={"Delete " + branchName} />
       </Menu>,
       { left: e.clientX, top: e.clientY },
       null,

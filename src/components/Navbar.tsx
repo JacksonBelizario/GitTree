@@ -139,28 +139,33 @@ const Nav = (props: NavProps) => {
             className={Classes.MINIMAL}
             icon={<GitMergeIcon size={20} />}
             text="Merge"
+            disabled
           />
           <Button
             className={Classes.MINIMAL}
             icon={<GitBranchIcon size={20} />}
             text="Branch"
+            disabled
           />
           <NavbarDivider />
           <Button
             className={Classes.MINIMAL}
             icon={<StashIcon size={20} />}
             text="Stash"
+            disabled
           />
           <Button
             className={Classes.MINIMAL}
             icon={<PopStashIcon size={20} />}
             text="Pop"
+            disabled
           />
           <NavbarDivider />
           <Button
             className={Classes.MINIMAL}
             icon={<TagIcon size={20} />}
             text="Tag"
+            disabled
           />
       </NavbarGroup>
       <NavbarGroup>
@@ -168,6 +173,7 @@ const Nav = (props: NavProps) => {
         <Button
           className={Classes.MINIMAL}
           icon={<TerminalIcon size={25} />}
+          disabled
         />
         <Button
           className={Classes.MINIMAL}

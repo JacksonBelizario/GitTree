@@ -1,6 +1,6 @@
 import NodeGit, { Repository } from "nodegit"
 import { isSSH } from "./index"
-import { IAuth, IReference } from "./interfaces";
+import { IAuth, IRefDict, IReference, IRefs } from "./interfaces";
 
 const openRepo = async (path: string) => {
   return await NodeGit.Repository.open(path);
@@ -193,14 +193,14 @@ const getRefsChanges = async (Repo: Repository, refs: IReference[]) => {
   return res;
 }
 
-const getReferences = async (Repo: Repository) => {
+const getReferences = async (Repo: Repository) : Promise<IRefs> => {
   try {
     let refs = await Repo.getReferences();
     refs = refs.filter((_) => _.shorthand() !== "stash");
 
     const commits = refs.map(o => o.target().toString()).join(',');
 
-    let references = refs.map(ref => {
+    let references = refs.map((ref) : IReference => {
       let display = "";
       if (ref.isBranch()) {
         display = ref.shorthand();
@@ -212,9 +212,9 @@ const getReferences = async (Repo: Repository) => {
       }
       return {
         target: ref.target().toString(),
-        isBranch: ref.isBranch(),
-        isRemote: ref.isRemote(),
-        isTag: ref.isTag(),
+        isBranch: !!ref.isBranch(),
+        isRemote: !!ref.isRemote(),
+        isTag: !!ref.isTag(),
         name: ref.name(),
         shorthand: ref.shorthand(),
         display,
@@ -222,8 +222,8 @@ const getReferences = async (Repo: Repository) => {
         isCurrent: false
       };
     });
-    let refDict = {};
-    references.forEach((ref) => {
+    let refDict = {} as IRefDict;
+    references.forEach((ref : IReference) => {
       if (refDict[ref.target]) {
         refDict[ref.target].push(ref);
       } else {

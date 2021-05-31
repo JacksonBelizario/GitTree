@@ -109,7 +109,7 @@ const FileViewer = (props: FileViewerProps) => {
         }
       }, 1000);
     }
-  }, [hunks]);
+  }, [hunks, viewType]);
 
 
   if (!repo || !file || !commit || !file.path || tokens.length === 0) {
@@ -137,6 +137,7 @@ const FileViewer = (props: FileViewerProps) => {
           hunks={hunks}
           tokens={tokens}
           renderToken={renderToken}
+          optimizeSelection={true}
         >
           {hunks => hunks.flatMap(renderHunk)}
         </Diff>

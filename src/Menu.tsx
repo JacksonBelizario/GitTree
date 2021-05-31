@@ -19,7 +19,6 @@ class Dispatcher {
 
   public setMenuProps(props: MenuProps) {
     this.props = props;
-    console.log('setMenuProps', props);
   }
 
   public onMenuEvent(name) {
@@ -49,7 +48,8 @@ const menuTemplate = [
       {
         label: 'New repository...',
         accelerator: 'CmdOrCtrl+N',
-        click: dipatcher.onMenuEvent('new-repo')
+        click: dipatcher.onMenuEvent('new-repo'),
+        enabled: false
       },
       {
         label: 'Open repository...',
@@ -59,7 +59,8 @@ const menuTemplate = [
       {
         label: 'Clone repository...',
         accelerator: 'CmdOrCtrl+Shift+O',
-        click: dipatcher.onMenuEvent('clone-repo')
+        click: dipatcher.onMenuEvent('clone-repo'),
+        enabled: false
       },
       { type: 'separator' },
       {
@@ -98,34 +99,40 @@ const menuTemplate = [
       {
         label: 'New Branch...',
         accelerator: 'CmdOrCtrl+Shift+N',
-        click: dipatcher.onMenuEvent('new-branch')
+        click: dipatcher.onMenuEvent('new-branch'),
+        enabled: false
       },
       {
         label: 'Rename...',
         accelerator: 'CmdOrCtrl+Shift+R',
-        click: dipatcher.onMenuEvent('rename-branch')
+        click: dipatcher.onMenuEvent('rename-branch'),
+        enabled: false
       },
       {
         label: 'Delete...',
         accelerator: 'CmdOrCtrl+Shift+D',
-        click: dipatcher.onMenuEvent('delete-branch')
+        click: dipatcher.onMenuEvent('delete-branch'),
+        enabled: false
       },
       { type: 'separator' },
       {
         label: 'Discard all changes...',
         accelerator: 'CmdOrCtrl+Shift+Backspace',
-        click: dipatcher.onMenuEvent('dicard-all-changes')
+        click: dipatcher.onMenuEvent('dicard-all-changes'),
+        enabled: false
       },
       { type: 'separator' },
       {
         label: 'Stash',
         accelerator: 'Alt+S',
-        click: dipatcher.onMenuEvent('stash')
+        click: dipatcher.onMenuEvent('stash'),
+        enabled: false
       },
       {
         label: 'Pop Stash',
         accelerator: 'Alt+Shift+S',
-        click: dipatcher.onMenuEvent('pop-stash')
+        click: dipatcher.onMenuEvent('pop-stash'),
+        enabled: false
       },
     ]
   },
