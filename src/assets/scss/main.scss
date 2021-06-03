@@ -162,5 +162,31 @@ $footer-size: 77px;
   height: calc(100vh - 30px) !important;
 }
 
+.badge {
+  display: inline-block;
+  line-height: 1;
+  border-radius: 10px;
+  color: #fff;
+  font-size: 11px;
+  height: 15px;
+  letter-spacing: 0;
+  min-width: 15px;
+  padding: 1px 3px;
+  pointer-events: auto;
+  position: absolute;
+  text-align: center;
+  text-indent: 0;
+  top: auto;
+  transition: 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
+  white-space: nowrap;
+  inset: auto auto calc(100% - 17px) calc(100% - 17px);
+  background-color: #2196f3 !important;
+  border-color: #2196f3 !important;
+
+  ::after {
+    border-color: #1e1e1e;
+  }
+}
+
 @import "resizer.scss";
 @import "subway.scss";

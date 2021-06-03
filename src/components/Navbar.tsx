@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 import {
   Button,
   Classes,
@@ -28,7 +28,7 @@ import {
 
 import Git from "../utils/git";
 import { useInterval } from "../utils/hooks";
-import { IRepo, ICurrentCommit, ISettings } from "../utils/interfaces";
+import { IRepo, ICurrentCommit, ISettings, IRefs } from "../utils/interfaces";
 import { connect } from "redux-zero/react";
 import { BoundActions } from "redux-zero/types/Actions";
 import actions from "../store/actions";
@@ -43,7 +43,8 @@ interface StoreProps {
   repo: IRepo;
   folder: string;
   currentBranch: ICurrentCommit | null;
-  settings: ISettings
+  settings: ISettings;
+  refs: IRefs;
 }
 
 const mapToProps = (state: IStore): StoreProps => ({
@@ -51,6 +52,7 @@ const mapToProps = (state: IStore): StoreProps => ({
   folder: state.folder,
   currentBranch: state.currentBranch,
   settings: state.settings,
+  refs: state.refs,
 });
 
 type NavProps = StoreProps & BoundActions<IStore, typeof actions>;
@@ -68,8 +70,11 @@ const Nav = (props: NavProps) => {
       auth
     },
     pull,
-    push
+    push,
+    refs
   } = props;
+
+  const [ref] = refs.refDict[currentBranch.target] || [];
 
   useInterval(() => {
     const fetch = async () => {
@@ -127,13 +132,17 @@ const Nav = (props: NavProps) => {
             icon={<ArrowDownIcon size={20} />}
             text="Pull"
             onClick={() => pull()}
-          />
+          >
+            { !!ref && !!ref.diff.behind && <div className="badge">{ref.diff.behind}</div> }
+          </Button>
           <Button
             className={Classes.MINIMAL}
             icon={<ArrowUpIcon size={20} />}
             text="Push"
             onClick={() => push()}
-          />
+          >
+            { !!ref && !!ref.diff.ahead && <div className="badge">{ref.diff.ahead}</div> }
+          </Button>
           <NavbarDivider />
           <Button
             className={Classes.MINIMAL}
