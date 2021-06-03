@@ -63,6 +63,14 @@ $footer-size: 77px;
         height: 22px;
         font-size: 13px;
       }
+
+      .secondary-label {
+        font-size: 11px;
+        display: flex;
+        align-items: center;
+        width: 40px;
+        justify-content: space-between;
+      }
     }
   }
   .section {

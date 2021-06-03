@@ -2,12 +2,14 @@ import React, { useState, useEffect, useCallback } from "react";
 
 import {
   Classes,
+  Icon,
   ITreeNode,
   Tree,
   ContextMenu,
   MenuItem,
   Menu,
   MenuDivider,
+  Colors,
 } from "@blueprintjs/core";
 import {
   FiFolder as FolderIcon,
@@ -60,7 +62,10 @@ const SidebarBranchs = (props: SidebarBranchsProps) => {
             label: currentLabel,
             icon: <GitBranchIcon size={15} style={{ marginRight: "10px" }} />,
             isSelected: !!branch.isCurrent,
-            secondaryLabel: branch.diff ? <div style={{fontSize: 11}}>{branch.diff}</div> : null,
+            secondaryLabel: <div className="secondary-label">
+                { !!branch.diff.ahead && <> {branch.diff.ahead} <Icon icon="arrow-up" iconSize={11} color={Colors.WHITE} /></> }
+                { !!branch.diff.behind && <> {branch.diff.behind} <Icon icon="arrow-down" iconSize={11} color={Colors.WHITE} /></> }
+              </div>,
             nodeData: branch,
           });
           folder.childNodes.sort(order);

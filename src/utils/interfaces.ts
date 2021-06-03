@@ -91,7 +91,10 @@ export interface IReference {
   shorthand: string;
   display: string;
   isCurrent?: boolean;
-  diff?: number;
+  diff?: {
+    ahead: number;
+    behind: number;
+  };
 }
 
 export type IRefDict = Map<string, IReference[]> | null;

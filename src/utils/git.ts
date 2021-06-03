@@ -175,15 +175,8 @@ const getRefsChanges = async (Repo: Repository, refs: IReference[]) : Promise<IR
     if (ref.isBranch) {
       let remoteRefWithDiff = remoteRefs.find(remoteRef => remoteRef.shorthand.indexOf(ref.shorthand) !== -1 && remoteRef.target !== ref.target);
       if (remoteRefWithDiff) {
-        const res = await compareCommits(Repo, ref.target, remoteRefWithDiff.target);
-        const filesChanged = res.numDeltas();
-        // var stats = await res.getStats();
-        // console.log({
-        //   filesChanged: stats.filesChanged(),
-        //   deletions: stats.deletions(),
-        //   insertions: stats.insertions(),
-        // })
-        ref.diff = filesChanged;
+        //@ts-ignore
+        ref.diff = await NodeGit.Graph.aheadBehind(Repo, ref.target, remoteRefWithDiff.target);
       }
     }
     res.push(ref)
@@ -217,7 +210,7 @@ const getReferences = async (Repo: Repository) : Promise<IRefs> => {
         name: ref.name(),
         shorthand: ref.shorthand(),
         display,
-        diff: 0,
+        diff: { ahead: 0, behind: 0 },
         isCurrent: false
       };
     });
