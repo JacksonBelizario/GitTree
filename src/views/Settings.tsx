@@ -7,7 +7,7 @@ import { connect } from 'redux-zero/react';
 
 import { Button, H4, H6, Callout, Menu, MenuItem, InputGroup, Switch } from "@blueprintjs/core";
 
-const { dialog } = window.require("electron").remote;
+const { dialog, getCurrentWindow } = window.require("electron").remote;
 const fs = window.require('fs');
 
 interface StoreProps {
@@ -33,9 +33,10 @@ const Settings = (props: SettingsProps) => {
 
   const selectFile = async () => {
     try {
-      const {canceled, filePaths} = await dialog.showOpenDialog({
-        properties: ["openFile"],
-      });
+      const {canceled, filePaths} = await dialog.showOpenDialog(
+        getCurrentWindow(),
+        { properties: ["openFile"] }
+      );
       if (canceled) {
         return {success: false, path: '', content: ''}
       }

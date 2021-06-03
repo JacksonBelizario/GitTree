@@ -8,7 +8,7 @@ import { IStore } from './store/store';
 const icon = "data:image/svg+xml,%3Csvg stroke='%23eeeeee' fill='none' stroke-width='2' viewBox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='18' cy='18' r='3'%3E%3C/circle%3E%3Ccircle cx='6' cy='6' r='3'%3E%3C/circle%3E%3Cpath d='M13 6h3a2 2 0 0 1 2 2v7'%3E%3C/path%3E%3Cline x1='6' y1='9' x2='6' y2='21'%3E%3C/line%3E%3C/svg%3E";
 
 const { Titlebar, Color } = window.require('custom-electron-titlebar');
-const { Menu: { buildFromTemplate }, globalShortcut , shell, app, dialog } = window.require('electron').remote;
+const { Menu: { buildFromTemplate }, globalShortcut , shell, app, dialog, getCurrentWindow } = window.require('electron').remote;
 
 type MenuProps = {
   title: string;
@@ -150,7 +150,7 @@ const menuTemplate = [
       {
         label: "About",
         async click() {
-          await dialog.showMessageBoxSync({
+          await dialog.showMessageBoxSync(getCurrentWindow(), {
             type: "info",
             title: "GitTree",
             message: `

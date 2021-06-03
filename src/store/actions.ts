@@ -4,7 +4,7 @@ import { ICommit, IRepo, ICurrentCommit, IRefs, ISelectedFile, IWipCommit, IRefe
 import { showDanger, showInfo } from "../utils/toaster";
 import Git from "../utils/git";
 
-const { dialog } = window.require("electron").remote;
+const { dialog, getCurrentWindow } = window.require("electron").remote;
 
 const actions = (store: any) => ({
   setLoading: (state: IStore, loading: boolean) => ({ loading }),
@@ -56,7 +56,10 @@ const actions = (store: any) => ({
   setExpandedMenu: (state: IStore, expandedMenu: string[]) => ({ expandedMenu }),
 
   openRepo: (state: IStore) => {
-    dialog.showOpenDialog({ properties: ["openDirectory"] })
+    dialog.showOpenDialog(
+        getCurrentWindow(),
+        { properties: ["openDirectory"] }
+      )
       .then(res => {
         if (!res.canceled) {
           const [folder] = res.filePaths;
