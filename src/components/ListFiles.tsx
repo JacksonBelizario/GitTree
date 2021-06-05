@@ -38,7 +38,7 @@ const ListFiles = (props) => {
   
   return (
   <>
-    <div className="modified-file-list p-2">
+    <div className="modified-file-list card-field">
       {
         files.map((file : IFile, key : number) => (
         <div
@@ -73,10 +73,24 @@ const ListFiles = (props) => {
         }
         { getShortenedPath(file.path) }
         { sha === 'workdir' &&
-          <Button className="action-btn" intent={Intent.PRIMARY} onClick={e =>{ e.stopPropagation(); stage(file.path)}}>Stage file</Button>
+          <Button
+            className="action-btn"
+            intent={Intent.SUCCESS}
+            outlined
+            onClick={e =>{ e.stopPropagation(); stage(file.path)}}
+          >
+            Stage file
+          </Button>
         }
         { sha === 'tree' &&
-          <Button className="action-btn" intent={Intent.DANGER} onClick={e =>{ e.stopPropagation(); unstage(file.path)}}>Unstage file</Button>
+          <Button
+            className="action-btn"
+            intent={Intent.DANGER}
+            outlined
+            onClick={e =>{ e.stopPropagation(); unstage(file.path)}}
+          >
+            Unstage file
+          </Button>
         }
       </div>
       ))

@@ -19,7 +19,7 @@ import {
 } from 'react-icons/fi';
 import actions from '../store/actions';
 import { BoundActions } from 'redux-zero/types';
-import { Dialog, Button, Intent, Classes, Tooltip, AnchorButton, Icon, Colors } from '@blueprintjs/core';
+import { Dialog, Button, Intent, Classes, Tooltip, AnchorButton, Icon, InputGroup, TextArea, Colors } from '@blueprintjs/core';
 import { IconNames } from "@blueprintjs/icons";
 
 interface StoreProps {
@@ -115,11 +115,18 @@ const CommitDetail = (props : CommitDetailProps) => {
               }</span>
             </div>
           </div>
-          <div className="commit-message flex p-2 my-3">{details.message}</div>
+          <div className="commit-message card-field">{details.message}</div>
           {
             details.files && <>
-              <span className="text-md font-bold mb-2">Changed Files</span>
-              <ListFiles sha={sha} files={details.files} selectedFile={selectedFile} setSelectedFile={setSelectedFile} />
+              <div className="file-list-title">
+                <span className="title">Changed Files</span>
+              </div>
+              <ListFiles
+                sha={sha}
+                files={details.files}
+                selectedFile={selectedFile}
+                setSelectedFile={setSelectedFile}
+              />
             </>
           }
         </>
@@ -132,6 +139,7 @@ const CommitDetail = (props : CommitDetailProps) => {
             className="discard-btn"
             icon={<TrashIcon />}
             intent={Intent.DANGER}
+            outlined
             onClick={() => setShowDiscardDialog(true)}
           >
             Discard all changes
@@ -139,22 +147,74 @@ const CommitDetail = (props : CommitDetailProps) => {
         }
         {
           details.unstaged && <>
-            <div className="flex justify-between mb-2">
-              <span className="text-md font-bold mt-2">Unstaged Files</span>
-              { details.unstaged.length > 0 && <Button className="self-end" onClick={() => stageAll()}>Stage All</Button> }
+            <div className="file-list-title">
+              <span className="title">Unstaged Files</span>
+              { details.unstaged.length > 0 &&
+                <Button
+                  className="self-end"
+                  intent={Intent.SUCCESS}
+                  outlined
+                  onClick={() => stageAll()}
+                >
+                  Stage All
+                </Button>
+              }
             </div>
-            <ListFiles sha={'workdir'} files={details.unstaged} selectedFile={selectedFile} setSelectedFile={setSelectedFile} repo={repo} updateStatus={updateStatus} />
+            <ListFiles
+              sha={'workdir'}
+              files={details.unstaged}
+              selectedFile={selectedFile}
+              setSelectedFile={setSelectedFile}
+              repo={repo}
+              updateStatus={updateStatus}
+            />
           </>
         }
         {
           details.staged && <>
-            <div className="flex justify-between mb-2">
-              <span className="text-md font-bold mt-2">Staged Files</span>
-              { details.staged.length > 0 && <Button className="self-end" onClick={() => unstageAll()}>Unstage All</Button> }
+            <div className="file-list-title">
+              <span className="title">Staged Files</span>
+              { details.staged.length > 0 &&
+                <Button
+                  className="self-end"
+                  intent={Intent.DANGER}
+                  outlined
+                  onClick={() => unstageAll()}
+                >
+                  Unstage All
+                </Button>
+              }
             </div>
-            <ListFiles sha={'tree'} files={details.staged} selectedFile={selectedFile} setSelectedFile={setSelectedFile} repo={repo} updateStatus={updateStatus} />
+            <ListFiles
+              sha={'tree'}
+              files={details.staged}
+              selectedFile={selectedFile}
+              setSelectedFile={setSelectedFile}
+              repo={repo}
+              updateStatus={updateStatus}
+            />
           </>
         }
+          <div className="commit-area">
+            <div className="file-list-title">
+              <span className="title">Commit Message</span>
+            </div>
+            <InputGroup
+              large
+              placeholder="Sumary"
+            />
+            <TextArea
+              fill
+              growVertically
+              placeholder="Description"
+            />
+            <Button
+              intent={Intent.SUCCESS}
+              outlined
+            >
+              Commit
+            </Button>
+          </div>
         </>
       }
       <Dialog
