@@ -28,11 +28,15 @@
   background-color: var(--bg-secondary);
 }
 
+.discard-btn {
+  width: fit-content;
+}
+
 .modified-file-list {
   background-color: var(--bg-secondary);
   overflow-y: auto;
   overflow-x: hidden;
-  min-height: 0;
+  min-height: 100px;
 
   .modified-file-entry {
     position: relative;
@@ -47,7 +51,7 @@
       display: none;
     }
 
-    &:hover .action-btn{
+    &:hover .action-btn {
       display: block;
     }
   }

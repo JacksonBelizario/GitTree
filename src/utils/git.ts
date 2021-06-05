@@ -417,6 +417,13 @@ export const checkout = async (Repo: Repository, reference: IReference) => {
   }
 }
 
+export const discardAll = async (Repo: Repository) => {
+  await stage(Repo, []);
+  const commit = await Repo.getHeadCommit();
+  //@ts-ignore
+  await NodeGit.Reset.reset(Repo, commit, NodeGit.Reset.TYPE.HARD, {});
+}
+
 export default {
   openRepo,
   getCommits,
@@ -434,4 +441,5 @@ export default {
   pull,
   push,
   checkout,
+  discardAll,
 };

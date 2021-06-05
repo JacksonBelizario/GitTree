@@ -14,11 +14,13 @@ import moment from 'moment';
 
 import {
   FiGitCommit as CommitIcon,
-  FiGitMerge as MergeIcon
+  FiGitMerge as MergeIcon,
+  FiTrash2 as TrashIcon
 } from 'react-icons/fi';
 import actions from '../store/actions';
 import { BoundActions } from 'redux-zero/types';
-import { Button, Intent } from '@blueprintjs/core';
+import { Dialog, Button, Intent, Classes, Tooltip, AnchorButton, Icon, Colors } from '@blueprintjs/core';
+import { IconNames } from "@blueprintjs/icons";
 
 interface StoreProps {
   repo: IRepo;
@@ -37,15 +39,16 @@ const mapToProps = (state: IStore): StoreProps => ({
 type CommitDetailProps = StoreProps & BoundActions<IStore, typeof actions>;
 
 const CommitDetail = (props : CommitDetailProps) => {
-  const { repo, sha, selectedFile, setSelectedFile, setSelectedCommit, commit, updateStatus } = props;
+  const { repo, sha, selectedFile, setSelectedFile, setSelectedCommit, commit, updateStatus, setLoading } = props;
 
   const [details, setDetails] = useState<ICommit | IWipCommit>();
+  const [showDiscardDialog, setShowDiscardDialog] = useState<boolean>(false);
 
   const stageAll = async () => {
     if (commit.virtual && commit.unstaged.length) {
       let unstagedPaths = commit.unstaged.map(s => s.path);
       await Git.stage(repo, unstagedPaths);
-      await updateStatus();
+      updateStatus();
     }
   }
 
@@ -53,8 +56,17 @@ const CommitDetail = (props : CommitDetailProps) => {
     if (commit.virtual && commit.staged.length) {
       let stagedPaths = commit.staged.map(s => s.path);
       await Git.unstage(repo, stagedPaths);
-      await updateStatus();
+      updateStatus();
     }
+  }
+
+  const discardAll = async () => {
+    setLoading(true);
+    setShowDiscardDialog(false);
+    setSelectedFile({commit: null, file: null});
+    await Git.discardAll(repo);
+    updateStatus();
+    setLoading(false);
   }
 
   useEffect(() => {
@@ -104,32 +116,74 @@ const CommitDetail = (props : CommitDetailProps) => {
             </div>
           </div>
           <div className="commit-message flex p-2 my-3">{details.message}</div>
+          {
+            details.files && <>
+              <span className="text-md font-bold mb-2">Changed Files</span>
+              <ListFiles sha={sha} files={details.files} selectedFile={selectedFile} setSelectedFile={setSelectedFile} />
+            </>
+          }
         </>
       }
       {
-        details.unstaged && <>
-          <div className="flex justify-between mb-2">
-            <span className="text-md font-bold mt-2">Unstaged Files</span>
-            { details.unstaged.length > 0 && <Button className="self-end" onClick={() => stageAll()}>Stage All</Button> }
+        sha === "workdir" && <>
+        {
+          details.unstaged && details.staged && (details.unstaged.length > 0 || details.staged.length > 0) &&
+          <Button
+            className="discard-btn"
+            icon={<TrashIcon />}
+            intent={Intent.DANGER}
+            onClick={() => setShowDiscardDialog(true)}
+          >
+            Discard all changes
+          </Button>
+        }
+        {
+          details.unstaged && <>
+            <div className="flex justify-between mb-2">
+              <span className="text-md font-bold mt-2">Unstaged Files</span>
+              { details.unstaged.length > 0 && <Button className="self-end" onClick={() => stageAll()}>Stage All</Button> }
+            </div>
+            <ListFiles sha={'workdir'} files={details.unstaged} selectedFile={selectedFile} setSelectedFile={setSelectedFile} repo={repo} updateStatus={updateStatus} />
+          </>
+        }
+        {
+          details.staged && <>
+            <div className="flex justify-between mb-2">
+              <span className="text-md font-bold mt-2">Staged Files</span>
+              { details.staged.length > 0 && <Button className="self-end" onClick={() => unstageAll()}>Unstage All</Button> }
+            </div>
+            <ListFiles sha={'tree'} files={details.staged} selectedFile={selectedFile} setSelectedFile={setSelectedFile} repo={repo} updateStatus={updateStatus} />
+          </>
+        }
+        </>
+      }
+      <Dialog
+        className="bp3-dark"
+        icon={<Icon icon={IconNames.WARNING_SIGN} color={Colors.RED3} iconSize={20} />}
+        onClose={() => setShowDiscardDialog(false)}
+        title="Discard all changes"
+        isOpen={showDiscardDialog}
+        canOutsideClickClose={false}
+      >
+        <div className={Classes.DIALOG_BODY}>
+          <p>Are you sure that want to discard all changes?</p>
+        </div>
+        <div className={Classes.DIALOG_FOOTER}>
+          <div className={Classes.DIALOG_FOOTER_ACTIONS}>
+            <Button
+              onClick={() => setShowDiscardDialog(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              intent={Intent.DANGER}
+              onClick={() => discardAll()}
+            >
+              Reset all
+            </Button>
           </div>
-          <ListFiles sha={'workdir'} files={details.unstaged} selectedFile={selectedFile} setSelectedFile={setSelectedFile} repo={repo} updateStatus={updateStatus} />
-        </>
-      }
-      {
-        details.staged && <>
-          <div className="flex justify-between mb-2">
-            <span className="text-md font-bold mt-2">Staged Files</span>
-            { details.staged.length > 0 && <Button className="self-end" onClick={() => unstageAll()}>Unstage All</Button> }
-          </div>
-          <ListFiles sha={'tree'} files={details.staged} selectedFile={selectedFile} setSelectedFile={setSelectedFile} repo={repo} updateStatus={updateStatus} />
-        </>
-      }
-      {
-        details.files && <>
-          <span className="text-md font-bold mb-2">Changed Files</span>
-          <ListFiles sha={sha} files={details.files} selectedFile={selectedFile} setSelectedFile={setSelectedFile} />
-        </>
-      }
+        </div>
+      </Dialog>
     </div>
   )
 }
