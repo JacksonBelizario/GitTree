@@ -175,8 +175,10 @@ const getRefsChanges = async (Repo: Repository, refs: IReference[]) : Promise<IR
     if (ref.isBranch) {
       let remoteRefWithDiff = remoteRefs.find(remoteRef => remoteRef.shorthand.indexOf(ref.shorthand) !== -1 && remoteRef.target !== ref.target);
       if (remoteRefWithDiff) {
+        const local = NodeGit.Oid.fromString(ref.target);
+        const upstream = NodeGit.Oid.fromString(remoteRefWithDiff.target);
         //@ts-ignore
-        ref.diff = await NodeGit.Graph.aheadBehind(Repo, ref.target, remoteRefWithDiff.target);
+        ref.diff = await NodeGit.Graph.aheadBehind(Repo, local, upstream);
       }
     }
     res.push(ref)

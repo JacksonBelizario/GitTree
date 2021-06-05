@@ -8,7 +8,7 @@ import { IStore } from "../store/store";
 import { useInterval } from "../utils/hooks";
 import { BoundActions } from "redux-zero/types/Actions";
 import actions from "../store/actions";
-import { isEqual } from "lodash";
+import equal from "fast-deep-equal/react";
 
 import Git from "../utils/git";
 import { IRepo, ICommit, ICurrentCommit, IRefs, IWipCommit, ISettings } from "../utils/interfaces";
@@ -24,7 +24,8 @@ interface StoreProps {
   currentBranch: ICurrentCommit | null;
   commits: ICommit[];
   commit: IWipCommit;
-  settings: ISettings
+  settings: ISettings;
+  loading: boolean
 }
 
 const mapToProps = (state: IStore): StoreProps => ({
@@ -35,6 +36,7 @@ const mapToProps = (state: IStore): StoreProps => ({
   refs: state.refs,
   commit: state.commit,
   settings: state.settings,
+  loading: state.loading,
 });
 
 const ONE_SECOND = 1000;
@@ -45,18 +47,13 @@ type MainProps = StoreProps & BoundActions<IStore, typeof actions>;
 const Main = (props: MainProps) => {
   const {
     folder,
-    repo,
-    setRepo,
-    currentBranch,
-    setCurrentBranch,
-    refs,
-    setRefs,
-    commits,
-    setCommits,
-    commit,
-    setCommit,
     setSelectedCommit,
-    setLoading,
+    repo, setRepo,
+    currentBranch, setCurrentBranch,
+    refs, setRefs,
+    commits, setCommits,
+    commit, setCommit,
+    loading, setLoading,
   } = props;
 
   const [watch, setWatch] = useState<Boolean>(false);
@@ -71,11 +68,12 @@ const Main = (props: MainProps) => {
         setLoading(true);
         setCommits([]);
         setCommit(INITIAL_WIP);
-        setSelectedCommit(INITIAL_WIP.sha);
 
         const repo = await Git.openRepo(folder);
         setRepo(repo);
-        setCurrentBranch(await Git.getCurrentBranch(repo));
+        const curBranch = await Git.getCurrentBranch(repo)
+        setCurrentBranch(curBranch);
+        setSelectedCommit(curBranch.target);
         setCommits(await Git.getCommits(repo));
         setWatch(true);
       } catch (error) {
@@ -87,54 +85,82 @@ const Main = (props: MainProps) => {
   }, [folder, setCommit, setCommits, setCurrentBranch, setRepo, setSelectedCommit, setLoading]);
 
   useEffect(() => {
-    if (!isEqual(localRefs.references, refs.references)) {
+    if (!equal(localRefs.references, refs.references)) {
       setRefs(localRefs);
     }
   }, [localRefs, refs, setRefs]);
 
   useInterval(() => {
 
-    const getRefs = async () => {
+    /**
+     * Check if the references have updated
+     */
+    const checkRefs = async () => {
       let repoRefs = await Git.getReferences(repo);
-      if (refs.commits === repoRefs.commits) {
-        return;
+      if (refs.commits !== repoRefs.commits) {
+        console.log('References updated', (new Date()).toJSON());
+
+        repoRefs.references = await Git.getRefsChanges(repo, repoRefs.references);
+        setCurrentBranch(await Git.getCurrentBranch(repo));
+        
+        setLocalRefs(repoRefs);
       }
-  
-      repoRefs.references = await Git.getRefsChanges(repo, repoRefs.references);
-      setCurrentBranch(await Git.getCurrentBranch(repo));
-      
-      //@ts-ignore
-      setLocalRefs(repoRefs);
+    };
+
+    /**
+     * Check if the branch have changed
+     */
+    const checkCurrentBranch = async () => {
+      const curBranch = await Git.getCurrentBranch(repo);
+      if (curBranch.shorthand !== currentBranch.shorthand) {
+        console.log('Current branch have changed', (new Date()).toJSON());
+
+        setCurrentBranch(curBranch);
+      }
+    };
+
+
+    /**
+     * Check if the working directory have changed
+     */
+    const checkWorkingDirectory = async () => {
+      let changes = await Git.getStatus(repo);
+      let wip = {...commit, ...changes} as IWipCommit;
+
+      if (!equal(commit, wip)) {
+        console.log('Working directory updated', (new Date()).toJSON());
+
+        if (changes.enabled) {
+          wip.parents = currentBranch ? [currentBranch.target] : [];
+          setCommits([wip, ...commits.filter(({sha}) => sha !== 'workdir')]);
+        } else {
+          setCommits(commits.filter(({sha}) => sha !== 'workdir'));
+          setSelectedCommit(currentBranch.target);
+        }
+
+        setCommit(wip);
+      }
+      else if (wip.enabled && commits[0].sha !== 'workdir') {
+        setCommit(wip);
+      }
     };
     
     const watchChanges = async () => {
       if (!repo) {
         return;
       }
-      let curBranch = await Git.getCurrentBranch(repo);
-      if (curBranch.shorthand !== currentBranch.shorthand) {
-        setCurrentBranch(curBranch);
-      }
 
-      let changes = await Git.getStatus(repo);
-      let oldStatus = commit.enabled;
-      let wip = {...commit, ...changes} as IWipCommit;
-      if (oldStatus !== wip.enabled) {
-        wip.parents = currentBranch ? [currentBranch.target] : [];
-        if (changes.enabled) {
-          setLoading(true);
-          setCommits([wip, ...commits.filter(({sha}) => sha !== 'workdir')]);
-        } else {
-          setCommits(commits.filter(({sha}) => sha !== 'workdir'));
-        }
+      await checkRefs();
+      await checkCurrentBranch();
+      await checkWorkingDirectory();
+
+      if (loading) {
+        setTimeout(() => setLoading(false), 1000);
       }
-      setCommit(wip);
-      setTimeout(() => setLoading(false), 1000);
     };
 
     if (watch) {
       watchChanges();
-      getRefs();
     }
   }, INTERVAL);
 
