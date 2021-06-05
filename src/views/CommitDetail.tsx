@@ -19,8 +19,9 @@ import {
 } from 'react-icons/fi';
 import actions from '../store/actions';
 import { BoundActions } from 'redux-zero/types';
-import { Dialog, Button, Intent, Classes, Tooltip, AnchorButton, Icon, InputGroup, TextArea, Colors } from '@blueprintjs/core';
+import { Dialog, Button, Intent, Classes, Tooltip, Icon, InputGroup, TextArea, Colors } from '@blueprintjs/core';
 import { IconNames } from "@blueprintjs/icons";
+import { showDanger, showInfo } from '../utils/toaster';
 
 interface StoreProps {
   repo: IRepo;
@@ -43,6 +44,8 @@ const CommitDetail = (props : CommitDetailProps) => {
 
   const [details, setDetails] = useState<ICommit | IWipCommit>();
   const [showDiscardDialog, setShowDiscardDialog] = useState<boolean>(false);
+  const [commitSummary, setCommitSummary] = useState<string>('');
+  const [commitDescription, setCommitDescription] = useState<string>('');
 
   const stageAll = async () => {
     if (commit.virtual && commit.unstaged.length) {
@@ -57,6 +60,24 @@ const CommitDetail = (props : CommitDetailProps) => {
       let stagedPaths = commit.staged.map(s => s.path);
       await Git.unstage(repo, stagedPaths);
       updateStatus();
+    }
+  }
+
+  const commitStaged = async () => {
+    if (commitSummary || commitDescription) {
+      setLoading(true);
+      try {
+        await Git.commit(repo, commitSummary, commitDescription);
+        setCommitSummary('');
+        setCommitDescription('');
+        updateStatus();
+        showInfo('Commit successful');
+      } catch(err) {
+        console.warn(err);
+        showDanger('Error on commit: ' + err.message);
+      } finally {
+        setLoading(true);
+      }
     }
   }
 
@@ -201,16 +222,22 @@ const CommitDetail = (props : CommitDetailProps) => {
             </div>
             <InputGroup
               large
-              placeholder="Sumary"
+              placeholder="Summary"
+              value={commitSummary}
+              onChange={({target}) => setCommitSummary(target.value)}
             />
             <TextArea
               fill
               growVertically
               placeholder="Description"
+              value={commitDescription}
+              onChange={({target}) => setCommitDescription(target.value)}
             />
             <Button
               intent={Intent.SUCCESS}
               outlined
+              disabled={!commitSummary && !commitDescription}
+              onClick={() => commitStaged()}
             >
               Commit
             </Button>

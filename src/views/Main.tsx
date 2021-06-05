@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import SubwayStations from "./SubwayStations";
 import SubwayMapVisual from "./SubwayMapVisual";
@@ -16,6 +16,7 @@ import { IRepo, ICommit, ICurrentCommit, IRefs, IWipCommit, ISettings } from "..
 import "react-perfect-scrollbar/dist/css/styles.css";
 import MapSeparator from "./MapSeparator";
 import { INITIAL_WIP } from "../utils";
+import { debounce } from "lodash";
 
 interface StoreProps {
   folder: string;
@@ -58,6 +59,7 @@ const Main = (props: MainProps) => {
 
   const [watch, setWatch] = useState<Boolean>(false);
   const [localRefs, setLocalRefs] = useState<IRefs>(refs);
+  const [localCommits, setLocalCommits] = useState<ICommit[]>([]);
 
   useEffect(() => {
     const loadRepo = async (folder: string) => {
@@ -74,7 +76,7 @@ const Main = (props: MainProps) => {
         const curBranch = await Git.getCurrentBranch(repo)
         setCurrentBranch(curBranch);
         setSelectedCommit(curBranch.target);
-        setCommits(await Git.getCommits(repo));
+        setLocalCommits(await Git.getCommits(repo));
         setWatch(true);
       } catch (error) {
         console.warn({ error });
@@ -90,6 +92,25 @@ const Main = (props: MainProps) => {
     }
   }, [localRefs, refs, setRefs]);
 
+  const updateCommits = useCallback(debounce((commit: IWipCommit, localCommits: ICommit[], currentBranch: ICurrentCommit) => {
+    console.log('Update commits', (new Date()).toJSON());
+    if (commit.enabled) {
+      commit.parents = currentBranch ? [currentBranch.target] : [];
+      setCommits([commit, ...localCommits.filter(({sha}) => sha !== 'workdir')]);
+    } else {
+      setCommits(localCommits.filter(({sha}) => sha !== 'workdir'));
+      setSelectedCommit(currentBranch.target);
+    }
+  }, 500), []);
+
+  useEffect(() => {
+    if (!commit || !currentBranch || localCommits.length == 0) {
+      return;
+    }
+    updateCommits(commit, localCommits, currentBranch);
+  }, [commit, localCommits, currentBranch, updateCommits]);
+  
+
   useInterval(() => {
 
     /**
@@ -104,6 +125,8 @@ const Main = (props: MainProps) => {
         setCurrentBranch(await Git.getCurrentBranch(repo));
         
         setLocalRefs(repoRefs);
+
+        setLocalCommits(await Git.getCommits(repo));
       }
     };
 
@@ -129,14 +152,6 @@ const Main = (props: MainProps) => {
 
       if (!equal(commit, wip)) {
         console.log('Working directory updated', (new Date()).toJSON());
-
-        if (changes.enabled) {
-          wip.parents = currentBranch ? [currentBranch.target] : [];
-          setCommits([wip, ...commits.filter(({sha}) => sha !== 'workdir')]);
-        } else {
-          setCommits(commits.filter(({sha}) => sha !== 'workdir'));
-          setSelectedCommit(currentBranch.target);
-        }
 
         setCommit(wip);
       }

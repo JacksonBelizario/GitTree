@@ -1,4 +1,4 @@
-import NodeGit, { Repository } from "nodegit"
+import NodeGit, { Repository, Signature } from "nodegit"
 import { isSSH } from "./index"
 import { IAuth, IRefDict, IReference, IRefs, ICommit, IStatusCommit } from "./interfaces";
 
@@ -426,6 +426,32 @@ export const discardAll = async (Repo: Repository) => {
   await NodeGit.Reset.reset(Repo, commit, NodeGit.Reset.TYPE.HARD, {});
 }
 
+export const getSignature = async (Repo: Repository) : Promise<Signature> => {
+  try {
+    //@ts-ignore
+    const { email, name } = Repo.ident();
+    if (email && name) {
+      return NodeGit.Signature.now(name, email);
+    }
+    return NodeGit.Signature.default(Repo);
+  } catch(err) {
+    return NodeGit.Signature.now("unknown", "unknown");
+  }
+}
+
+export const commit = async (Repo: Repository, summary: string, description: string) => {
+  const index = await Repo.index();
+  await index.writeTree();
+
+  const signature = await getSignature(Repo);
+  const oid = await index.writeTree();
+  const parent = await Repo.getHeadCommit();
+
+  const message = description ? `${summary}\n\n${description}` : summary;
+
+  await Repo.createCommit("HEAD", signature, signature, message, oid, [parent]);
+}
+
 export default {
   openRepo,
   getCommits,
@@ -444,4 +470,6 @@ export default {
   push,
   checkout,
   discardAll,
+  getSignature,
+  commit,
 };
