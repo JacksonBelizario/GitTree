@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState, useEffect} from "react";
 import {
   Button,
   Classes,
@@ -28,7 +28,7 @@ import {
 
 import Git from "../utils/git";
 import { useInterval } from "../utils/hooks";
-import { IRepo, ICurrentCommit, ISettings, IRefs } from "../utils/interfaces";
+import { IRepo, ICurrentCommit, ISettings, IRefs, IReference } from "../utils/interfaces";
 import { connect } from "redux-zero/react";
 import { BoundActions } from "redux-zero/types/Actions";
 import actions from "../store/actions";
@@ -74,7 +74,13 @@ const Nav = (props: NavProps) => {
     refs
   } = props;
 
-  const [ref] = currentBranch && refs.refDict ? refs.refDict[currentBranch.target] : [];
+  const [ref, setRef] = useState<IReference>(null);
+
+  useEffect(() => {
+    if (currentBranch && refs.refDict && refs.refDict.hasOwnProperty(currentBranch.target)) {
+      setRef(refs.refDict[currentBranch.target]);
+    }
+  }, [currentBranch, refs]);
 
   useInterval(() => {
     const fetch = async () => {
@@ -133,7 +139,7 @@ const Nav = (props: NavProps) => {
             text="Pull"
             onClick={() => pull()}
           >
-            { !!ref && !!ref.diff.behind && <div className="badge">{ref.diff.behind}</div> }
+            { !!ref && !!ref.diff && !!ref.diff.behind && <div className="badge">{ref.diff.behind}</div> }
           </Button>
           <Button
             className={Classes.MINIMAL}
@@ -141,7 +147,7 @@ const Nav = (props: NavProps) => {
             text="Push"
             onClick={() => push()}
           >
-            { !!ref && !!ref.diff.ahead && <div className="badge">{ref.diff.ahead}</div> }
+            { !!ref && !!ref.diff && !!ref.diff.ahead && <div className="badge">{ref.diff.ahead}</div> }
           </Button>
           <NavbarDivider />
           <Button
