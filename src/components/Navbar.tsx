@@ -74,7 +74,7 @@ const Nav = (props: NavProps) => {
     refs
   } = props;
 
-  const [ref] = refs.refDict[currentBranch.target] || [];
+  const [ref] = currentBranch && refs.refDict ? refs.refDict[currentBranch.target] : [];
 
   useInterval(() => {
     const fetch = async () => {

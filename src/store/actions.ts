@@ -75,6 +75,17 @@ const actions = (store: any) => ({
     return {};
   },
 
+  updateStatus: (state: IStore) => {
+    Git.getStatus(state.repo)
+      .then((changes) => {
+        store.setState({...state.commit, ...changes})
+      }).catch(err => {
+        console.warn(err)
+        showDanger('Error on update status: ' + err.message)
+      })
+    return {};
+  },
+
   pull: (state: IStore, reference: IReference = null) => {
     Git.pull(state.repo, reference, state.settings.auth)
       .then(() => {

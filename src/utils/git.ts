@@ -313,7 +313,7 @@ const getCommitDetails = async (Repo: Repository, sha: string) : Promise<ICommit
   }
 }
 
-const stageAll = async (Repo, paths) => {
+const stage = async (Repo, paths) => {
     let statuses = await Repo.getStatus();
     let index = await Repo.refreshIndex();
     let req = [];
@@ -330,7 +330,7 @@ const stageAll = async (Repo, paths) => {
     await index.write();
 }
 
-const unstageAll = async (Repo: Repository, paths: string[]) => {
+const unstage = async (Repo: Repository, paths: string[]) => {
   let commit = await Repo.getHeadCommit();
   await NodeGit.Reset.default(Repo, commit, paths);
 }
@@ -427,8 +427,8 @@ export default {
   getSubmodules,
   // getSubmoduleDetails,
   getCommitDetails,
-  stageAll,
-  unstageAll,
+  stage,
+  unstage,
   fetchAll,
   fetch,
   pull,

@@ -37,19 +37,14 @@ const mapToProps = (state: IStore): StoreProps => ({
 type CommitDetailProps = StoreProps & BoundActions<IStore, typeof actions>;
 
 const CommitDetail = (props : CommitDetailProps) => {
-  const { repo, sha, selectedFile, setSelectedFile, setSelectedCommit, commit, setCommit } = props;
+  const { repo, sha, selectedFile, setSelectedFile, setSelectedCommit, commit, updateStatus } = props;
 
   const [details, setDetails] = useState<ICommit | IWipCommit>();
-
-  const updateStatus = async () => {
-    let changes = await Git.getStatus(repo);
-    setCommit({...commit, ...changes});
-  }
 
   const stageAll = async () => {
     if (commit.virtual && commit.unstaged.length) {
       let unstagedPaths = commit.unstaged.map(s => s.path);
-      await Git.stageAll(repo, unstagedPaths);
+      await Git.stage(repo, unstagedPaths);
       await updateStatus();
     }
   }
@@ -57,7 +52,7 @@ const CommitDetail = (props : CommitDetailProps) => {
   const unstageAll = async () => {
     if (commit.virtual && commit.staged.length) {
       let stagedPaths = commit.staged.map(s => s.path);
-      await Git.unstageAll(repo, stagedPaths);
+      await Git.unstage(repo, stagedPaths);
       await updateStatus();
     }
   }
@@ -117,7 +112,7 @@ const CommitDetail = (props : CommitDetailProps) => {
             <span className="text-md font-bold mt-2">Unstaged Files</span>
             { details.unstaged.length > 0 && <Button className="self-end" onClick={() => stageAll()}>Stage All</Button> }
           </div>
-          <ListFiles sha={'workdir'} files={details.unstaged} selectedFile={selectedFile} setSelectedFile={setSelectedFile} />
+          <ListFiles sha={'workdir'} files={details.unstaged} selectedFile={selectedFile} setSelectedFile={setSelectedFile} repo={repo} updateStatus={updateStatus} />
         </>
       }
       {
@@ -126,7 +121,7 @@ const CommitDetail = (props : CommitDetailProps) => {
             <span className="text-md font-bold mt-2">Staged Files</span>
             { details.staged.length > 0 && <Button className="self-end" onClick={() => unstageAll()}>Unstage All</Button> }
           </div>
-          <ListFiles sha={'tree'} files={details.staged} selectedFile={selectedFile} setSelectedFile={setSelectedFile} />
+          <ListFiles sha={'tree'} files={details.staged} selectedFile={selectedFile} setSelectedFile={setSelectedFile} repo={repo} updateStatus={updateStatus} />
         </>
       }
       {
