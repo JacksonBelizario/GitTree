@@ -43,7 +43,7 @@ const ListFiles = (props) => {
         files.map((file : IFile, key : number) => (
         <div
           key={key}
-          className={`modified-file-entry p-1 flex cursor-pointer ${selectedFile.path === file.path ? "bg-gray-700" : "hover:bg-gray-800"}`}
+          className={`modified-file-entry ${selectedFile.file && selectedFile.file.path === file.path ? 'active' : ''}`}
           onClick={() => setSelectedFile({ commit: sha, file: file })}
         >
         { file.isModified &&

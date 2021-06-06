@@ -71,6 +71,9 @@
 
   .modified-file-entry {
     position: relative;
+    cursor: pointer;
+    display: flex;
+    padding: 0.25rem;
 
     .action-btn {
       position: absolute;
@@ -82,8 +85,14 @@
       display: none;
     }
 
-    &:hover .action-btn {
-      display: block;
+    &:hover {
+      background-color: #137cbd3a;
+      .action-btn {
+        display: block;
+      }
+    }
+    &.active {
+      background-color: #137cbd7e;
     }
   }
 

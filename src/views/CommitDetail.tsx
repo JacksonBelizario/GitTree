@@ -127,11 +127,29 @@ const CommitDetail = (props : CommitDetailProps) => {
               <small>{moment(details.date).format("YYYY-MM-DD")}</small>
             </div>
             <div className="flex flex-col text-right">
-              <Button className="mb-1 ml-1 cursor-default" icon={<CommitIcon />} intent={Intent.NONE}>{sha.substring(0, 6)}</Button>
+              <Button
+                className="mb-1 ml-1 cursor-default"
+                icon={<CommitIcon />}
+                intent={Intent.NONE}
+                outlined
+                small
+              >
+                {sha.substring(0, 6)}
+              </Button>
               <span className="flex flex-row text-right">
               {
                 details.parents.map((parent: string, idx: number) =>
-                  <Button key={idx} className="ml-1" icon={<MergeIcon />} intent={Intent.PRIMARY} onClick={() => setSelectedCommit(parent)}>{parent.substring(0, 6)}</Button>
+                  <Button
+                    key={idx}
+                    className="ml-1"
+                    icon={<MergeIcon />}
+                    intent={Intent.PRIMARY}
+                    outlined
+                    small
+                    onClick={() => setSelectedCommit(parent)}
+                  >
+                    {parent.substring(0, 6)}
+                  </Button>
                 )
               }</span>
             </div>
