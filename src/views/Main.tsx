@@ -104,7 +104,7 @@ const Main = (props: MainProps) => {
   }, 500), []);
 
   useEffect(() => {
-    if (!commit || !currentBranch || localCommits.length == 0) {
+    if (!commit || !currentBranch || localCommits.length === 0) {
       return;
     }
     updateCommits(commit, localCommits, currentBranch);

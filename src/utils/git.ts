@@ -205,15 +205,14 @@ const getReferences = async (Repo: Repository) : Promise<IRefs> => {
         display = ref.shorthand();
       }
       return {
+        display,
         target: ref.target().toString(),
         isBranch: !!ref.isBranch(),
         isRemote: !!ref.isRemote(),
         isTag: !!ref.isTag(),
         name: ref.name(),
         shorthand: ref.shorthand(),
-        display,
         diff: { ahead: 0, behind: 0 },
-        isCurrent: false
       };
     });
     let refDict = {} as IRefDict;
@@ -264,8 +263,8 @@ const getCommitDetails = async (Repo: Repository, sha: string) : Promise<ICommit
   if (typeof Repo.getCommit !== 'function') {
     return null;
   }
-  let x = await Repo.getCommit(sha);
-  let [diff] = await x.getDiff();
+  let commit = await Repo.getCommit(sha);
+  let [diff] = await commit.getDiff();
   let patches = await diff.findSimilar({ renameThreshold: 50 }).then(() => {
       return diff.patches();
   })
@@ -296,15 +295,15 @@ const getCommitDetails = async (Repo: Repository, sha: string) : Promise<ICommit
     }
   });
   return {
-    sha: x.sha(),
-    message: x.message().split('\n')[0],
-    detail: x.message().split('\n').splice(1, x.message().split('\n').length).join('\n'),
-    date: x.date(),
-    time: x.time(),
-    committer: x.committer().name(),
-    email: x.author().email(),
-    author: x.author().name(),
-    parents: x.parents().map(p => p.toString()),
+    sha: commit.sha(),
+    message: commit.message().split('\n')[0],
+    detail: commit.message().split('\n').splice(1, commit.message().split('\n').length).join('\n'),
+    date: commit.date(),
+    time: commit.time(),
+    committer: commit.committer().name(),
+    email: commit.author().email(),
+    author: commit.author().name(),
+    parents: commit.parents().map(p => p.toString()),
     fileSummary: {
       added: added,
       deleted: deleted,

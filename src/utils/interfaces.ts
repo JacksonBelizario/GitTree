@@ -90,7 +90,6 @@ export interface IReference {
   name: string;
   shorthand: string;
   display: string;
-  isCurrent?: boolean;
   diff?: {
     ahead: number;
     behind: number;

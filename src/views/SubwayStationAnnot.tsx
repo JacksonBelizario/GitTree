@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { Node } from "../models/Node";
-import { ICommit, IRepo, IRefDict, ICurrentCommit } from "../utils/interfaces";
+import { ICommit, IRepo, IRefDict, ICurrentCommit, IReference } from "../utils/interfaces";
 import { IGraph } from "../models/SubwayMap";
 import { colors } from "../models/Color";
 
@@ -18,19 +18,9 @@ import '../assets/scss/subway-station-annot.scss'
 
 interface IBranchInfo {
   top: number;
-  color: string;
+  color?: string;
   target: string;
-  names: [
-    {
-      isRemote: boolean;
-      isBranch: boolean;
-      isTag: boolean;
-      isCurrent: boolean;
-      display: string;
-      remoteName: string;
-      localName: string;
-    }
-  ];
+  names: IReference[];
 }
 
 interface ISubwayStationAnnot {
@@ -62,56 +52,33 @@ const SubwayStationAnnot = (props: SubwayStationAnnotProps) => {
       if (!commits || !refDict) {
         return;
       }
-      const branchInfos: IBranchInfo[] = [];
-      commits.forEach((cmt: ICommit, i: number) => {
-        //@ts-ignore
-        if (refDict[cmt.sha]) {
-          let bi = {
-            top: height * i,
-            names: [],
-            target: cmt.sha,
-          };
-          //@ts-ignore
-          refDict[cmt.sha].forEach((ref: any) => {
-            //@ts-ignore
-            bi.names.push(ref);
-          });
-          //@ts-ignore
-          branchInfos.push(bi);
-        }
-      });
-      branchInfos.forEach((bi) => {
-        let consolidated = new Map<string, IBranchInfo>();
-        bi.names.forEach((na) => {
-          //@ts-ignore
-          if (!consolidated[na.display]) {
-            //@ts-ignore
-            consolidated[na.display] = na;
-            na.isCurrent = false;
-          } else {
-            //@ts-ignore
-            consolidated[na.display].isRemote =
-              consolidated[na.display].isRemote || na.isRemote;
-            //@ts-ignore
-            consolidated[na.display].isBranch =
-              consolidated[na.display].isBranch || na.isBranch;
-            if (na.isBranch) {
-              //@ts-ignore
-              consolidated[na.display].shorthand = na.shorthand;
-            }
+      const branchInfos: IBranchInfo[] = commits.reduce(
+        (acc: IBranchInfo[], cmt: ICommit, i: number) => {
+          if (refDict[cmt.sha]) {
+            acc.push({
+              top: height * i,
+              names: Object.values(
+                refDict[cmt.sha].reduce(
+                  (acc: Map<string, IReference>, cur: IReference) => {
+                    if (!acc[cur.display]) {
+                      acc[cur.display] = cur;
+                    } else {
+                      acc[cur.display].isRemote = acc[cur.display].isRemote || cur.isRemote;
+                      acc[cur.display].isBranch = acc[cur.display].isBranch || cur.isBranch;
+                      if (cur.isBranch) {
+                        acc[cur.display].shorthand = cur.shorthand;
+                      }
+                    }
+                    return acc;
+                  }, {})
+              ),
+              target: cmt.sha,
+              color: colors[graph.nodeDict[cmt.sha].x_order % colors.length]
+            });
           }
-        });
-        Object.values(consolidated).forEach((con) => {
-          if (con.isBranch && con.display.includes(currentBranch.name)) {
-            con.isCurrent = true;
-          }
-        });
-        //@ts-ignore
-        bi.names = Object.values(consolidated);
-        if (graph && graph.nodeDict[bi.target]) {
-          bi.color = colors[graph.nodeDict[bi.target].x_order % colors.length];
-        }
-      });
+          return acc;
+        }, []);
+      
       setBranchInfos(branchInfos);
     };
 
@@ -125,7 +92,7 @@ const SubwayStationAnnot = (props: SubwayStationAnnotProps) => {
           <div className="annot" style={{ height, top: branch.top }} key={key}>
             <ul>
               <li style={{ backgroundColor: branch.color }} className="summary">
-                {!!branch.names[0].isCurrent && (
+                {branch.names[0].shorthand === currentBranch.shorthand && (
                   <CheckIcon size={14} />
                 )}
                 {!!branch.names[0].isRemote && (
@@ -144,7 +111,7 @@ const SubwayStationAnnot = (props: SubwayStationAnnotProps) => {
                   style={{ backgroundColor: branch.color }}
                   key={key}
                 >
-                  {!!name.isCurrent && <CheckIcon size={14} />}
+                  {name.shorthand === currentBranch.shorthand && <CheckIcon size={14} />}
                   {!!name.isRemote && <CloudIcon size={14} />}
                   {!!name.isBranch && <MonitorIcon size={14} />}
                   {!!name.isTag && <TagIcon size={14} />}

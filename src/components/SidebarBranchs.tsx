@@ -15,7 +15,7 @@ import {
   FiFolder as FolderIcon,
   FiGitBranch as GitBranchIcon
 } from "react-icons/fi";
-import { IReference } from "../utils/interfaces";
+import { ICurrentCommit, IReference } from "../utils/interfaces";
 import { IStore } from "../store/store";
 import { connect } from "redux-zero/react";
 import { BoundActions } from "redux-zero/types/Actions";
@@ -27,10 +27,12 @@ const order = (a: any, b: any) => {
 
 interface StoreProps {
   expandedMenu: string[];
+  currentBranch: ICurrentCommit;
 }
 
 const mapToProps = (state: IStore): StoreProps => ({
   expandedMenu: state.expandedMenu,
+  currentBranch: state.currentBranch,
 });
 
 type SidebarBranchsProps = {
@@ -40,7 +42,7 @@ type SidebarBranchsProps = {
 } & StoreProps & BoundActions<IStore, typeof actions>;
 
 const SidebarBranchs = (props: SidebarBranchsProps) => {
-  const { branchs, scrollToCommit, checkoutBranch, pull, push, expandedMenu, setExpandedMenu } = props;
+  const { branchs, scrollToCommit, checkoutBranch, pull, push, expandedMenu, setExpandedMenu, currentBranch } = props;
 
   const [contents, setContents] = useState<ITreeNode[]>([]);
 
@@ -61,7 +63,7 @@ const SidebarBranchs = (props: SidebarBranchsProps) => {
             id: `${folder.id}_${folder.childNodes.length}`,
             label: currentLabel,
             icon: <GitBranchIcon size={15} style={{ marginRight: "10px" }} />,
-            isSelected: !!branch.isCurrent,
+            isSelected: branch.shorthand === currentBranch.shorthand,
             secondaryLabel: <div className="secondary-label">
                 { !!branch.diff.ahead && <> {branch.diff.ahead} <Icon icon="arrow-up" iconSize={11} color={Colors.WHITE} /></> }
                 { !!branch.diff.behind && <> {branch.diff.behind} <Icon icon="arrow-down" iconSize={11} color={Colors.WHITE} /></> }
@@ -143,7 +145,7 @@ const SidebarBranchs = (props: SidebarBranchsProps) => {
     }
     const branch = nodeData as IReference;
     const branchName = branch['shorthand'];
-    const isCurrent = branch['isCurrent'];
+    const isCurrent = branch['shorthand'] === currentBranch.shorthand;;
     const isLocalBranch = !!branch['isBranch'] && !branch['isRemote'];
     // @todo On remote branch check if has permission to delete
     ContextMenu.show(

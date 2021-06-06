@@ -151,7 +151,7 @@ const Nav = (props: NavProps) => {
             minimal
             style={{ marginLeft: 10 }}
           >
-            {currentBranch.name}
+            {currentBranch.shorthand}
           </Tag>
         )}
         </NavbarGroup>
@@ -238,7 +238,7 @@ const Nav = (props: NavProps) => {
             icon={<GitBranchIcon size={18} />}
             minimal
           >
-            {currentBranch.name}
+            {currentBranch && currentBranch.shorthand}
           </Tag>
         </p>
         <InputGroup
