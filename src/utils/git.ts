@@ -452,6 +452,13 @@ export const commit = async (Repo: Repository, summary: string, description: str
   await Repo.createCommit("HEAD", signature, signature, message, oid, [parent]);
 }
 
+export const createBranch = async (Repo: Repository, branchName: string, sha?: string) => {
+  const commit = sha ? await Repo.getCommit(sha) : await Repo.getHeadCommit();
+  
+  const ref = await Repo.createBranch(branchName, commit, false);
+  return Repo.checkoutBranch(ref);
+}
+
 export default {
   openRepo,
   getCommits,
@@ -472,4 +479,5 @@ export default {
   discardAll,
   getSignature,
   commit,
+  createBranch,
 };

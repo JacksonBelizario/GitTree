@@ -2,12 +2,18 @@ import React, {useState, useEffect} from "react";
 import {
   Button,
   Classes,
+  Colors,
+  Dialog,
+  Icon,
+  InputGroup,
+  Intent,
   Navbar,
   NavbarDivider,
   NavbarGroup,
   NavbarHeading,
   Tag,
 } from "@blueprintjs/core";
+import { IconNames } from "@blueprintjs/icons";
 import {
   FiFolderPlus as FolderIcon,
   FiBook as BookIcon,
@@ -33,7 +39,7 @@ import { connect } from "redux-zero/react";
 import { BoundActions } from "redux-zero/types/Actions";
 import actions from "../store/actions";
 import { IStore } from "../store/store";
-import { showWarning } from "../utils/toaster";
+import { showDanger, showInfo, showWarning } from "../utils/toaster";
 
 import '../assets/scss/navbar.scss'
 
@@ -75,6 +81,8 @@ const Nav = (props: NavProps) => {
   } = props;
 
   const [ref, setRef] = useState<IReference>(null);
+  const [showCreateBranchDialog, setShowCreateBranchDialog] = useState<boolean>(false);
+  const [branchName, setBranchName] = useState<string>('');
 
   useEffect(() => {
     if (currentBranch && refs.refDict && refs.refDict.hasOwnProperty(currentBranch.target)) {
@@ -100,8 +108,23 @@ const Nav = (props: NavProps) => {
 
     fetch();
   }, fetchInterval * ONE_SECOND);
+  
+  const createBranch = async () => {
+    if (branchName) {
+      try {
+        await Git.createBranch(repo, branchName);
+        setBranchName('');
+        setShowCreateBranchDialog(false)
+        showInfo('Branch created');
+      } catch(err) {
+        console.warn(err);
+        showDanger('Error on create branch: ' + err.message);
+      }
+    }
+  }
 
   return (
+    <>
     <Navbar>
       <NavbarGroup>
         <NavbarHeading>GitTree</NavbarHeading>
@@ -160,7 +183,7 @@ const Nav = (props: NavProps) => {
             className={Classes.MINIMAL}
             icon={<GitBranchIcon size={20} />}
             text="Branch"
-            disabled
+            onClick={() => setShowCreateBranchDialog(true)}
           />
           <NavbarDivider />
           <Button
@@ -197,6 +220,52 @@ const Nav = (props: NavProps) => {
         />
       </NavbarGroup>
     </Navbar>
+    <Dialog
+      className="bp3-dark"
+      icon={<GitBranchIcon className="bp3-icon" color={Colors.BLUE3} size={20} />}
+      onClose={() => setShowCreateBranchDialog(false)}
+      title="New branch"
+      isOpen={showCreateBranchDialog}
+      canOutsideClickClose={false}
+    >
+      <form
+        className={Classes.DIALOG_BODY}
+        onSubmit={e => {e.preventDefault(); createBranch();}}
+      >
+        <p className="flex items-center">
+          <span className="pr-2">Current Branch:</span>
+          <Tag
+            icon={<GitBranchIcon size={18} />}
+            minimal
+          >
+            {currentBranch.name}
+          </Tag>
+        </p>
+        <InputGroup
+          autoFocus
+          placeholder="Name"
+          value={branchName}
+          onChange={({target}) => setBranchName(target.value)}
+        />
+      </form>
+      <div className={Classes.DIALOG_FOOTER}>
+        <div className={Classes.DIALOG_FOOTER_ACTIONS}>
+          <Button
+              onClick={() => setShowCreateBranchDialog(false)}
+          >
+            Cancel
+          </Button>
+          <Button
+            intent={Intent.PRIMARY}
+            disabled={!branchName}
+            onClick={() => createBranch()}
+          >
+            Create branch
+          </Button>
+        </div>
+      </div>
+    </Dialog>
+    </>
   );
 };
 
