@@ -1,0 +1,86 @@
+.settings {
+  display: flex;
+  z-index: 10;
+  background-color: var(--bg-secondary);
+  color: #ddd;
+  position: absolute;
+  inset: 0;
+
+  .settings-left-panel {
+    width: 300px;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    display: flex;
+    background: #202b33;
+
+    .settings-menu-container {
+      background: #30404d;
+      border-bottom: 1px solid rgba(16, 22, 26, 0.4);
+      .settings-menu {
+        align-items: center;
+        background-color: #f5f8fa;
+        border-radius: 6px;
+        cursor: not-allowed;
+        display: flex;
+        margin: 4px;
+        padding: 6px 14px;
+        cursor: pointer;
+        background: #30404d;
+
+        &:hover {
+          background: #293742;
+        }
+        .settings-menu-icon {
+          align-items: center;
+          background-color: rgba(92, 112, 128, 0.6);
+          border-radius: 50%;
+          color: #ffffff;
+          display: flex;
+          height: 25px;
+          justify-content: center;
+          width: 25px;
+          background-color: #8a9ba8;
+        }
+        .settings-menu-title {
+          flex: 1;
+          padding-left: 10px;
+        }
+      }
+
+      &.active {
+        .settings-menu-icon {
+          background-color: #2b95d6;
+        }
+        .settings-menu-title {
+          color: #2b95d6;
+        }
+      }
+    }
+  }
+
+  .settings-right-panel {
+    border-radius: 0 0 6px 0;
+    flex: 1;
+    min-width: 0;
+    line-height: 18px;
+    background-color: #293742;
+    border-left: 1px solid rgba(16,22,26,.4);
+
+    .settings-title {
+      padding: 20px 20px 10px 20px;
+    }
+
+    .settings-item {
+      padding: 10px 20px 10px 20px;
+      &:hover {
+        background: #30404d;
+      }
+
+      .bp3-input-group {
+        max-width: 500px;
+      }
+    }
+  }
+}

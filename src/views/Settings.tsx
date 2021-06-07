@@ -5,7 +5,9 @@ import { BoundActions } from 'redux-zero/types';
 import actions from '../store/actions';
 import { connect } from 'redux-zero/react';
 
-import { Button, H4, H6, Callout, Menu, MenuItem, InputGroup, Switch } from "@blueprintjs/core";
+import { Button, H4, H6, Callout, Menu, MenuItem, InputGroup, Switch, Icon, Colors, H3 } from "@blueprintjs/core";
+
+import '../assets/scss/settings.scss'
 
 const { dialog, getCurrentWindow } = window.require("electron").remote;
 const fs = window.require('fs');
@@ -74,84 +76,86 @@ const Settings = (props: SettingsProps) => {
   }
 
   return (
-    <div className="settings flex absolute top-0 bottom-0 left-0 right-0 z-10 bg-white text-black">
-      <Menu style={{width: 300, height: '100%'}}>
-        <li className="bp3-menu-header"><H6>Settings</H6></li>
-        <MenuItem icon="settings" onClick={() => {}} text="General" />
-        <MenuItem icon="shield" active onClick={() => {}} text="Auth" />
-      </Menu>
-      <div className="p-3 w-full">
-        <Callout className="mb-3 w-full">
-          <H4>Credentials</H4>
-        </Callout>
-        <Callout className="w-full">
-          <span style={{display: 'block', width: 500, marginBottom: 10}}>
-            <H6>Username</H6>
-            <InputGroup
-              large={true}
-              placeholder="Enter your username..."
-              value={auth.username}
-              onChange={({target}) => setAuthSettings({ username: target.value })}
-            />
-          </span>
-          <span style={{display: 'block', width: 500, marginBottom: 10}}>
-            <H6>Password</H6>
-            <InputGroup
-              large={true}
-              type="password"
-              placeholder="Enter your password..."
-              value={auth.password}
-              onChange={({target}) => setAuthSettings({ password: target.value })}
-            />
-          </span>
-        </Callout>
-        <Callout className="mb-3 mt-3 w-full">
-          <H4>SSH</H4>
-        </Callout>
-        <Callout className="w-full">
-          <span style={{display: 'block', width: 500, marginBottom: 10}}>
-            <H6>Use SSH Local Agent</H6>
-            <Switch
-              checked={auth.useSshLocalAgent}
-              onChange={() => setAuthSettings({ useSshLocalAgent: !auth.useSshLocalAgent })} />
-          </span>
-          <span style={{display: 'block', width: 500, marginBottom: 10}}>
-            <H6>SSH Private Key</H6>
-            <InputGroup
-              large={true}
-              disabled={auth.useSshLocalAgent}
-              onChange={() => {}}
-              placeholder="Choose file..."
-              value={auth.sshPrivateKey}
-              readOnly
-              onClick={() => setSSHPrivateKey()}
-              rightElement={
-                <Button
-                  disabled={auth.useSshLocalAgent}
-                  onClick={() => setSSHPrivateKey()}
-                >Browse</Button>
-              }
-            />
-          </span>
-          <span style={{display: 'block', width: 500, marginBottom: 10}}>
-            <H6>SSH Public Key</H6>
-            <InputGroup
-              large={true}
-              disabled={auth.useSshLocalAgent}
-              onChange={() => {}}
-              placeholder="Choose file..."
-              value={auth.sshPublicKey}
-              readOnly
-              onClick={() => setSSHPublicKey()}
-              rightElement={
-                <Button
-                  disabled={auth.useSshLocalAgent}
-                  onClick={() => setSSHPublicKey()}
-                >Browse</Button>
-              }
-            />
-          </span>
-        </Callout>
+    <div className="settings">
+      <div className="settings-left-panel">
+        <div className="settings-menu-container">
+            <div className="settings-menu">
+              <div className="settings-menu-icon"><Icon icon="settings" /></div>
+              <div className="settings-menu-title">General</div>
+            </div>
+        </div>
+        <div className="settings-menu-container active">
+            <div className="settings-menu">
+              <div className="settings-menu-icon"><Icon icon="shield" /></div>
+              <div className="settings-menu-title">Auth</div>
+            </div>
+        </div>
+      </div>
+      
+      <div className="settings-right-panel">
+        <H3 className="settings-title">Credentials</H3>
+        <div className="settings-item">
+          <H6>Username</H6>
+          <InputGroup
+            large={true}
+            placeholder="Enter your username..."
+            value={auth.username}
+            onChange={({target}) => setAuthSettings({ username: target.value })}
+          />
+        </div>
+        <div className="settings-item">
+          <H6>Password</H6>
+          <InputGroup
+            large={true}
+            type="password"
+            placeholder="Enter your password..."
+            value={auth.password}
+            onChange={({target}) => setAuthSettings({ password: target.value })}
+          />
+        </div>
+        <H4 className="settings-title">SSH</H4>
+        <div className="settings-item">
+          <H6>Use SSH Local Agent</H6>
+          <Switch
+            checked={auth.useSshLocalAgent}
+            onChange={() => setAuthSettings({ useSshLocalAgent: !auth.useSshLocalAgent })} />
+        </div>
+        <div className="settings-item">
+          <H6>SSH Private Key</H6>
+          <InputGroup
+            large={true}
+            disabled={auth.useSshLocalAgent}
+            onChange={() => {}}
+            placeholder="Choose file..."
+            value={auth.sshPrivateKey}
+            readOnly
+            onClick={() => setSSHPrivateKey()}
+            rightElement={
+              <Button
+                disabled={auth.useSshLocalAgent}
+                onClick={() => setSSHPrivateKey()}
+              >Browse</Button>
+            }
+          />
+        </div>
+        <div className="settings-item">
+          <H6>SSH Public Key</H6>
+          <InputGroup
+            large={true}
+            disabled={auth.useSshLocalAgent}
+            onChange={() => {}}
+            placeholder="Choose file..."
+            value={auth.sshPublicKey}
+            readOnly
+            onClick={() => setSSHPublicKey()}
+            rightElement={
+              <Button
+                disabled={auth.useSshLocalAgent}
+                onClick={() => setSSHPublicKey()}
+              >Browse</Button>
+            }
+          />
+        </div>
       </div>
     </div>
   )

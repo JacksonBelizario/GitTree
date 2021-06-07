@@ -224,9 +224,8 @@ const Nav = (props: NavProps) => {
       className="bp3-dark"
       icon={<GitBranchIcon className="bp3-icon" color={Colors.BLUE3} size={20} />}
       onClose={() => setShowCreateBranchDialog(false)}
-      title="New branch"
       isOpen={showCreateBranchDialog}
-      canOutsideClickClose={false}
+      style={{width: 350}}
     >
       <form
         className={Classes.DIALOG_BODY}
@@ -249,20 +248,15 @@ const Nav = (props: NavProps) => {
         />
       </form>
       <div className={Classes.DIALOG_FOOTER}>
-        <div className={Classes.DIALOG_FOOTER_ACTIONS}>
-          <Button
-              onClick={() => setShowCreateBranchDialog(false)}
-          >
-            Cancel
-          </Button>
-          <Button
-            intent={Intent.PRIMARY}
-            disabled={!branchName}
-            onClick={() => createBranch()}
-          >
-            Create branch
-          </Button>
-        </div>
+        <Button
+          intent={Intent.PRIMARY}
+          disabled={!branchName}
+          fill
+          small
+          onClick={() => createBranch()}
+        >
+          Create branch
+        </Button>
       </div>
     </Dialog>
     </>
