@@ -1,4 +1,4 @@
-import { ICommit } from "../utils/interfaces";
+import { ICommit } from "../Support/Interfaces";
 import { Color } from "./Color";
 
 export class Node {

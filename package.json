@@ -11,10 +11,10 @@
   "build": {
     "appId": "git-tree",
     "directories": {
-      "buildResources": "assets"
+      "buildResources": "Assets"
     },
     "win": {
-      "iconUrl": "./src/assets/images/logo.ico"
+      "iconUrl": "./src/Assets/images/logo.ico"
     }
   },
   "scripts": {
@@ -25,7 +25,7 @@
     "start:react": "cross-env PORT=4000 BROWSER=none react-app-rewired start",
     "start": "concurrently \"yarn start:react\" \"yarn start:electron\"",
     "build:react": "react-app-rewired build",
-    "build:electron": "electron-packager . --overwrite --prune --asar --out=release-builds --ignore=/src --icon=./src/assets/images/logo.ico",
+    "build:electron": "electron-packager . --overwrite --prune --asar --out=release-builds --ignore=/src --icon=./src/Assets/images/logo.ico",
     "build": "yarn build:react && yarn build:electron",
     "test": "react-app-rewired test",
     "eject": "react-app-rewired eject"

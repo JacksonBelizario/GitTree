@@ -1,6 +1,6 @@
 import * as crypto from 'crypto'
-import { getMaterialColors } from "../utils/colors";
-import { IRepo } from '../utils/interfaces';
+import { getMaterialColors } from "../Support/Colors";
+import { IRepo } from '../Support/Interfaces';
 
 export class Author {
 

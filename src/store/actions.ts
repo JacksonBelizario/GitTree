@@ -1,8 +1,8 @@
-import { IStore } from "./store";
-import { IGraph } from "../models/SubwayMap";
-import { ICommit, IRepo, ICurrentCommit, IRefs, ISelectedFile, IWipCommit, IReference } from "../utils/interfaces";
-import { showDanger, showInfo } from "../utils/toaster";
-import Git from "../utils/git";
+import { ICommit, IRepo, ICurrentCommit, IRefs, ISelectedFile, IWipCommit, IReference, IStore } from "../Support/Interfaces";
+import { IGraph } from "../Models/SubwayMap";
+
+import { showDanger, showInfo } from "../Support/Toaster";
+import Git from "../Services/Git";
 
 const { dialog, getCurrentWindow } = window.require("electron").remote;
 

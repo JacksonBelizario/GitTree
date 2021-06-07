@@ -1,8 +1,7 @@
 import createStore from "redux-zero";
 import { applyMiddleware } from "redux-zero/middleware";
-import { IGraph } from "../models/SubwayMap";
-import { IRepo, ICommit, ICurrentCommit, IRefs, ISelectedFile, IWipCommit, ISettings } from "../utils/interfaces";
-import { INITIAL_WIP } from "../utils";
+import { IStore } from "../Support/Interfaces";
+import { INITIAL_WIP } from "../Support/Utils";
 import persist from "redux-zero-persist";
 
 const ElectronStore = window.require('electron-store');
@@ -49,21 +48,6 @@ const persistMiddleware = persist({ key: "[key]", storage }, function (
 });
 
 const middlewares = applyMiddleware(persistMiddleware);
-
-export interface IStore {
-  loading: boolean;
-  folder: string;
-  repo: IRepo;
-  selectedCommit: string;
-  graph: IGraph | null;
-  currentBranch: ICurrentCommit | null;
-  commits: ICommit[];
-  commit: IWipCommit;
-  refs: IRefs;
-  selectedFile: ISelectedFile,
-  settings: ISettings,
-  expandedMenu: string[]
-}
 
 const initialState: IStore = {
   loading: false,

@@ -16,7 +16,7 @@ function createWindow() {
     height: 680,
     frame: false,
     titleBarStyle: 'hiddenInset',
-    icon: nativeImage.createFromPath(path.join(__dirname, "/src/assets/images/logo.png")),
+    icon: nativeImage.createFromPath(path.join(__dirname, "/src/Assets/images/logo.png")),
     webPreferences: {
       nodeIntegration: true,
       enableRemoteModule: true
