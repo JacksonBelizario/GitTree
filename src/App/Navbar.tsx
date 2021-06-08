@@ -38,10 +38,12 @@ import Actions from "../Store/Actions";
 import Git from "../Services/Git";
 
 import '../Assets/scss/navbar.scss'
+import { Repository } from "nodegit";
 
 const ONE_SECOND = 1000;
 
 interface StoreProps {
+  loading: boolean;
   repo: IRepo;
   folder: string;
   currentBranch: ICurrentCommit | null;
@@ -50,6 +52,7 @@ interface StoreProps {
 }
 
 const mapToProps = (state: IStore): StoreProps => ({
+  loading: state.loading,
   repo: state.repo,
   folder: state.folder,
   currentBranch: state.currentBranch,
@@ -61,6 +64,7 @@ type NavProps = StoreProps & BoundActions<IStore, typeof Actions>;
 
 const Nav = (props: NavProps) => {
   const {
+    loading,
     repo,
     folder,
     openRepo,
@@ -88,7 +92,7 @@ const Nav = (props: NavProps) => {
 
   useInterval(() => {
     const fetch = async () => {
-      if (!repo || showSettings) {
+      if (!(repo instanceof Repository) || loading || showSettings) {
         return;
       }
       try {

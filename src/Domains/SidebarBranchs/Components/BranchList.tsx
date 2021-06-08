@@ -73,7 +73,7 @@ const BranchList = (props: BranchListProps) => {
           folder.childNodes.sort(order);
         }
       } else {
-        let currentFolder;
+        let currentFolder : TreeNodeInfo;
         if (folder.childNodes.filter(o => o.label === currentLabel && o.childNodes).length === 0) {
           let newFolder = {
             id: folder.childNodes.length,
@@ -108,7 +108,7 @@ const BranchList = (props: BranchListProps) => {
 
     const items = buildList(branchs);
     setContents([...items]);
-  }, [branchs, expandedMenu]);
+  }, [branchs, expandedMenu, currentBranch]);
 
   const handleNodeClick = (treeNode: TreeNodeInfo, _nodePath: number[], e: React.MouseEvent<HTMLElement>) => {
     if (!!treeNode.childNodes?.length) {
@@ -132,10 +132,10 @@ const BranchList = (props: BranchListProps) => {
     setContents([...contents]);
     setExpandedMenu([...expandedMenu, treeNode.label.toString()])
   };
-  const onExpand = useCallback(handleNodeExpand, [contents]);
-  const onCollapse = useCallback(handleNodeCollapse, [contents]);
-  const onNodeClick = useCallback(handleNodeClick, [contents]);
-  const onNodeDoubleClick = useCallback(handleNodeDoubleClick, [contents]);
+  const onExpand = useCallback(handleNodeExpand, [contents]); //eslint-disable-line
+  const onCollapse = useCallback(handleNodeCollapse, [contents]); //eslint-disable-line
+  const onNodeClick = useCallback(handleNodeClick, [contents]); //eslint-disable-line
+  const onNodeDoubleClick = useCallback(handleNodeDoubleClick, [contents]); //eslint-disable-line
 
   const showContextMenu = (treeNode: TreeNodeInfo, path: number[], e: React.MouseEvent<HTMLElement>) => {
     const {nodeData} = treeNode;

@@ -102,12 +102,12 @@ const menuTemplate = [
         click: dipatcher.onMenuEvent('new-branch'),
         enabled: false
       },
-      {
-        label: 'Rename...',
-        accelerator: 'CmdOrCtrl+Shift+R',
-        click: dipatcher.onMenuEvent('rename-branch'),
-        enabled: false
-      },
+      // {
+      //   label: 'Rename...',
+      //   accelerator: 'CmdOrCtrl+Shift+R',
+      //   click: dipatcher.onMenuEvent('rename-branch'),
+      //   enabled: false
+      // },
       {
         label: 'Delete...',
         accelerator: 'CmdOrCtrl+Shift+D',
@@ -200,7 +200,7 @@ const Menu = (props: MenuProps): JSX.Element => {
   
   useEffect(() => {
     dipatcher.setMenuProps(props);
-  }, []);
+  }, []); // eslint-disable-line
   
   useEffect(() => {
     document.title = title;

@@ -1,17 +1,18 @@
 import NodeGit, { Repository } from "nodegit";
 import {formatLines, diffLines} from 'unidiff';
 import {parseDiff} from 'react-diff-view';
+import { IHunk, IHunkLine } from "../Support/Interfaces";
 
 const fs = window.require('fs');
 
 export class FileDetails {
   Repo: Repository;
 
-  constructor(Repo) {
+  constructor(Repo: Repository) {
     this.Repo = Repo;
   }
 
-  async getFileDetail(path, commit, fullFile = false, ignoreWhiteSpaces = true) {
+  async getFileDetail(path: string, commit: string, fullFile: boolean = false, ignoreWhiteSpaces: boolean = true) {
     let diffOptions = {
       //@ts-ignore
       flags: NodeGit.Diff.OPTION.NORMAL
@@ -51,7 +52,7 @@ export class FileDetails {
     }
   }
 
-  async processDiff(diff, path, commit, fullFile = false) {
+  async processDiff(diff: NodeGit.Diff, path: string, commit: string, fullFile: boolean = false) : Promise<IHunk[]> {
     await diff.findSimilar({ renameThreshold: 50 });
     let patches = await diff.patches();
     let patch = patches.find(p => p.newFile().path() === path);
@@ -96,7 +97,6 @@ export class FileDetails {
         newStart: hunk.newStart(),
         newLines: hunk.newLines(),
         content: hunk.header(),
-        highlight: true,
         changes: changes
       })
     }
@@ -133,7 +133,7 @@ export class FileDetails {
 
     let oldLineNumber = 1;
     let newLineNumber = 1;
-    hunkLikeLines = hunkLikeLines.map(line => {
+    hunkLikeLines = hunkLikeLines.map((line) : IHunkLine => {
       if (!line.isInsert) {
         line.oldLineNumber = oldLineNumber++;
         line.lineNumber = line.oldLineNumber;
@@ -161,7 +161,7 @@ export class FileDetails {
     }];
   }
 
-  async getFileLines(commit, path) {
+  async getFileLines(commit: string, path: string) : Promise<IHunkLine[]> {
     try {
       let cmt = ['workdir','tree'].includes(commit)
         ? await this.Repo.getHeadCommit()
@@ -173,16 +173,23 @@ export class FileDetails {
       }
       let blob = await treeEntry.getBlob();
       if (blob.isBinary()) {
-        return [{ op: "binary", content: "Binary File Content", oldLineNumber: -1, newLineNumber: -1 }]
+        // @todo
+        return [{
+          op: ' ',
+          type: 'binary',
+          content: "Binary File Content",
+          oldLineNumber: -1, newLineNumber: -1, lineNumber: -1,
+          isNormal: false, isInsert: false, isDelete: false,
+        }]
       }
       let lines = blob.toString().split(/\r?\n/);
       //@ts-ignore
       if (lines.length > 0 && lines[lines.length -1].content === '\\ No newline at end of file') {
         lines.pop();
       }
-      let hunkLike = lines.map((l, index) => {
+      let hunkLike = lines.map((l, index) : IHunkLine => {
         return {
-          op: " ",
+          op: ' ',
           type: "normal",
           content: l,
           oldLineNumber: index + 1,
@@ -200,7 +207,7 @@ export class FileDetails {
   }
 
   async processConflictedDiff(conflict, path) {
-    let [ancestorBlob, ourBlob, theirBlob] = await Promise.all([
+    let [/*ancestorBlob*/, ourBlob, theirBlob] = await Promise.all([
       this.Repo.getBlob(conflict.ancestor_out.id),
       this.Repo.getBlob(conflict.our_out.id),
       this.Repo.getBlob(conflict.their_out.id)
@@ -218,7 +225,6 @@ export class FileDetails {
           newStart: hunk.newStart(),
           newLines: hunk.newLines(),
           content: hunk.header(),
-          highlight: true,
           changes: []
         });
       },
@@ -261,7 +267,10 @@ export class FileDetails {
     return this.removeCarriageReturn(result);
   }
 
-  async getDiffBetween(fromCommitSHA, toCommitSHA) {
+  async getDiffBetween(
+    fromCommitSHA: string | NodeGit.Oid | NodeGit.Commit,
+    toCommitSHA: string | NodeGit.Oid | NodeGit.Commit
+    ) {
     const from = await this.Repo.getCommit(fromCommitSHA);
     const fromTree = await from.getTree();
 
@@ -276,7 +285,7 @@ export class FileDetails {
     }
   }
 
-  async getConflictDiff(path) {
+  async getConflictDiff(path: string) {
     let index = await this.Repo.index();
     if (!index.hasConflicts()) {
       return;
@@ -311,7 +320,7 @@ export class FileDetails {
    * @param {*} result 
    * @returns 
    */
-  removeEOL(result) {
+  removeEOL(result: IHunk[]) : IHunk[] {
     if (result.length === 0 || result[result.length -1].changes.length === 0) {
       return;
     }
@@ -326,7 +335,7 @@ export class FileDetails {
    * @param {*} result 
    * @returns 
    */
-  removeCarriageReturn(result) {
+  removeCarriageReturn(result: IHunk[]) : IHunk[] {
     return result.map(hunk => {
       hunk.changes = hunk.changes.map(line => {
         line.content = line.content.replace(/(\r\n|\n|\r)/gm, "");

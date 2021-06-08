@@ -133,7 +133,9 @@ const Settings = (props: SettingsProps) => {
               <Button
                 disabled={auth.useSshLocalAgent}
                 onClick={() => setSSHPrivateKey()}
-              >Browse</Button>
+              >
+                Browse
+              </Button>
             }
           />
         </div>
@@ -151,7 +153,9 @@ const Settings = (props: SettingsProps) => {
               <Button
                 disabled={auth.useSshLocalAgent}
                 onClick={() => setSSHPublicKey()}
-              >Browse</Button>
+              >
+                Browse
+              </Button>
             }
           />
         </div>

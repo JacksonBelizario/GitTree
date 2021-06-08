@@ -12,6 +12,7 @@ import Actions from '../../Store/Actions';
 import { FileDetails } from '../../Services/FileDetails';
 
 import '../../Assets/scss/file-viewer.scss'
+import { Repository } from 'nodegit';
 
 const renderToken = (token, defaultRender, i) => {
   switch (token.type) {
@@ -66,7 +67,7 @@ const FileViewer = (props: FileViewerProps) => {
 
   useEffect(() => {
     const getFileDetails = async () => {
-      if (!repo || !commit || !file) {
+      if (!repo || !commit || !file || !(repo instanceof Repository)) {
         return;
       }
       try {
@@ -116,7 +117,7 @@ const FileViewer = (props: FileViewerProps) => {
     return <></>;
   }
   return (
-    <div className="file-viewer absolute top-0 bottom-0 left-0 right-0 z-10 bg-white text-black">
+    <div className="file-viewer">
       <div className="flex justify-center space-x-4">
         <div className="flex-1 flex justify-center">
           {

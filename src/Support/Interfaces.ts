@@ -120,7 +120,6 @@ export interface IRefs {
   commits: string
 }
 
-
 export interface ISelectedFile {
   commit: string;
   file?: IFile;
@@ -135,6 +134,27 @@ export interface IAuth {
   sshPublicKey: string,
   sshPublicContent: string,
 }
+
+export interface IHunkLine {
+  op: '<' | '>' | '=' | '+' | '-' | ' ',
+  type: 'normal' | 'insert' | 'delete' | 'binary',
+  content: string,
+  oldLineNumber: number,
+  newLineNumber: number,
+  lineNumber: number,
+  isNormal: boolean,
+  isInsert: boolean,
+  isDelete: boolean,
+};
+
+export interface IHunk {
+  oldStart: number,
+  oldLines: number,
+  newStart: number,
+  newLines: number,
+  content: string,
+  changes: IHunkLine[]
+};
 
 export interface ISettings {
   show: boolean,

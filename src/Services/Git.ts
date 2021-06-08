@@ -2,11 +2,11 @@ import NodeGit, { Repository, Signature } from "nodegit"
 import { isSSH } from "../Support/Utils"
 import { IAuth, IRefDict, IReference, IRefs, ICommit, IStatusCommit } from "../Support/Interfaces";
 
-const openRepo = async (path: string) => {
+export const openRepo = async (path: string) : Promise<Repository> => {
   return await NodeGit.Repository.open(path);
 };
 
-const getCommits = async (Repo: Repository) => {
+export const getCommits = async (Repo: Repository) => {
   let walker = NodeGit.Revwalk.create(Repo);
   //@ts-ignore
   walker.sorting(NodeGit.Revwalk.SORT.TOPOLOGICAL, NodeGit.Revwalk.SORT.TIME);
@@ -57,7 +57,7 @@ const getCommits = async (Repo: Repository) => {
   return commits;
 };
 
-const getStatus = async (Repo: Repository) : Promise<IStatusCommit> => {
+export const getStatus = async (Repo: Repository) : Promise<IStatusCommit> => {
   const statuses = await Repo.getStatus();
   let stagedSummary = {
     ignored: 0,
@@ -133,7 +133,7 @@ const getStatus = async (Repo: Repository) : Promise<IStatusCommit> => {
   };
 };
 
-const getCurrentBranch = async (Repo: Repository) => {
+export const getCurrentBranch = async (Repo: Repository) => {
   try {
     const ref = await Repo.getCurrentBranch();
     let branchNames = ref.name().split("/");
@@ -149,7 +149,7 @@ const getCurrentBranch = async (Repo: Repository) => {
   }
 };
 
-const compareCommits = async (Repo: Repository, firstSHA: string, secondSHA: string) => {
+export const compareCommits = async (Repo: Repository, firstSHA: string, secondSHA: string) => {
 
   let [localCommit, remoteCommit] = await Promise.all([
     Repo.getCommit(firstSHA),
@@ -167,7 +167,7 @@ const compareCommits = async (Repo: Repository, firstSHA: string, secondSHA: str
   return await firstTree.diff(secondTree);
 }
 
-const getRefsChanges = async (Repo: Repository, refs: IReference[]) : Promise<IReference[]> => {
+export const getRefsChanges = async (Repo: Repository, refs: IReference[]) : Promise<IReference[]> => {
   let remoteRefs = refs.filter((_) => _.isRemote);
 
   let res = [];
@@ -187,7 +187,7 @@ const getRefsChanges = async (Repo: Repository, refs: IReference[]) : Promise<IR
   return res;
 }
 
-const getReferences = async (Repo: Repository) : Promise<IRefs> => {
+export const getReferences = async (Repo: Repository) : Promise<IRefs> => {
   try {
     let refs = await Repo.getReferences();
     refs = refs.filter((_) => _.shorthand() !== "stash");
@@ -230,7 +230,7 @@ const getReferences = async (Repo: Repository) : Promise<IRefs> => {
   }
 };
 
-const getSubmodules = async (Repo) => {
+export const getSubmodules = async (Repo) => {
   let submodules = await Repo.getSubmodules();
   return submodules.map((submodule) => ({
     hid: submodule.headId().toString(),
@@ -259,7 +259,7 @@ const getSubmodules = async (Repo) => {
 //   return result;
 // };
 
-const getCommitDetails = async (Repo: Repository, sha: string) : Promise<ICommit> => {
+export const getCommitDetails = async (Repo: Repository, sha: string) : Promise<ICommit> => {
   if (typeof Repo.getCommit !== 'function') {
     return null;
   }
@@ -314,7 +314,7 @@ const getCommitDetails = async (Repo: Repository, sha: string) : Promise<ICommit
   }
 }
 
-const stage = async (Repo, paths) => {
+export const stage = async (Repo, paths) => {
     let statuses = await Repo.getStatus();
     let index = await Repo.refreshIndex();
     let req = [];
@@ -331,12 +331,12 @@ const stage = async (Repo, paths) => {
     await index.write();
 }
 
-const unstage = async (Repo: Repository, paths: string[]) => {
+export const unstage = async (Repo: Repository, paths: string[]) => {
   let commit = await Repo.getHeadCommit();
   await NodeGit.Reset.default(Repo, commit, paths);
 }
 
-const repoCallbacks = (auth: IAuth) => {
+export const repoCallbacks = (auth: IAuth) => {
   return {
     callbacks: {
       credentials: (url, userName) => {
@@ -357,11 +357,11 @@ const repoCallbacks = (auth: IAuth) => {
   }
 }
 
-const fetchAll = async (Repo: Repository, auth: IAuth) => {
+export const fetchAll = async (Repo: Repository, auth: IAuth) => {
   return await Repo.fetchAll(repoCallbacks(auth));
 }
 
-const getCurrentFirstRemote = async (Repo: Repository) => {
+export const getCurrentFirstRemote = async (Repo: Repository) => {
   const [firstRemote] = await Repo.getRemotes();
   if (!firstRemote) {
     throw new Error('No remote found');
@@ -369,7 +369,7 @@ const getCurrentFirstRemote = async (Repo: Repository) => {
   return firstRemote;
 }
 
-const fetch = async (Repo: Repository, auth: IAuth) => {
+export const fetch = async (Repo: Repository, auth: IAuth) => {
   const remote = await getCurrentFirstRemote(Repo);
   return await Repo.fetch(remote, repoCallbacks(auth));
 }
@@ -458,6 +458,7 @@ export const createBranch = async (Repo: Repository, branchName: string, sha?: s
   return Repo.checkoutBranch(ref);
 }
 
+// eslint-disable-next-line import/no-anonymous-default-export
 export default {
   openRepo,
   getCommits,
@@ -479,4 +480,5 @@ export default {
   getSignature,
   commit,
   createBranch,
+  compareCommits,
 };
