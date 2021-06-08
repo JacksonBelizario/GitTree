@@ -119,8 +119,7 @@ const Sidebar = (props: SidebarProps) => {
           <Button
             key={idx}
             icon={<InboxIcon size={15} />}
-            className={Classes.MINIMAL + " " + Classes.ALIGN_LEFT}
-            style={{ paddingLeft: 30, paddingRight: 10, width: "100%" }}
+            className={"btn-list " + Classes.MINIMAL + " " + Classes.ALIGN_LEFT}
             onClick={() => scrollToCommit(stash.sha)}
           >
             {stash.message}
@@ -147,8 +146,7 @@ const Sidebar = (props: SidebarProps) => {
           <Button
             key={idx}
             icon={<LayersIcon size={15} />}
-            className={Classes.MINIMAL + " " + Classes.ALIGN_LEFT}
-            style={{ paddingLeft: 30, paddingRight: 10, width: "100%" }}
+            className={"btn-list " + Classes.MINIMAL + " " + Classes.ALIGN_LEFT}
           >
             {submodule.path()}
           </Button>

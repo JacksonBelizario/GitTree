@@ -86,6 +86,16 @@ $footer-size: 77px;
         justify-content: space-between;
       }
     }
+
+    .btn-list {
+      background: rgba(16, 22, 26, 0.3);
+      color: #f5f8fa;
+      padding: 0 10px 0 30px;
+      width: 100%;
+      min-height: 22px !important;
+      height: 22px !important;
+      font-size: 13px;
+    }
   }
   .section {
     display: flex;
