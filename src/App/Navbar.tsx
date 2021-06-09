@@ -123,6 +123,24 @@ const Nav = (props: NavProps) => {
     }
   }
 
+  const saveStash = async () => {
+    try {
+      await Git.saveStash(repo);
+    } catch(err) {
+      console.warn(err);
+      showDanger(err.message);
+    }
+  }
+
+  const popStash = async () => {
+    try {
+      await Git.popStash(repo);
+    } catch(err) {
+      console.warn(err);
+      showDanger(err.message);
+    }
+  }
+
   return (
     <>
     <Navbar>
@@ -190,13 +208,13 @@ const Nav = (props: NavProps) => {
             className={Classes.MINIMAL}
             icon={<StashIcon size={20} />}
             text="Stash"
-            disabled
+            onClick={() => saveStash()}
           />
           <Button
             className={Classes.MINIMAL}
             icon={<PopStashIcon size={20} />}
             text="Pop"
-            disabled
+            onClick={() => popStash()}
           />
           <NavbarDivider />
           <Button

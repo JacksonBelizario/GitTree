@@ -458,6 +458,26 @@ export const createBranch = async (Repo: Repository, branchName: string, sha?: s
   return Repo.checkoutBranch(ref);
 }
 
+export const dropStash = (Repo: Repository, index: number) => {
+  return NodeGit.Stash.drop(Repo, index)
+}
+
+export const applyStash = (Repo: Repository, index: number) => {
+  //@ts-ignore
+  return NodeGit.Stash.apply(Repo, index, NodeGit.Stash.APPLY_FLAGS.APPLY_DEFAULT)
+}
+
+export const popStash = (Repo: Repository, index: number = 0) => {
+  //@ts-ignore
+  return NodeGit.Stash.pop(Repo, index, NodeGit.Stash.APPLY_FLAGS.APPLY_DEFAULT)
+}
+
+export const saveStash = async (Repo: Repository) => {
+  const signature = await getSignature(Repo);
+  //@ts-ignore
+  return NodeGit.Stash.save(Repo, signature, "", NodeGit.Stash.FLAGS.DEFAULT)
+}
+
 // eslint-disable-next-line import/no-anonymous-default-export
 export default {
   openRepo,
@@ -481,4 +501,8 @@ export default {
   commit,
   createBranch,
   compareCommits,
+  dropStash,
+  applyStash,
+  popStash,
+  saveStash,
 };
