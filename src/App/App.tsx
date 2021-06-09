@@ -152,6 +152,19 @@ const App = (props: AppProps) => {
         setCurrentBranch(await Git.getCurrentBranch(repo));
         
         setLocalRefs(repoRefs);
+      }
+    };
+
+    /**
+     * Check if the commits have updated
+     */
+    const checkCommits = async () => {
+      let commits = await Git.getCommits(repo, 1);
+      if (commits.length > 0) {
+        if (localCommits.length > 0 && commits[0].sha === localCommits[0].sha) {
+          return;
+        }
+        console.log('Commits updated', (new Date()).toJSON());
 
         setLocalCommits(await Git.getCommits(repo));
       }
@@ -192,6 +205,7 @@ const App = (props: AppProps) => {
       }
 
       await checkRefs();
+      await checkCommits();
       await checkCurrentBranch();
       await checkWorkingDirectory();
 

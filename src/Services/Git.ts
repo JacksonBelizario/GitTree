@@ -6,24 +6,24 @@ export const openRepo = async (path: string) : Promise<Repository> => {
   return await NodeGit.Repository.open(path);
 };
 
-export const getCommits = async (Repo: Repository) => {
+export const getCommits = async (Repo: Repository, count: number = 500) : Promise<ICommit[]> => {
   let walker = NodeGit.Revwalk.create(Repo);
   //@ts-ignore
   walker.sorting(NodeGit.Revwalk.SORT.TOPOLOGICAL, NodeGit.Revwalk.SORT.TIME);
   walker.pushGlob("*");
   let stashes = [];
-  await NodeGit.Stash.foreach(Repo, (index, msg, id) => {
-    stashes.push(id.toString());
-    walker.push(id);
+  await NodeGit.Stash.foreach(Repo, (index, msg, oid) => {
+    stashes.push(oid.toString());
+    walker.push(oid);
   });
-  const res = await walker.getCommits(500);
+  const res = await walker.getCommits(count);
   let commits = [];
   let stashIndicies = [];
   res.forEach((x) => {
-    let stashIndex = -1;
+    let stashIndex = stashes.indexOf(x.sha());
     let isStash = false;
     let parents = x.parents().map((p) => p.toString());
-    if (stashes.indexOf(x.sha()) !== -1) {
+    if (stashIndex !== -1) {
       isStash = true;
       parents = [x.parents()[0].toString()];
       if (x.parents().length > 0) {
@@ -31,27 +31,25 @@ export const getCommits = async (Repo: Repository) => {
           stashIndicies.push(x.parents()[i].toString());
         }
       }
-      stashIndex = stashes.indexOf(x.sha());
     }
-    let cmt = {
-      sha: x.sha(),
-      message: x.message().split("\n")[0],
-      detail: x
-        .message()
-        .split("\n")
-        .splice(1, x.message().split("\n").length)
-        .join("\n"),
-      date: x.date(),
-      time: x.time(),
-      committer: x.committer().name(),
-      email: x.author().email(),
-      author: x.author().name(),
-      parents: parents,
-      isStash: isStash,
-      stashIndex: stashIndex,
-    };
-    if (stashIndicies.indexOf(cmt.sha) === -1) {
-      commits.push(cmt);
+    if (stashIndicies.indexOf(x.sha()) === -1) {
+      commits.push({
+        sha: x.sha(),
+        message: x.message().split("\n")[0],
+        detail: x
+          .message()
+          .split("\n")
+          .splice(1, x.message().split("\n").length)
+          .join("\n"),
+        date: x.date(),
+        time: x.time(),
+        committer: x.committer().name(),
+        email: x.author().email(),
+        author: x.author().name(),
+        parents: parents,
+        isStash: isStash,
+        stashIndex: stashIndex,
+      });
     }
   });
   return commits;
