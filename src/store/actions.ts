@@ -1,4 +1,4 @@
-import { ICommit, IRepo, ICurrentCommit, IRefs, ISelectedFile, IWipCommit, IReference, IStore } from "../Support/Interfaces";
+import { ICommit, IRepo, ICurrentCommit, IRefs, ISelectedFile, IWipCommit, IReference, IStore, ISettingsTab } from "../Support/Interfaces";
 import { IGraph } from "../Models/SubwayMap";
 
 import { showDanger, showInfo } from "../Support/Toaster";
@@ -49,10 +49,11 @@ const actions = (store: any) => ({
       ...settings
     }
   }),
-  setShowSettings: (state: IStore, show: boolean) => ({
+  setShowSettings: (state: IStore, show: boolean, tab: ISettingsTab = 'general') => ({
     settings: {
       ...state.settings,
-      show
+      show,
+      tab
     }
   }),
   setExpandedMenu: (state: IStore, expandedMenu: string[]) => ({ expandedMenu }),

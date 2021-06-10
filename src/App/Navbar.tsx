@@ -101,13 +101,13 @@ const Nav = (props: NavProps) => {
       catch(err) {
         showWarning(
           <>Error to fetch remotes<br />{err.message}</>,
-          { text: "Settings", onClick: () => setShowSettings(true) }
+          { text: "Settings", onClick: () => setShowSettings(true, 'auth') }
         )
       }
     };
 
     fetch();
-  }, fetchInterval * ONE_SECOND);
+  }, parseInt(fetchInterval || '0') * ONE_SECOND);
   
   const createBranch = async () => {
     if (branchName) {

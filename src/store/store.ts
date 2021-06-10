@@ -67,8 +67,9 @@ const initialState: IStore = {
   },
   settings: {
     show: false,
+    tab: "general",
     general: {
-      fetchInterval: 5
+      fetchInterval: '5'
     },
     auth: {
       username: '',

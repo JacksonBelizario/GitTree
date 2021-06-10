@@ -137,6 +137,17 @@ export interface IAuth {
   sshPublicContent: string,
 }
 
+export type ISettingsTab = 'general' | 'auth';
+
+export interface ISettings {
+  show: boolean,
+  tab: ISettingsTab,
+  general: {
+    fetchInterval: string,
+  },
+  auth: IAuth
+}
+
 export interface IHunkLine {
   op: '<' | '>' | '=' | '+' | '-' | ' ',
   type: 'normal' | 'insert' | 'delete' | 'binary',
@@ -157,11 +168,3 @@ export interface IHunk {
   content: string,
   changes: IHunkLine[]
 };
-
-export interface ISettings {
-  show: boolean,
-  general: {
-    fetchInterval: number,
-  },
-  auth: IAuth
-}
