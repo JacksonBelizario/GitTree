@@ -5,6 +5,8 @@ export interface IStore {
   loading: boolean;
   folder: string;
   repo: IRepo;
+  workdir: string;
+  repoName: string;
   selectedCommit: string;
   graph: IGraph | null;
   currentBranch: ICurrentCommit | null;

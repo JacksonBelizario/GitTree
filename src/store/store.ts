@@ -53,6 +53,8 @@ const initialState: IStore = {
   loading: false,
   folder: "",
   repo: null,
+  workdir: "",
+  repoName: "",
   selectedCommit: "",
   graph: null,
   currentBranch: null,

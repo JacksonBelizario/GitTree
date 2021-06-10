@@ -3,7 +3,7 @@ import { isSSH } from "../Support/Utils"
 import { IAuth, IRefDict, IReference, IRefs, ICommit, IStatusCommit } from "../Support/Interfaces";
 
 export const openRepo = async (path: string) : Promise<Repository> => {
-  return await NodeGit.Repository.open(path);
+  return NodeGit.Repository.open(path);
 };
 
 export const getCommits = async (Repo: Repository, count: number = 500) : Promise<ICommit[]> => {

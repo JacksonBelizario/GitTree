@@ -9,6 +9,8 @@ const { dialog, getCurrentWindow } = window.require("electron").remote;
 const actions = (store: any) => ({
   setLoading: (state: IStore, loading: boolean) => ({ loading }),
   setFolder: (state: IStore, folder: string) => ({ folder }),
+  setWorkdir: (state: IStore, workdir: string) => ({ workdir }),
+  setRepoName: (state: IStore, repoName: string) => ({ repoName }),
   setRepo: (state: IStore, repo: IRepo) => ({ repo }),
   setCommits: (state: IStore, commits: ICommit[]) => ({ commits }),
   setCurrentBranch: (state: IStore, currentBranch: ICurrentCommit | null) => ({

@@ -32,6 +32,7 @@ const INTERVAL = 2 * ONE_SECOND;
 
 interface StoreProps {
   folder: string;
+  workdir: string;
   repo: IRepo;
   refs: IRefs;
   currentBranch: ICurrentCommit | null;
@@ -46,6 +47,7 @@ FocusStyleManager.onlyShowFocusOnTabs();
 
 const mapToProps = (state: IStore): StoreProps => ({
   folder: state.folder,
+  workdir: state.workdir,
   repo: state.repo,
   refs: state.refs,
   currentBranch: state.currentBranch,
@@ -69,6 +71,8 @@ const App = (props: AppProps) => {
     commit, setCommit,
     loading, setLoading,
     selectedFile, setSelectedFile,
+    workdir, setWorkdir,
+    setRepoName,
   } = props;
 
   const [watch, setWatch] = useState<Boolean>(false);
@@ -91,11 +95,12 @@ const App = (props: AppProps) => {
         setCommit(INITIAL_WIP);
         setSelectedFile({commit: null, file: null});
 
-        if (!(repo instanceof Repository) || folder !== repo.workdir()) {
+        if (!(repo instanceof Repository) || workdir !== repo.workdir()) {
           console.log('Load repo', {folder}, (new Date()).toJSON());
           const repo = await Git.openRepo(folder);
           setRepo(repo);
-          setFolder(repo.workdir());
+          setWorkdir(repo.workdir());
+          setRepoName(repo.workdir().split('/').filter(o => o).pop());
           const curBranch = await Git.getCurrentBranch(repo);
           setCurrentBranch(curBranch);
           setSelectedCommit(curBranch.target);
@@ -109,7 +114,7 @@ const App = (props: AppProps) => {
     };
 
     loadRepo(folder);
-  }, [repo, folder, setFolder, setRepo, setLoading, setCommit, setCommits, setCurrentBranch, setSelectedCommit, setLocalCommits, setSelectedFile]);
+  }, [repo, folder, workdir, setFolder, setRepo, setLoading, setCommit, setCommits, setCurrentBranch, setSelectedCommit, setLocalCommits, setSelectedFile, setWorkdir, setRepoName]);
 
   useEffect(() => {
     if (!equal(localRefs.references, refs.references)) {
@@ -204,10 +209,12 @@ const App = (props: AppProps) => {
         return;
       }
 
-      await checkRefs();
-      await checkCommits();
-      await checkCurrentBranch();
-      await checkWorkingDirectory();
+      await Promise.all([
+        checkRefs(),
+        checkCommits(),
+        checkCurrentBranch(),
+        checkWorkingDirectory(),
+      ]);
 
       if (loading) {
         setLoading(false);

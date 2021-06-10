@@ -45,7 +45,7 @@ const ONE_SECOND = 1000;
 interface StoreProps {
   loading: boolean;
   repo: IRepo;
-  folder: string;
+  repoName: string;
   currentBranch: ICurrentCommit | null;
   settings: ISettings;
   refs: IRefs;
@@ -54,7 +54,7 @@ interface StoreProps {
 const mapToProps = (state: IStore): StoreProps => ({
   loading: state.loading,
   repo: state.repo,
-  folder: state.folder,
+  repoName: state.repoName,
   currentBranch: state.currentBranch,
   settings: state.settings,
   refs: state.refs,
@@ -66,7 +66,7 @@ const Nav = (props: NavProps) => {
   const {
     loading,
     repo,
-    folder,
+    repoName,
     openRepo,
     currentBranch,
     setShowSettings,
@@ -152,14 +152,14 @@ const Nav = (props: NavProps) => {
           icon={<FolderIcon size={20} />}
           onClick={() => openRepo()}
         />
-        {folder && (
+        {repoName && (
           <Tag
             icon={<BookIcon size={18} />}
             large
             minimal
             style={{ marginLeft: 10 }}
           >
-            {folder.split('\\').slice(-1)[0]}
+            {repoName}
           </Tag>
         )}
         {currentBranch && (
@@ -169,7 +169,7 @@ const Nav = (props: NavProps) => {
             minimal
             style={{ marginLeft: 10 }}
           >
-            {currentBranch.shorthand}
+            {currentBranch.name}
           </Tag>
         )}
         </NavbarGroup>
