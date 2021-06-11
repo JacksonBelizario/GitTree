@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { connect } from 'redux-zero/react';
 import { BoundActions } from "redux-zero/types/Actions";
 import Pane from "react-split-pane/lib/Pane";
@@ -95,10 +95,11 @@ const App = (props: AppProps) => {
         setCommit(INITIAL_WIP);
         setSelectedFile({commit: null, file: null});
 
-        if (!(repo instanceof Repository) || workdir !== repo.workdir()) {
+        if (!(repo instanceof Repository) || folder !== repo.workdir()) {
           console.log('Load repo', {folder}, (new Date()).toJSON());
           const repo = await Git.openRepo(folder);
           setRepo(repo);
+          setFolder(repo.workdir());
           setWorkdir(repo.workdir());
           setRepoName(repo.workdir().split('/').filter(o => o).pop());
           const curBranch = await Git.getCurrentBranch(repo);
@@ -114,7 +115,10 @@ const App = (props: AppProps) => {
     };
 
     loadRepo(folder);
-  }, [repo, folder, workdir, setFolder, setRepo, setLoading, setCommit, setCommits, setCurrentBranch, setSelectedCommit, setLocalCommits, setSelectedFile, setWorkdir, setRepoName]);
+  },
+  [folder] // eslint-disable-line
+  // [repo, folder, workdir, setFolder, setRepo, setLoading, setCommit, setCommits, setCurrentBranch, setSelectedCommit, setLocalCommits, setSelectedFile, setWorkdir, setRepoName]
+  );
 
   useEffect(() => {
     if (!equal(localRefs.references, refs.references)) {
