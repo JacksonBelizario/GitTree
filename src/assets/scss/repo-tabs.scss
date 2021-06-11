@@ -1,0 +1,75 @@
+
+
+.repo-tabgroup {
+  display: flex;
+  margin: 5px 8px 0 8px;
+
+  // Prevent dragleave from firing when dragging into a child element
+  &.dragging .repo-tab * {
+    pointer-events: none;
+  }
+
+  .repo-tab {
+    padding: 7px 0;
+    cursor: pointer;
+    border-radius: 5px 5px 0 0;
+
+    
+    &.drag-over {
+      background: rgba(114, 103, 240, 0.09) !important;
+    }
+
+    .repo-tab-inner {
+      display: flex;
+      padding: 0 6px 0 18px;
+      border-right: 1px solid rgba(221, 221, 221, 0.342);
+
+      span {
+        max-width: 100px;
+        overflow: hidden;
+        display: inline-block;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        margin-top: 1px;
+      }
+
+      button {
+        min-height: 16px;
+        height: 16px;
+        min-width: 16px;
+        width: 16px;
+        padding: 0;
+        margin-left: 3px;
+        margin-top: 2px;
+        svg {
+          display: none;
+        }
+      }
+    }
+
+    &:hover {
+      background: rgba(138, 155, 168, 0.06);
+      svg {
+        display: block !important;
+      }
+    }
+
+    &.active {
+      background-color: #394b59;
+      box-shadow: none;
+      svg {
+        display: block !important;
+      }
+    }
+  }
+  .btn-add-tab {
+    margin: 0px 5px;
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 5px 5px 0 0;
+
+    &:hover {
+      background: rgba(138, 155, 168, 0.15);
+    }
+  }
+}
