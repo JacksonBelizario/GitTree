@@ -7,8 +7,6 @@ import { INITIAL_WIP } from "../Support/Utils"
 import { showDanger, showInfo } from "../Support/Toaster";
 import Git from "../Services/Git";
 
-const { dialog, getCurrentWindow } = window.require("electron").remote;
-
 export const loading = createModel<RootModel>()({
 	state: false,
   reducers: { setLoading: (state, payload: boolean) => payload },
@@ -23,22 +21,6 @@ export const repo = createModel<RootModel>()({
 	state: null,
   reducers: { setRepo: (state, payload: IRepo) => payload },
 	effects: (dispatch) => ({
-		async openRepo() {
-      try {
-        const res = await dialog.showOpenDialog(getCurrentWindow(), { properties: ["openDirectory"] });
-        if (!res.canceled) {
-          const [folder] = res.filePaths;
-          dispatch.folder.setFolder(folder);
-          dispatch.expandedMenu.setExpandedMenu([]);
-        }
-      } catch (err) {
-        console.warn(err);
-        showDanger('Error on select folder: ' + err.message);
-      }
-		},
-    async updateStatus(payload, rootState) {
-      // const changes = await Git.getStatus(rootState.repo);
-    },
     async pull(reference: IReference = null, rootState) {
       dispatch.loading.setLoading(true);
       try {
@@ -64,11 +46,6 @@ export const repo = createModel<RootModel>()({
       }
     }
 	}),
-});
-
-export const workdir = createModel<RootModel>()({
-	state: '',
-  reducers: { setWorkdir: (state, payload: string) => payload },
 });
 
 export const repoName = createModel<RootModel>()({

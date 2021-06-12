@@ -3,6 +3,7 @@
 .repo-tabgroup {
   display: flex;
   margin: 5px 8px 0 8px;
+  color: var(--text);
 
   // Prevent dragleave from firing when dragging into a child element
   &.dragging .repo-tab * {
@@ -41,6 +42,7 @@
         padding: 0;
         margin-left: 3px;
         margin-top: 2px;
+        color: var(--text);
         svg {
           display: none;
         }

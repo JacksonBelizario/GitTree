@@ -30,7 +30,6 @@ const mapState = (state: RootState) => ({
 const mapDispatch = (dispatch: Dispatch) => ({
   setSelectedFile: dispatch.selectedFile.setSelectedFile,
   setSelectedCommit: dispatch.selectedCommit.setSelectedCommit,
-  updateStatus: dispatch.repo.updateStatus,
   setLoading: dispatch.loading.setLoading,
 });
 
@@ -40,7 +39,7 @@ type DispatchProps = ReturnType<typeof mapDispatch>
 type CommitDetailProps = StateProps & DispatchProps;
 
 const CommitDetail = (props : CommitDetailProps) => {
-  const { repo, sha, selectedFile, setSelectedFile, setSelectedCommit, commit, updateStatus, setLoading } = props;
+  const { repo, sha, selectedFile, setSelectedFile, setSelectedCommit, commit, setLoading } = props;
 
   const [details, setDetails] = useState<ICommit | IWipCommit>();
   const [showDiscardDialog, setShowDiscardDialog] = useState<boolean>(false);
@@ -51,7 +50,6 @@ const CommitDetail = (props : CommitDetailProps) => {
     if (commit.virtual && commit.unstaged.length) {
       let unstagedPaths = commit.unstaged.map(s => s.path);
       await Git.stage(repo, unstagedPaths);
-      updateStatus();
     }
   }
 
@@ -59,7 +57,6 @@ const CommitDetail = (props : CommitDetailProps) => {
     if (commit.virtual && commit.staged.length) {
       let stagedPaths = commit.staged.map(s => s.path);
       await Git.unstage(repo, stagedPaths);
-      updateStatus();
     }
   }
 
@@ -70,7 +67,6 @@ const CommitDetail = (props : CommitDetailProps) => {
         await Git.commit(repo, commitSummary, commitDescription);
         setCommitSummary('');
         setCommitDescription('');
-        updateStatus();
         showInfo('Commit successful');
       } catch(err) {
         console.warn(err);
@@ -86,7 +82,6 @@ const CommitDetail = (props : CommitDetailProps) => {
     setShowDiscardDialog(false);
     setSelectedFile({commit: null, file: null});
     await Git.discardAll(repo);
-    updateStatus();
     setLoading(false);
   }
 
@@ -205,7 +200,6 @@ const CommitDetail = (props : CommitDetailProps) => {
               selectedFile={selectedFile}
               setSelectedFile={setSelectedFile}
               repo={repo}
-              updateStatus={updateStatus}
             />
           </>
         }
@@ -230,7 +224,6 @@ const CommitDetail = (props : CommitDetailProps) => {
               selectedFile={selectedFile}
               setSelectedFile={setSelectedFile}
               repo={repo}
-              updateStatus={updateStatus}
             />
           </>
         }

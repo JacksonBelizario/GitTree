@@ -1,6 +1,12 @@
 import { Repository } from "nodegit";
 import { IGraph } from "../Models/SubwayMap";
 
+
+export interface IGlobalStore {
+  loading: boolean;
+  settings: ISettings,
+}
+
 export interface IStore {
   loading: boolean;
   folder: string;

@@ -15,7 +15,7 @@ import Git from "../../../Services/Git";
 
 
 const ListFiles = (props) => {
-    const { sha, files, selectedFile, setSelectedFile, repo, updateStatus } = props;
+    const { sha, files, selectedFile, setSelectedFile, repo } = props;
 
   const getShortenedPath = (path : string) => {
     if (path.length > 55) {
@@ -29,12 +29,10 @@ const ListFiles = (props) => {
 
   const stage = async (file) => {
     await Git.stage(repo, [file]);
-    await updateStatus();
   }
 
   const unstage = async (file) => {
     await Git.unstage(repo, [file]);
-    await updateStatus();
   }
   
   return (

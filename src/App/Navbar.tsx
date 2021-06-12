@@ -13,7 +13,6 @@ import {
   Tag,
 } from "@blueprintjs/core";
 import {
-  FiFolderPlus as FolderIcon,
   FiBook as BookIcon,
   FiGitBranch as GitBranchIcon,
   FiSettings as SettingsIcon,
@@ -51,7 +50,6 @@ const mapState = (state: RootState) => ({
 });
 
 const mapDispatch = (dispatch: Dispatch) => ({
-  openRepo: dispatch.repo.openRepo,
   setShowSettings: dispatch.settings.setShowSettings,
   pull: dispatch.repo.pull,
   push: dispatch.repo.push,
@@ -67,7 +65,6 @@ const Nav = (props: NavProps) => {
     loading,
     repo,
     repoName,
-    openRepo,
     currentBranch,
     setShowSettings,
     settings: {
@@ -147,11 +144,6 @@ const Nav = (props: NavProps) => {
       <NavbarGroup>
         <NavbarHeading>GitTree</NavbarHeading>
         <NavbarDivider />
-        <Button
-          className={Classes.MINIMAL}
-          icon={<FolderIcon size={20} />}
-          onClick={() => openRepo()}
-        />
         {repoName && (
           <Tag
             icon={<BookIcon size={18} />}

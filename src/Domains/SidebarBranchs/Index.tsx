@@ -46,7 +46,6 @@ const mapState = (state: RootState) => ({
 
 const mapDispatch = (dispatch: Dispatch) => ({
   scrollToCommit: dispatch.selectedCommit.scrollToCommit,
-  checkoutBranch: dispatch.selectedCommit.checkoutBranch,
 });
 
 type StateProps = ReturnType<typeof mapState>
@@ -55,7 +54,7 @@ type DispatchProps = ReturnType<typeof mapDispatch>
 type SidebarProps = StateProps & DispatchProps;
 
 const Sidebar = (props: SidebarProps) => {
-  const { refs: {references}, commits, repo, scrollToCommit, checkoutBranch } = props;
+  const { refs: {references}, commits, repo, scrollToCommit } = props;
 
   const [showLocal, setShowLocal] = useState<boolean>(true);
   const [showRemote, setShowRemote] = useState<boolean>(false);

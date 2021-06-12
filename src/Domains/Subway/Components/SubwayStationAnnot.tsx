@@ -70,7 +70,7 @@ const SubwayStationAnnot = (props: SubwayStationAnnotProps) => {
                   }, {})
               ),
               target: cmt.sha,
-              color: graph.nodeDict[cmt.sha] ? colors[graph.nodeDict[cmt.sha].x_order % colors.length] : null
+              color: graph && graph.nodeDict[cmt.sha] ? colors[graph.nodeDict[cmt.sha].x_order % colors.length] : null
             });
           }
           return acc;

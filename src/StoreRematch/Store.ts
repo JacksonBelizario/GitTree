@@ -1,10 +1,9 @@
 import { init, Models, RematchDispatch, RematchRootState } from '@rematch/core'
-import {commit, commits, currentBranch, expandedMenu, folder, graph, loading, refs, repo, repoName, selectedCommit, selectedFile, settings, workdir} from './Models'
+import {commit, commits, currentBranch, expandedMenu, folder, graph, loading, refs, repo, repoName, selectedCommit, selectedFile, settings} from './Models'
 export interface RootModel extends Models<RootModel> {
   loading: typeof loading;
   folder: typeof folder;
   repo: typeof repo;
-  workdir: typeof workdir;
   repoName: typeof repoName;
   selectedCommit: typeof selectedCommit;
   graph: typeof graph;
@@ -21,7 +20,6 @@ export const models: RootModel = {
   loading,
   folder,
   repo,
-  workdir,
   repoName,
   selectedCommit,
   graph,
@@ -34,10 +32,12 @@ export const models: RootModel = {
   expandedMenu,
 };
 
-export const store = init({
-	models,
-	// plugins: [persistPlugin],
-})
-
 export type Dispatch = RematchDispatch<RootModel>;
 export type RootState = RematchRootState<RootModel>;
+
+export const createStore = (name: string) =>
+  init({
+    name,
+    models,
+    // plugins: [persistPlugin],
+  });

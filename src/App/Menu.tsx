@@ -1,6 +1,4 @@
 import React, {FunctionComponent, useEffect} from "react";
-import { connect } from "react-redux";
-import { Dispatch, RootState } from "../StoreRematch/Store";
 
 // import icon from './Assets/logo.svg'
 const icon = "data:image/svg+xml,%3Csvg stroke='%23eeeeee' fill='none' stroke-width='2' viewBox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='18' cy='18' r='3'%3E%3C/circle%3E%3Ccircle cx='6' cy='6' r='3'%3E%3C/circle%3E%3Cpath d='M13 6h3a2 2 0 0 1 2 2v7'%3E%3C/path%3E%3Cline x1='6' y1='9' x2='6' y2='21'%3E%3C/line%3E%3C/svg%3E";
@@ -8,21 +6,11 @@ const icon = "data:image/svg+xml,%3Csvg stroke='%23eeeeee' fill='none' stroke-wi
 const { Titlebar, Color } = window.require('custom-electron-titlebar');
 const { Menu: { buildFromTemplate }, globalShortcut , shell, app, dialog, getCurrentWindow } = window.require('electron').remote;
 
-
-const mapState = (state: RootState) => ({})
-
-const mapDispatch = (dispatch: Dispatch) => ({
-  setShowSettings: dispatch.settings.setShowSettings,
-  openRepo: dispatch.repo.openRepo,
-  pull: dispatch.repo.pull,
-  push: dispatch.repo.push,
-});
-
-type DispatchProps = ReturnType<typeof mapDispatch>
-
 type MenuProps = {
   title: string;
-} & DispatchProps;
+  openRepo: Function;
+  store?: any
+};
 
 class Dispatcher {
   private props: MenuProps;
@@ -34,14 +22,14 @@ class Dispatcher {
   public onMenuEvent(name) {
     return () => {
       switch (name) {
-        case 'settings':
-          return this.props.setShowSettings({show: true});
         case 'open-repo':
           return this.props.openRepo();
+        case 'settings':
+          return this.props.store ? this.props.store.dispatch.settings.setShowSettings({show: true}) : null;
         case 'pull':
-          return this.props.pull(null);
+          return this.props.store ? this.props.store.dispatch.repo.pull(null): null;
         case 'push':
-          return this.props.push(null);
+          return this.props.store ? this.props.store.dispatch.repo.push(null): null;
         default:
           return console.error(`Unknown menu event name: ${name}`);
       }
@@ -221,4 +209,4 @@ const Menu: FunctionComponent<MenuProps> = (props): JSX.Element => {
 }
 
 //@ts-ignore
-export default connect(mapState, mapDispatch)(Menu);
+export default Menu;
