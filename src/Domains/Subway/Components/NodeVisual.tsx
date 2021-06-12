@@ -1,10 +1,8 @@
 import React from "react";
-import { connect } from "redux-zero/react";
-import { BoundActions } from "redux-zero/types/Actions";
+import { connect } from "react-redux";
 
 import { Node } from "../../../Models/Node";
-import { IStore } from "../../../Support/Interfaces";
-import Actions from "../../../Store/Actions";
+import { Dispatch, RootState } from "../../../StoreRematch/Store";
 
 import '../../../Assets/scss/node-visual.scss';
 
@@ -12,17 +10,18 @@ interface INodeVisual {
   node: Node;
 }
 
-interface StoreProps {
-  selectedCommit: string;
-}
-
-const mapToProps = (state: IStore): StoreProps => ({
+const mapState = (state: RootState) => ({
   selectedCommit: state.selectedCommit,
 });
 
-type NodeVisualProps = INodeVisual &
-  StoreProps &
-  BoundActions<IStore, typeof Actions>;
+const mapDispatch = (dispatch: Dispatch) => ({
+  setSelectedCommit: dispatch.selectedCommit.setSelectedCommit,
+});
+
+type StateProps = ReturnType<typeof mapState>
+type DispatchProps = ReturnType<typeof mapDispatch>
+
+type NodeVisualProps = INodeVisual & StateProps & DispatchProps;
 
 const NodeVisual = (props: NodeVisualProps) => {
   const { node, selectedCommit, setSelectedCommit } = props;
@@ -122,4 +121,5 @@ const NodeVisual = (props: NodeVisualProps) => {
   )
 }
 
-export default connect<IStore>(mapToProps, Actions)(NodeVisual);
+//@ts-ignore
+export default connect(mapState, mapDispatch)(NodeVisual);

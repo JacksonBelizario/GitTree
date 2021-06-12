@@ -1,15 +1,13 @@
 import React from "react";
-import { connect } from "redux-zero/react";
+import { connect } from "react-redux";
 import { FiFile as FileIcon } from 'react-icons/fi';
-import { BoundActions } from "redux-zero/types/Actions";
 
 import moment from 'moment';
 
-import { ICommit, IStore } from "../../../Support/Interfaces";
+import { ICommit } from "../../../Support/Interfaces";
 import { colors } from "../../../Models/Color";
-import { IGraph } from "../../../Models/SubwayMap";
 
-import Actions from "../../../Store/Actions";
+import { Dispatch, RootState } from "../../../StoreRematch/Store";
 
 import { Author } from "../../../Models/Author";
 
@@ -19,19 +17,19 @@ export interface ISubwayStations {
   commits: ICommit[];
 }
 
-interface StoreProps {
-  selectedCommit: string;
-  graph: IGraph | null;
-}
-
-const mapToProps = (state: IStore): StoreProps => ({
+const mapState = (state: RootState) => ({
   selectedCommit: state.selectedCommit,
   graph: state.graph,
 });
 
-type SubwayStationsProps = ISubwayStations &
-  StoreProps &
-  BoundActions<IStore, typeof Actions>;
+const mapDispatch = (dispatch: Dispatch) => ({
+  setSelectedCommit: dispatch.selectedCommit.setSelectedCommit,
+});
+
+type StateProps = ReturnType<typeof mapState>
+type DispatchProps = ReturnType<typeof mapDispatch>
+
+type SubwayStationsProps = ISubwayStations & StateProps & DispatchProps;
 
 const SubwayStations = (props: SubwayStationsProps) => {
   const { commits, selectedCommit, setSelectedCommit, graph } = props;
@@ -120,4 +118,6 @@ const SubwayStations = (props: SubwayStationsProps) => {
   );
 };
 
-export default connect<IStore>(mapToProps, Actions)(SubwayStations);
+//@ts-ignore
+export default connect(mapState, mapDispatch)(SubwayStations);
+

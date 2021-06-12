@@ -1,24 +1,27 @@
 import React from 'react';
-import { connect } from 'redux-zero/react';
-import { BoundActions } from 'redux-zero/types';
+import { connect } from "react-redux";
 import { Icon } from "@blueprintjs/core";
 
-import { ISettings, ISettingsTab, IStore } from '../../Support/Interfaces';
-import Actions from '../../Store/Actions';
+import { ISettingsTab } from '../../Support/Interfaces';
+import { Dispatch, RootState } from "../../StoreRematch/Store";
 
 import GeneralSettingsTab from './Components/GeneralSettingsTab'
 import AuthSettingsTab from './Components/AuthSettingsTab'
 
 import '../../Assets/scss/settings.scss'
-interface StoreProps {
-  settings: ISettings;
-}
 
-const mapToProps = (state: IStore): StoreProps => ({
+const mapState = (state: RootState) => ({
   settings: state.settings,
 });
 
-type SettingsProps = StoreProps & BoundActions<IStore, typeof Actions>;
+const mapDispatch = (dispatch: Dispatch) => ({
+  setSettings: dispatch.settings.setSettings,
+});
+
+type StateProps = ReturnType<typeof mapState>
+type DispatchProps = ReturnType<typeof mapDispatch>
+
+type SettingsProps = StateProps & DispatchProps;
 
 const Settings = (props: SettingsProps) => {
   const { settings, setSettings } = props;
@@ -65,4 +68,5 @@ const Settings = (props: SettingsProps) => {
   )
 }
 
-export default connect<IStore>(mapToProps, Actions)(Settings);
+//@ts-ignore
+export default connect(mapState, mapDispatch)(Settings);

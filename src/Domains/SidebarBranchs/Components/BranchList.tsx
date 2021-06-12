@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { connect } from "redux-zero/react";
-import { BoundActions } from "redux-zero/types/Actions";
+import { connect } from "react-redux";
 
 import {
   Classes,
@@ -18,28 +17,32 @@ import {
   FiGitBranch as GitBranchIcon
 } from "react-icons/fi";
 
-import { ICurrentCommit, IReference, IStore } from "../../../Support/Interfaces";
-import Actions from "../../../Store/Actions";
+import { IReference } from "../../../Support/Interfaces";
+import { Dispatch, RootState } from "../../../StoreRematch/Store";
 
 const order = (a: TreeNodeInfo, b: TreeNodeInfo) => {
   return a.label > b.label ? 1 : -1;
 };
 
-interface StoreProps {
-  expandedMenu: string[];
-  currentBranch: ICurrentCommit;
-}
-
-const mapToProps = (state: IStore): StoreProps => ({
+const mapState = (state: RootState) => ({
   expandedMenu: state.expandedMenu,
   currentBranch: state.currentBranch,
 });
 
+const mapDispatch = (dispatch: Dispatch) => ({
+  scrollToCommit: dispatch.selectedCommit.scrollToCommit,
+  checkoutBranch: dispatch.selectedCommit.checkoutBranch,
+  pull: dispatch.repo.pull,
+  push: dispatch.repo.push,
+  setExpandedMenu: dispatch.expandedMenu.setExpandedMenu,
+});
+
+type StateProps = ReturnType<typeof mapState>
+type DispatchProps = ReturnType<typeof mapDispatch>
+
 type BranchListProps = {
   branchs: IReference[];
-  scrollToCommit: Function;
-  checkoutBranch?: Function;
-} & StoreProps & BoundActions<IStore, typeof Actions>;
+} & StateProps & DispatchProps;
 
 const BranchList = (props: BranchListProps) => {
   const { branchs, scrollToCommit, checkoutBranch, pull, push, expandedMenu, setExpandedMenu, currentBranch } = props;
@@ -182,4 +185,5 @@ const BranchList = (props: BranchListProps) => {
   );
 };
 
-export default connect<IStore>(mapToProps, Actions)(BranchList);
+//@ts-ignore
+export default connect(mapState, mapDispatch)(BranchList);

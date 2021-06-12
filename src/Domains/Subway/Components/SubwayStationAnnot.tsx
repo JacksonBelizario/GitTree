@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { connect } from "redux-zero/react";
+import { connect } from "react-redux";
 
 import {
   FiCloud as CloudIcon,
@@ -8,10 +8,10 @@ import {
   FiTag as TagIcon,
 } from "react-icons/fi";
 
-import { ICommit, IRepo, IRefDict, ICurrentCommit, IReference, IStore } from "../../../Support/Interfaces";
+import { RootState } from "../../../StoreRematch/Store";
+import { ICommit, IRepo, ICurrentCommit, IReference } from "../../../Support/Interfaces";
 
 import { Node } from "../../../Models/Node";
-import { IGraph } from "../../../Models/SubwayMap";
 import { colors } from "../../../Models/Color";
 
 import '../../../Assets/scss/subway-station-annot.scss'
@@ -29,17 +29,14 @@ interface ISubwayStationAnnot {
   currentBranch: ICurrentCommit;
 }
 
-interface StoreProps {
-  graph: IGraph | null;
-  refDict: IRefDict;
-}
-
-const mapToProps = (state: IStore): StoreProps => ({
+const mapState = (state: RootState) => ({
   graph: state.graph,
   refDict: state.refs.refDict,
 });
 
-type SubwayStationAnnotProps = ISubwayStationAnnot & StoreProps;
+type StateProps = ReturnType<typeof mapState>
+
+type SubwayStationAnnotProps = ISubwayStationAnnot & StateProps;
 
 const SubwayStationAnnot = (props: SubwayStationAnnotProps) => {
   const { commits, graph, currentBranch, refDict } = props;
@@ -126,4 +123,5 @@ const SubwayStationAnnot = (props: SubwayStationAnnotProps) => {
   );
 };
 
-export default connect<IStore>(mapToProps)(SubwayStationAnnot);
+//@ts-ignore
+export default connect(mapState)(SubwayStationAnnot);

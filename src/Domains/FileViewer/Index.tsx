@@ -1,13 +1,11 @@
 import React, { useEffect, useState, useMemo } from 'react';
-import { connect } from 'redux-zero/react';
-import { BoundActions } from 'redux-zero/types';
+import { connect } from "react-redux";
 import refractor from 'refractor';
 import { Button, ButtonGroup } from '@blueprintjs/core';
 import { FiColumns, FiList, FiFileText } from 'react-icons/fi';
 import { Diff, Hunk, Decoration, tokenize, markEdits } from 'react-diff-view';
 
-import { ISelectedFile, IRepo, IStore } from '../../Support/Interfaces';
-import Actions from '../../Store/Actions';
+import { Dispatch, RootState } from "../../StoreRematch/Store";
 
 import { FileDetails } from '../../Services/FileDetails';
 
@@ -34,17 +32,20 @@ const renderHunk = (hunk) => [
   <Hunk key={'hunk-' + hunk.content} hunk={hunk} />
 ];
 
-interface StoreProps {
-  repo: IRepo;
-  selectedFile: ISelectedFile;
-}
 
-const mapToProps = (state: IStore): StoreProps => ({
+const mapState = (state: RootState) => ({
   repo: state.repo,
   selectedFile: state.selectedFile
 });
 
-type FileViewerProps = StoreProps & BoundActions<IStore, typeof Actions>;
+const mapDispatch = (dispatch: Dispatch) => ({
+  setSelectedFile: dispatch.selectedFile.setSelectedFile,
+});
+
+type StateProps = ReturnType<typeof mapState>
+type DispatchProps = ReturnType<typeof mapDispatch>
+
+type FileViewerProps = StateProps & DispatchProps;
 
 const FileViewer = (props: FileViewerProps) => {
   const { repo, selectedFile: {file, commit}, setSelectedFile } = props;
@@ -148,4 +149,5 @@ const FileViewer = (props: FileViewerProps) => {
 
 }
 
-export default connect<IStore>(mapToProps, Actions)(FileViewer);
+//@ts-ignore
+export default connect(mapState, mapDispatch)(FileViewer);

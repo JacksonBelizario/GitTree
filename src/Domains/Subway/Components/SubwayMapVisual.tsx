@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { connect } from "redux-zero/react";
-import { BoundActions } from "redux-zero/types/Actions";
+import { connect } from "react-redux";
 
-import Actions from "../../../Store/Actions";
+import { Dispatch, RootState } from "../../../StoreRematch/Store";
 
-import { ICommit, IStore } from "../../../Support/Interfaces";
+import { ICommit } from "../../../Support/Interfaces";
 import { Node } from "../../../Models/Node";
 import { Link } from "../../../Models/Link";
 import { Color, colors } from "../../../Models/Color";
-import { SubwayMap, IGraph } from "../../../Models/SubwayMap";
+import { SubwayMap } from "../../../Models/SubwayMap";
 import NodeVisual from "./NodeVisual";
 import LinkVisual from "./LinkVisual";
 
@@ -18,15 +17,18 @@ interface ISubwayMapVisual {
   commits: ICommit[];
 }
 
-interface StoreProps {
-  graph: IGraph | null;
-}
+const mapState = (state: RootState) => ({
+  graph: state.graph
+});
 
-const mapToProps = (state: IStore): StoreProps => ({ graph: state.graph });
+const mapDispatch = (dispatch: Dispatch) => ({
+  setGraph: dispatch.graph.setGraph,
+});
 
-type SubwayMapVisualProps = ISubwayMapVisual &
-  StoreProps &
-  BoundActions<IStore, typeof Actions>;
+type StateProps = ReturnType<typeof mapState>
+type DispatchProps = ReturnType<typeof mapDispatch>
+
+type SubwayMapVisualProps = ISubwayMapVisual & StateProps & DispatchProps;
 
 interface BranchLine {
   nodes: Node[];
@@ -205,4 +207,6 @@ const SubwayMapVisual = (props: SubwayMapVisualProps) => {
   );
 };
 
-export default connect<IStore>(mapToProps, Actions)(SubwayMapVisual);
+//@ts-ignore
+export default connect(mapState, mapDispatch)(SubwayMapVisual);
+

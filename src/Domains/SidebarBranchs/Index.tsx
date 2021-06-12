@@ -1,6 +1,5 @@
 import React, { useState, useEffect, FunctionComponent } from "react";
-import { connect } from "redux-zero/react";
-import { BoundActions } from "redux-zero/types";
+import { connect } from "react-redux";
 import { Submodule } from "nodegit";
 import { Classes, Button, ButtonProps, Divider } from "@blueprintjs/core";
 import {
@@ -11,8 +10,8 @@ import {
   FiTag as TagIcon,
 } from "react-icons/fi";
 
-import { IRefs, IReference, ICommit, IRepo, IStore } from "../../Support/Interfaces";
-import Actions from "../../Store/Actions";
+import { IReference, ICommit } from "../../Support/Interfaces";
+import { Dispatch, RootState } from "../../StoreRematch/Store";
 
 import BranchList from "./Components/BranchList";
 
@@ -39,19 +38,21 @@ const SidebarBtn: FunctionComponent<ISidebarBtn> = (props) => {
   );
 };
 
-interface StoreProps {
-  refs: IRefs;
-  commits: ICommit[];
-  repo: IRepo;
-}
-
-const mapToProps = (state: IStore): StoreProps => ({
+const mapState = (state: RootState) => ({
   refs: state.refs,
   commits: state.commits,
   repo: state.repo,
 });
 
-type SidebarProps = StoreProps & BoundActions<IStore, typeof Actions>;
+const mapDispatch = (dispatch: Dispatch) => ({
+  scrollToCommit: dispatch.selectedCommit.scrollToCommit,
+  checkoutBranch: dispatch.selectedCommit.checkoutBranch,
+});
+
+type StateProps = ReturnType<typeof mapState>
+type DispatchProps = ReturnType<typeof mapDispatch>
+
+type SidebarProps = StateProps & DispatchProps;
 
 const Sidebar = (props: SidebarProps) => {
   const { refs: {references}, commits, repo, scrollToCommit, checkoutBranch } = props;
@@ -97,7 +98,7 @@ const Sidebar = (props: SidebarProps) => {
         Local
       </SidebarBtn>
       {showLocal && (
-        <BranchList branchs={local} scrollToCommit={scrollToCommit} checkoutBranch={checkoutBranch} />
+        <BranchList branchs={local} />
       )}
       <SidebarBtn
         icon={<CloudIcon size={18} />}
@@ -106,7 +107,7 @@ const Sidebar = (props: SidebarProps) => {
         Remote
       </SidebarBtn>
       {showRemote && (
-        <BranchList branchs={remote} scrollToCommit={scrollToCommit} checkoutBranch={checkoutBranch} />
+        <BranchList branchs={remote} />
       )}
       <SidebarBtn
         icon={<InboxIcon size={18} />}
@@ -133,7 +134,7 @@ const Sidebar = (props: SidebarProps) => {
         Tags
       </SidebarBtn>
       {showTags && (
-        <BranchList branchs={tags} scrollToCommit={scrollToCommit} />
+        <BranchList branchs={tags} />
       )}
       <SidebarBtn
         icon={<LayersIcon size={18} />}
@@ -156,4 +157,5 @@ const Sidebar = (props: SidebarProps) => {
   );
 };
 
-export default connect<IStore>(mapToProps, Actions)(Sidebar);
+//@ts-ignore
+export default connect(mapState, mapDispatch)(Sidebar);

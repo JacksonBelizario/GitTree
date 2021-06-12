@@ -1,6 +1,5 @@
 import React, {useState, useEffect} from "react";
-import { connect } from "redux-zero/react";
-import { BoundActions } from "redux-zero/types/Actions";
+import { connect } from "react-redux";
 import {
   Button,
   Classes,
@@ -32,9 +31,9 @@ import {
 } from "react-icons/bs";
 
 import { useInterval } from "../Support/Hooks";
-import { IRepo, ICurrentCommit, ISettings, IRefs, IReference, IStore } from "../Support/Interfaces";
+import { IReference } from "../Support/Interfaces";
 import { showDanger, showInfo, showWarning } from "../Support/Toaster";
-import Actions from "../Store/Actions";
+import { Dispatch, RootState } from "../StoreRematch/Store";
 import Git from "../Services/Git";
 
 import '../Assets/scss/navbar.scss'
@@ -42,16 +41,7 @@ import { Repository } from "nodegit";
 
 const ONE_SECOND = 1000;
 
-interface StoreProps {
-  loading: boolean;
-  repo: IRepo;
-  repoName: string;
-  currentBranch: ICurrentCommit | null;
-  settings: ISettings;
-  refs: IRefs;
-}
-
-const mapToProps = (state: IStore): StoreProps => ({
+const mapState = (state: RootState) => ({
   loading: state.loading,
   repo: state.repo,
   repoName: state.repoName,
@@ -60,7 +50,17 @@ const mapToProps = (state: IStore): StoreProps => ({
   refs: state.refs,
 });
 
-type NavProps = StoreProps & BoundActions<IStore, typeof Actions>;
+const mapDispatch = (dispatch: Dispatch) => ({
+  openRepo: dispatch.repo.openRepo,
+  setShowSettings: dispatch.settings.setShowSettings,
+  pull: dispatch.repo.pull,
+  push: dispatch.repo.push,
+});
+
+type StateProps = ReturnType<typeof mapState>
+type DispatchProps = ReturnType<typeof mapDispatch>
+
+type NavProps = StateProps & DispatchProps;
 
 const Nav = (props: NavProps) => {
   const {
@@ -101,7 +101,7 @@ const Nav = (props: NavProps) => {
       catch(err) {
         showWarning(
           <>Error to fetch remotes<br />{err.message}</>,
-          { text: "Settings", onClick: () => setShowSettings(true, 'auth') }
+          { text: "Settings", onClick: () => setShowSettings({show: true, tab: 'auth'}) }
         )
       }
     };
@@ -178,7 +178,7 @@ const Nav = (props: NavProps) => {
             className={Classes.MINIMAL}
             icon={<ArrowDownIcon size={20} />}
             text="Pull"
-            onClick={() => pull()}
+            onClick={() => pull(null)}
           >
             { !!ref && !!ref.diff && !!ref.diff.behind && <div className="badge">{ref.diff.behind}</div> }
           </Button>
@@ -186,7 +186,7 @@ const Nav = (props: NavProps) => {
             className={Classes.MINIMAL}
             icon={<ArrowUpIcon size={20} />}
             text="Push"
-            onClick={() => push()}
+            onClick={() => push(null)}
           >
             { !!ref && !!ref.diff && !!ref.diff.ahead && <div className="badge">{ref.diff.ahead}</div> }
           </Button>
@@ -234,7 +234,7 @@ const Nav = (props: NavProps) => {
         <Button
           className={Classes.MINIMAL}
           icon={<SettingsIcon size={20} />}
-          onClick={() => setShowSettings(!showSettings)}
+          onClick={() => setShowSettings({show: !showSettings})}
         />
       </NavbarGroup>
     </Navbar>
@@ -280,4 +280,5 @@ const Nav = (props: NavProps) => {
   );
 };
 
-export default connect<IStore>(mapToProps, Actions)(Nav);
+//@ts-ignore
+export default connect(mapState, mapDispatch)(Nav);

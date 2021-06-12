@@ -1,4 +1,5 @@
-import { createModel, Models } from '@rematch/core'
+import { createModel } from '@rematch/core'
+import { RootModel } from './Store';
 import { ICommit, ICurrentCommit, IReference, IRefs, IRepo, ISelectedFile, ISettings, IWipCommit } from "../Support/Interfaces"
 import { IGraph } from "../Models/SubwayMap"
 import { INITIAL_WIP } from "../Support/Utils"
@@ -7,23 +8,6 @@ import { showDanger, showInfo } from "../Support/Toaster";
 import Git from "../Services/Git";
 
 const { dialog, getCurrentWindow } = window.require("electron").remote;
-
-export interface RootModel extends Models<RootModel> {
-  loading: typeof loading;
-  folder: typeof folder;
-  repo: typeof repo;
-  workdir: typeof workdir;
-  repoName: typeof repoName;
-  selectedCommit: typeof selectedCommit;
-  graph: typeof graph;
-  currentBranch: typeof currentBranch;
-  commits: typeof commits;
-  commit: typeof commit;
-  refs: typeof refs;
-  selectedFile: typeof selectedFile,
-  settings: typeof settings,
-  expandedMenu: typeof expandedMenu
-}
 
 export const loading = createModel<RootModel>()({
 	state: false,
@@ -173,6 +157,11 @@ export const expandedMenu = createModel<RootModel>()({
   reducers: { setExpandedMenu: (state, payload: string[]) => payload },
 });
 
+type IShowSettings = {
+  show: boolean;
+  tab?: string;
+}
+
 export const settings = createModel<RootModel>()({
 	state: {
     show: false,
@@ -197,8 +186,7 @@ export const settings = createModel<RootModel>()({
     })
   },
 	effects: (dispatch) => ({
-    // todo: verificar se é permitido dois parametros nos effects
-		setShowSettings(payload, rootState) {
+		setShowSettings(payload: IShowSettings, rootState) {
 			dispatch.settings.setSettings({
         ...rootState.settings,
         show: payload.show,
@@ -207,20 +195,3 @@ export const settings = createModel<RootModel>()({
 		},
 	}),
 });
-
-export const models: RootModel = {
-  loading,
-  folder,
-  repo,
-  workdir,
-  repoName,
-  selectedCommit,
-  graph,
-  currentBranch,
-  commits,
-  commit,
-  refs,
-  selectedFile,
-  settings,
-  expandedMenu,
-};

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BoundActions } from 'redux-zero/types';
-import { connect } from 'redux-zero/react';
+import { connect } from "react-redux";
 import { Dialog, Button, Intent, Classes, Icon, InputGroup, TextArea, Colors } from '@blueprintjs/core';
 import { IconNames } from "@blueprintjs/icons";
 import {
@@ -12,30 +11,33 @@ import {
 import moment from 'moment';
 
 import { Author } from "../../Models/Author";
-import { IRepo, ISelectedFile, IWipCommit, ICommit, IStore } from '../../Support/Interfaces';
+import { IRepo, IWipCommit, ICommit } from '../../Support/Interfaces';
 import { showDanger, showInfo } from '../../Support/Toaster';
 import ListFiles from "./Components/ListFiles";
 
-import Actions from '../../Store/Actions';
+import { Dispatch, RootState } from "../../StoreRematch/Store";
 import Git from "../../Services/Git";
 
 import '../../Assets/scss/commit-detail.scss';
 
-interface StoreProps {
-  repo: IRepo;
-  sha: string;
-  selectedFile: ISelectedFile;
-  commit: IWipCommit;
-}
-
-const mapToProps = (state: IStore): StoreProps => ({
+const mapState = (state: RootState) => ({
   repo: state.repo,
   sha: state.selectedCommit,
   selectedFile: state.selectedFile,
   commit: state.commit,
 });
 
-type CommitDetailProps = StoreProps & BoundActions<IStore, typeof Actions>;
+const mapDispatch = (dispatch: Dispatch) => ({
+  setSelectedFile: dispatch.selectedFile.setSelectedFile,
+  setSelectedCommit: dispatch.selectedCommit.setSelectedCommit,
+  updateStatus: dispatch.repo.updateStatus,
+  setLoading: dispatch.loading.setLoading,
+});
+
+type StateProps = ReturnType<typeof mapState>
+type DispatchProps = ReturnType<typeof mapDispatch>
+
+type CommitDetailProps = StateProps & DispatchProps;
 
 const CommitDetail = (props : CommitDetailProps) => {
   const { repo, sha, selectedFile, setSelectedFile, setSelectedCommit, commit, updateStatus, setLoading } = props;
@@ -291,4 +293,5 @@ const CommitDetail = (props : CommitDetailProps) => {
   )
 }
 
-export default connect<IStore>(mapToProps, Actions)(CommitDetail);
+//@ts-ignore
+export default connect(mapState, mapDispatch)(CommitDetail);

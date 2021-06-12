@@ -1,8 +1,6 @@
-import React, {useEffect} from "react";
-import { connect } from 'redux-zero/react';
-import { BoundActions } from 'redux-zero/types';
-import Actions from '../Store/Actions';
-import { IStore } from "../Support/Interfaces";
+import React, {FunctionComponent, useEffect} from "react";
+import { connect } from "react-redux";
+import { Dispatch, RootState } from "../StoreRematch/Store";
 
 // import icon from './Assets/logo.svg'
 const icon = "data:image/svg+xml,%3Csvg stroke='%23eeeeee' fill='none' stroke-width='2' viewBox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='18' cy='18' r='3'%3E%3C/circle%3E%3Ccircle cx='6' cy='6' r='3'%3E%3C/circle%3E%3Cpath d='M13 6h3a2 2 0 0 1 2 2v7'%3E%3C/path%3E%3Cline x1='6' y1='9' x2='6' y2='21'%3E%3C/line%3E%3C/svg%3E";
@@ -10,9 +8,21 @@ const icon = "data:image/svg+xml,%3Csvg stroke='%23eeeeee' fill='none' stroke-wi
 const { Titlebar, Color } = window.require('custom-electron-titlebar');
 const { Menu: { buildFromTemplate }, globalShortcut , shell, app, dialog, getCurrentWindow } = window.require('electron').remote;
 
+
+const mapState = (state: RootState) => ({})
+
+const mapDispatch = (dispatch: Dispatch) => ({
+  setShowSettings: dispatch.settings.setShowSettings,
+  openRepo: dispatch.repo.openRepo,
+  pull: dispatch.repo.pull,
+  push: dispatch.repo.push,
+});
+
+type DispatchProps = ReturnType<typeof mapDispatch>
+
 type MenuProps = {
   title: string;
-} & BoundActions<IStore, typeof Actions>;
+} & DispatchProps;
 
 class Dispatcher {
   private props: MenuProps;
@@ -25,13 +35,13 @@ class Dispatcher {
     return () => {
       switch (name) {
         case 'settings':
-          return this.props.setShowSettings(true);
+          return this.props.setShowSettings({show: true});
         case 'open-repo':
           return this.props.openRepo();
         case 'pull':
-          return this.props.pull();
+          return this.props.pull(null);
         case 'push':
-          return this.props.push();
+          return this.props.push(null);
         default:
           return console.error(`Unknown menu event name: ${name}`);
       }
@@ -195,7 +205,7 @@ const titleBar = new Titlebar({
 
 titleBar.updateBackground(Color.fromHex('#30404d'));
 
-const Menu = (props: MenuProps): JSX.Element => {
+const Menu: FunctionComponent<MenuProps> = (props): JSX.Element => {
   const {title} = props;
   
   useEffect(() => {
@@ -210,4 +220,5 @@ const Menu = (props: MenuProps): JSX.Element => {
   return <></>;
 }
 
-export default connect<IStore>(null, Actions)(Menu);
+//@ts-ignore
+export default connect(mapState, mapDispatch)(Menu);

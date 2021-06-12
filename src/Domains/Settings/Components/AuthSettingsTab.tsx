@@ -1,23 +1,24 @@
 import React from 'react';
-import { connect } from 'redux-zero/react';
-import { BoundActions } from 'redux-zero/types';
+import { connect } from "react-redux";
 import { Button, H4, H6, InputGroup, Switch, H3 } from "@blueprintjs/core";
 
-import { ISettings, IStore } from '../../../Support/Interfaces';
-import Actions from '../../../Store/Actions';
+import { Dispatch, RootState } from "../../../StoreRematch/Store";
 
 const { dialog, getCurrentWindow } = window.require("electron").remote;
 const fs = window.require('fs');
 
-interface StoreProps {
-  settings: ISettings;
-}
-
-const mapToProps = (state: IStore): StoreProps => ({
+const mapState = (state: RootState) => ({
   settings: state.settings,
 });
 
-type SettingsProps = StoreProps & BoundActions<IStore, typeof Actions>;
+const mapDispatch = (dispatch: Dispatch) => ({
+  setSettings: dispatch.settings.setSettings,
+});
+
+type StateProps = ReturnType<typeof mapState>
+type DispatchProps = ReturnType<typeof mapDispatch>
+
+type SettingsProps = StateProps & DispatchProps;
 
 const Settings = (props: SettingsProps) => {
   const { settings: {auth}, setSettings } = props;
@@ -141,4 +142,5 @@ const Settings = (props: SettingsProps) => {
   )
 }
 
-export default connect<IStore>(mapToProps, Actions)(Settings);
+//@ts-ignore
+export default connect(mapState, mapDispatch)(Settings);

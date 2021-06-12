@@ -1,6 +1,5 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { connect } from 'redux-zero/react';
-import { BoundActions } from "redux-zero/types/Actions";
+import React, { useCallback, useEffect, useState } from "react";
+import { connect } from "react-redux";
 import Pane from "react-split-pane/lib/Pane";
 import SplitPane from "react-split-pane/lib/SplitPane";
 import { Spinner, Intent, FocusStyleManager } from "@blueprintjs/core";
@@ -8,10 +7,10 @@ import { Repository } from "nodegit";
 import equal from "fast-deep-equal/react";
 import { debounce } from "lodash";
 
-import { IRepo, ICommit, ICurrentCommit, ISelectedFile, IRefs, IWipCommit, ISettings, IStore } from '../Support/Interfaces';
+import { ICommit, ICurrentCommit, IRefs, IWipCommit } from '../Support/Interfaces';
 import { useIntervalAsync } from "../Support/Hooks";
 import { INITIAL_WIP } from "../Support/Utils";
-import Actions from "../Store/Actions";
+import { Dispatch, RootState } from "../StoreRematch/Store";
 
 import Navbar from "./Navbar";
 import Footer from "./Footer";
@@ -29,25 +28,11 @@ import "../Assets/scss/main.scss";
 
 const ONE_SECOND = 1000;
 const INTERVAL = 2 * ONE_SECOND;
-
-interface StoreProps {
-  folder: string;
-  workdir: string;
-  repo: IRepo;
-  refs: IRefs;
-  currentBranch: ICurrentCommit | null;
-  commits: ICommit[];
-  commit: IWipCommit;
-  settings: ISettings;
-  loading: boolean
-  selectedFile: ISelectedFile;
-}
  
 FocusStyleManager.onlyShowFocusOnTabs();
 
-const mapToProps = (state: IStore): StoreProps => ({
+const mapState = (state: RootState) => ({
   folder: state.folder,
-  workdir: state.workdir,
   repo: state.repo,
   refs: state.refs,
   currentBranch: state.currentBranch,
@@ -58,7 +43,24 @@ const mapToProps = (state: IStore): StoreProps => ({
   selectedFile: state.selectedFile
 });
 
-type AppProps = StoreProps & BoundActions<IStore, typeof Actions>;
+const mapDispatch = (dispatch: Dispatch) => ({
+  setLoading: dispatch.loading.setLoading,
+  setFolder: dispatch.folder.setFolder,
+  setSelectedCommit: dispatch.selectedCommit.setSelectedCommit,
+  setRepo: dispatch.repo.setRepo,
+  setCurrentBranch: dispatch.currentBranch.setCurrentBranch,
+  setRefs: dispatch.refs.setRefs,
+  setCommits: dispatch.commits.setCommits,
+  setCommit: dispatch.commit.setCommit,
+  setSelectedFile: dispatch.selectedFile.setSelectedFile,
+  setWorkdir: dispatch.workdir.setWorkdir,
+  setRepoName: dispatch.repoName.setRepoName,
+});
+
+type StateProps = ReturnType<typeof mapState>
+type DispatchProps = ReturnType<typeof mapDispatch>
+
+type AppProps = StateProps & DispatchProps;
 
 const App = (props: AppProps) => {
   const {
@@ -71,7 +73,7 @@ const App = (props: AppProps) => {
     commit, setCommit,
     loading, setLoading,
     selectedFile, setSelectedFile,
-    workdir, setWorkdir,
+    setWorkdir,
     setRepoName,
   } = props;
 
@@ -261,4 +263,5 @@ const App = (props: AppProps) => {
   );
 };
 
-export default connect<IStore>(mapToProps, Actions)(App);
+//@ts-ignore
+export default connect(mapState, mapDispatch)(App);
