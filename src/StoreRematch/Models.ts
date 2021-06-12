@@ -1,4 +1,5 @@
-import { ICommit, ICurrentCommit, IReference, IRefs, IRepo, ISelectedFile, IWipCommit } from "../Support/Interfaces"
+import { createModel, Models } from '@rematch/core'
+import { ICommit, ICurrentCommit, IReference, IRefs, IRepo, ISelectedFile, ISettings, IWipCommit } from "../Support/Interfaces"
 import { IGraph } from "../Models/SubwayMap"
 import { INITIAL_WIP } from "../Support/Utils"
 
@@ -7,15 +8,34 @@ import Git from "../Services/Git";
 
 const { dialog, getCurrentWindow } = window.require("electron").remote;
 
-export const loading = {
-	state: 0, reducers: { setLoading: (state, payload: boolean) => payload },
+export interface RootModel extends Models<RootModel> {
+  loading: typeof loading;
+  folder: typeof folder;
+  repo: typeof repo;
+  workdir: typeof workdir;
+  repoName: typeof repoName;
+  selectedCommit: typeof selectedCommit;
+  graph: typeof graph;
+  currentBranch: typeof currentBranch;
+  commits: typeof commits;
+  commit: typeof commit;
+  refs: typeof refs;
+  selectedFile: typeof selectedFile,
+  settings: typeof settings,
+  expandedMenu: typeof expandedMenu
 }
 
-export const folder = {
-	state: '', reducers: { setFolder: (state, payload: string) => payload },
-}
+export const loading = createModel<RootModel>()({
+	state: false,
+  reducers: { setLoading: (state, payload: boolean) => payload },
+});
 
-export const repo = {
+export const folder = createModel<RootModel>()({
+	state: '',
+  reducers: { setFolder: (state, payload: string) => payload },
+});
+
+export const repo = createModel<RootModel>()({
 	state: null,
   reducers: { setRepo: (state, payload: IRepo) => payload },
 	effects: (dispatch) => ({
@@ -60,17 +80,19 @@ export const repo = {
       }
     }
 	}),
-}
+});
 
-export const workdir = {
-	state: '', reducers: { setWorkdir: (state, payload: string) => payload },
-}
+export const workdir = createModel<RootModel>()({
+	state: '',
+  reducers: { setWorkdir: (state, payload: string) => payload },
+});
 
-export const repoName = {
-	state: '', reducers: { setRepoName: (state, payload: string) => payload },
-}
+export const repoName = createModel<RootModel>()({
+	state: '',
+  reducers: { setRepoName: (state, payload: string) => payload },
+});
 
-export const selectedCommit = {
+export const selectedCommit = createModel<RootModel>()({
 	state: '',
   reducers: { setSelectedCommit: (state, payload: string) => payload },
 	effects: (dispatch) => ({
@@ -101,18 +123,19 @@ export const selectedCommit = {
       }
 		},
 	}),
-}
+});
 
-export const graph = {
-	state: null, reducers: { setGraph: (state, payload: IGraph | null) => payload },
-}
+export const graph = createModel<RootModel>()({
+	state: null,
+  reducers: { setGraph: (state, payload: IGraph | null) => payload },
+});
 
-export const refs = {
-	state: { references: [], refDict: null, commits: '' },
+export const refs = createModel<RootModel>()({
+	state: { references: [], refDict: null, commits: '' } as IRefs,
   reducers: { setRefs: (state, payload: IRefs) => payload },
-}
+});
 
-export const currentBranch = {
+export const currentBranch = createModel<RootModel>()({
 	state: null,
   reducers: { setCurrentCommit: (state, payload: ICurrentCommit | null) => payload },
 	effects: (dispatch) => ({
@@ -128,26 +151,29 @@ export const currentBranch = {
       });
 		},
 	}),
-}
+});
 
-export const commits = {
-	state: [], reducers: { setCommits: (state, payload: ICommit[]) => payload },
-}
+export const commits = createModel<RootModel>()({
+	state: [] as ICommit[],
+  reducers: { setCommits: (state, payload: ICommit[]) => payload },
+});
 
-export const commit = {
-	state: INITIAL_WIP, reducers: { setCommit: (state, payload: IWipCommit) => payload },
-}
+export const commit = createModel<RootModel>()({
+	state: INITIAL_WIP as IWipCommit,
+  reducers: { setCommit: (state, payload: IWipCommit) => payload },
+});
 
-export const selectedFile = {
-	state: { commit: null, file: null },
+export const selectedFile = createModel<RootModel>()({
+	state: { commit: null, file: null } as ISelectedFile,
   reducers: { setSelectedFile: (state, payload: ISelectedFile) => payload },
-}
+});
 
-export const expandedMenu = {
-	state: [], reducers: { setExpandedMenu: (state, payload: string[]) => payload },
-}
+export const expandedMenu = createModel<RootModel>()({
+	state: [] as string[],
+  reducers: { setExpandedMenu: (state, payload: string[]) => payload },
+});
 
-export const settings = {
+export const settings = createModel<RootModel>()({
 	state: {
     show: false,
     tab: "general",
@@ -163,10 +189,10 @@ export const settings = {
       sshPublicKey: '',
       sshPublicContent: ''
     }
-  },
+  } as ISettings,
   reducers: {
     setSettings: (state, payload: object) => ({
-      ...state.settings,
+      ...state,
       ...payload
     })
   },
@@ -180,4 +206,21 @@ export const settings = {
       });
 		},
 	}),
-}
+});
+
+export const models: RootModel = {
+  loading,
+  folder,
+  repo,
+  workdir,
+  repoName,
+  selectedCommit,
+  graph,
+  currentBranch,
+  commits,
+  commit,
+  refs,
+  selectedFile,
+  settings,
+  expandedMenu,
+};
