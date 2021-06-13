@@ -1,5 +1,5 @@
 import { createModel } from '@rematch/core'
-import { RootModel } from './Store';
+import { RepoModel, GlobalModel } from './Store';
 import { ICommit, ICurrentCommit, IReference, IRefs, IRepo, ISelectedFile, ISettings, IWipCommit } from "../Support/Interfaces"
 import { IGraph } from "../Models/SubwayMap"
 import { INITIAL_WIP } from "../Support/Utils"
@@ -7,17 +7,20 @@ import { INITIAL_WIP } from "../Support/Utils"
 import { showDanger, showInfo } from "../Support/Toaster";
 import Git from "../Services/Git";
 
-export const loading = createModel<RootModel>()({
+/**
+ * Repo stores
+ */
+export const loading = createModel<RepoModel>()({
 	state: false,
   reducers: { setLoading: (state, payload: boolean) => payload },
 });
 
-export const folder = createModel<RootModel>()({
+export const folder = createModel<RepoModel>()({
 	state: '',
   reducers: { setFolder: (state, payload: string) => payload },
 });
 
-export const repo = createModel<RootModel>()({
+export const repo = createModel<RepoModel>()({
 	state: null,
   reducers: { setRepo: (state, payload: IRepo) => payload },
 	effects: (dispatch) => ({
@@ -48,12 +51,12 @@ export const repo = createModel<RootModel>()({
 	}),
 });
 
-export const repoName = createModel<RootModel>()({
+export const repoName = createModel<RepoModel>()({
 	state: '',
   reducers: { setRepoName: (state, payload: string) => payload },
 });
 
-export const selectedCommit = createModel<RootModel>()({
+export const selectedCommit = createModel<RepoModel>()({
 	state: '',
   reducers: { setSelectedCommit: (state, payload: string) => payload },
 	effects: (dispatch) => ({
@@ -86,17 +89,17 @@ export const selectedCommit = createModel<RootModel>()({
 	}),
 });
 
-export const graph = createModel<RootModel>()({
+export const graph = createModel<RepoModel>()({
 	state: null,
   reducers: { setGraph: (state, payload: IGraph | null) => payload },
 });
 
-export const refs = createModel<RootModel>()({
+export const refs = createModel<RepoModel>()({
 	state: { references: [], refDict: null, commits: '' } as IRefs,
   reducers: { setRefs: (state, payload: IRefs) => payload },
 });
 
-export const currentBranch = createModel<RootModel>()({
+export const currentBranch = createModel<RepoModel>()({
 	state: null,
   reducers: { setCurrentCommit: (state, payload: ICurrentCommit | null) => payload },
 	effects: (dispatch) => ({
@@ -114,22 +117,22 @@ export const currentBranch = createModel<RootModel>()({
 	}),
 });
 
-export const commits = createModel<RootModel>()({
+export const commits = createModel<RepoModel>()({
 	state: [] as ICommit[],
   reducers: { setCommits: (state, payload: ICommit[]) => payload },
 });
 
-export const commit = createModel<RootModel>()({
+export const commit = createModel<RepoModel>()({
 	state: INITIAL_WIP as IWipCommit,
   reducers: { setCommit: (state, payload: IWipCommit) => payload },
 });
 
-export const selectedFile = createModel<RootModel>()({
+export const selectedFile = createModel<RepoModel>()({
 	state: { commit: null, file: null } as ISelectedFile,
   reducers: { setSelectedFile: (state, payload: ISelectedFile) => payload },
 });
 
-export const expandedMenu = createModel<RootModel>()({
+export const expandedMenu = createModel<RepoModel>()({
 	state: [] as string[],
   reducers: { setExpandedMenu: (state, payload: string[]) => payload },
 });
@@ -139,7 +142,7 @@ type IShowSettings = {
   tab?: string;
 }
 
-export const settings = createModel<RootModel>()({
+export const settings = createModel<RepoModel>()({
 	state: {
     show: false,
     tab: "general",
@@ -171,4 +174,12 @@ export const settings = createModel<RootModel>()({
       });
 		},
 	}),
+});
+
+/**
+ * Global store
+ */
+export const repos = createModel<GlobalModel>()({
+	state: [],
+  reducers: { setRepos: (state, payload: string[]) => payload },
 });

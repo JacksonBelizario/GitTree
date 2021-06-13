@@ -2405,6 +2405,13 @@
   resolved "https://registry.yarnpkg.com/@rematch/core/-/core-2.0.1.tgz#c69bba9637f41c403c8725834673b12a58a28f31"
   integrity sha512-EyvgmXzXZnDCIIsmBmOtwzaTQzH+rAlrjcPTiV8Hd/TbFeH5VpCXI/B4myB5aH4P+yQafRkm846HNHMmhkq7kQ==
 
+"@rematch/persist@^2.0.1":
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/@rematch/persist/-/persist-2.0.1.tgz#94f9cbbe212d769d204b90571c5b261a2fcb77b8"
+  integrity sha512-//OABsRd7k2llxuVoJQ9Ftgj7xnx6CnsGE2ectc7ZTkFc2tr8iQ0FEXNxPMuB/oXX2NqueV+0IQojDv5OFOM1Q==
+  dependencies:
+    redux-persist "^6.0.0"
+
 "@rollup/plugin-node-resolve@^7.1.1":
   version "7.1.3"
   resolved "https://registry.yarnpkg.com/@rollup/plugin-node-resolve/-/plugin-node-resolve-7.1.3.tgz#80de384edfbd7bfc9101164910f86078151a3eca"
@@ -13407,6 +13414,16 @@ reduce-css-calc@^2.1.6:
   dependencies:
     css-unit-converter "^1.1.1"
     postcss-value-parser "^3.3.0"
+
+redux-persist-electron-storage@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/redux-persist-electron-storage/-/redux-persist-electron-storage-2.1.0.tgz#8e9c2d4aeb451a5e00786456efed2f3d3f03dfa8"
+  integrity sha512-8VhAttDPqrwZlGIiHB3/PzZZChCliom8qcex8Q+eW3lHpSMkbqAaYpoedRm29e3FoVnan3VT+UV22NGFXKPmCg==
+
+redux-persist@^6.0.0:
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/redux-persist/-/redux-persist-6.0.0.tgz#b4d2972f9859597c130d40d4b146fecdab51b3a8"
+  integrity sha512-71LLMbUq2r02ng2We9S215LtPu3fY0KgaGE0k8WRgl6RkqxtGfl7HUozz1Dftwsb0D/5mZ8dwAaPbtnzfvbEwQ==
 
 redux-zero-persist@^0.2.6:
   version "0.2.6"

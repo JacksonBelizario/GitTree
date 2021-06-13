@@ -51,3 +51,6 @@ export const INITIAL_WIP = {
     renamed: 0,
   },
 } as IWipCommit;
+
+export const delay = (ms: number) =>
+	new Promise((resolve) => setTimeout(resolve, ms))

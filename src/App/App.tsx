@@ -1,6 +1,6 @@
-import React, { useState } from "react";
-import {Provider} from "react-redux";
-import {createStore} from "../StoreRematch/Store";
+import React, { useEffect, useState } from "react";
+import {Provider, useDispatch, useSelector} from "react-redux";
+import {globalStore, createStore, GlobalRootState, GlobalDispatch} from "../StoreRematch/Store";
 import Main from "./Main";
 import Menu from "./Menu";
 import RepoTabs, {Tab} from './RepoTabs'
@@ -12,24 +12,40 @@ import "../Assets/scss/main.scss";
 
 const { dialog, getCurrentWindow } = window.require("electron").remote;
 
-//
-// @todo: save e load state from a global persisted store
-// {
-//   title: 'RepoName',
-//   store: createStore('RepoName'),
-//   loaded: false,
-// }
-//
 interface Itab {
-    title: string;
-    store: any;
-    loaded: boolean;
+  title: string;
+  store: any;
+  loaded: boolean;
 }
 
 const App = () => {
-
   const [activeTab, setActiveTab] = useState<number>(-1);
   const [tabs , setTabs] = useState<Itab[]>([]);
+	const repos = useSelector((state: GlobalRootState) => state.repos)
+	const dispatch = useDispatch<GlobalDispatch>()
+
+  /**
+   * Get tabs from persisted store
+   */
+  useEffect(() => {
+    if (tabs.length === 0 && repos.length > 0) {
+      setTabs(repos.map((title: string, index) => ({
+        title,
+        store: createStore(title),
+        loaded: index === 0
+      })))
+      setActiveTab(0);
+    }
+  }, [tabs, repos]);
+
+  /**
+   * Update the store when has tabs changes 
+   */
+  useEffect(() => {
+    if (tabs.length !== repos.length || tabs.length > 0) {
+      dispatch.repos.setRepos(tabs.map(tab => tab.title));
+    }
+  }, [tabs, repos, dispatch]);
 
   const handleTabPositionChange = (a: number, b: number) => {
     const localTabs = [...tabs];
@@ -82,12 +98,12 @@ const App = () => {
       return;
     }
 
-    const store = createStore(title);
+    const repoStore = createStore(title);
 
-    store.dispatch.repoName.setRepoName(title);
-    store.dispatch.folder.setFolder(path);
+    repoStore.dispatch.repoName.setRepoName(title);
+    repoStore.dispatch.folder.setFolder(path);
 
-    setTabs([...tabs, { title, store, loaded: true }])
+    setTabs([...tabs, { title, store: repoStore, loaded: true }])
 
     setActiveTab(tabs.length);
 	}
@@ -105,27 +121,31 @@ const App = () => {
 
   return (
     <React.StrictMode>
-      <Menu
-        title="GitTree"
-        openRepo={() => handleTabAdd()}
-        store={activeTab > -1 ? tabs[activeTab].store : null}
-      />
-      <RepoTabs
-        activeTab={activeTab}
-        onTabSwitch={(index) => handleActiveTab(index)}
-        onTabAdd={() => handleTabAdd()}
-        onTabClose={(index) => handleTabClose(index)}
-        onTabPositionChange={(a, b) => handleTabPositionChange(a, b)}
+      <Provider
+        store={ globalStore }
       >
-      {
-        tabs.map((value, index) => (
-          <Tab
-            key={ index }
-            title={value.title}
-          />
-        ))
-      }
-      </RepoTabs>
+        <Menu
+          title="GitTree"
+          openRepo={() => handleTabAdd()}
+          repoStore={activeTab > -1 ? tabs[activeTab].store : null}
+        />
+        <RepoTabs
+          activeTab={activeTab}
+          onTabSwitch={(index) => handleActiveTab(index)}
+          onTabAdd={() => handleTabAdd()}
+          onTabClose={(index) => handleTabClose(index)}
+          onTabPositionChange={(a, b) => handleTabPositionChange(a, b)}
+        >
+        {
+          tabs.map((value, index) => (
+            <Tab
+              key={ index }
+              title={value.title}
+            />
+          ))
+        }
+        </RepoTabs>
+      </Provider>
       {
         tabs.map((value, index) => (
           value.loaded && 

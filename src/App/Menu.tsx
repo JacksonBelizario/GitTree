@@ -9,7 +9,7 @@ const { Menu: { buildFromTemplate }, globalShortcut , shell, app, dialog, getCur
 type MenuProps = {
   title: string;
   openRepo: Function;
-  store?: any
+  repoStore?: any
 };
 
 class Dispatcher {
@@ -25,11 +25,11 @@ class Dispatcher {
         case 'open-repo':
           return this.props.openRepo();
         case 'settings':
-          return this.props.store ? this.props.store.dispatch.settings.setShowSettings({show: true}) : null;
+          return this.props.repoStore ? this.props.repoStore.dispatch.settings.setShowSettings({show: true}) : null;
         case 'pull':
-          return this.props.store ? this.props.store.dispatch.repo.pull(null): null;
+          return this.props.repoStore ? this.props.repoStore.dispatch.repo.pull(null): null;
         case 'push':
-          return this.props.store ? this.props.store.dispatch.repo.push(null): null;
+          return this.props.repoStore ? this.props.repoStore.dispatch.repo.push(null): null;
         default:
           return console.error(`Unknown menu event name: ${name}`);
       }
